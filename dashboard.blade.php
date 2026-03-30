@@ -55,7 +55,7 @@
                     </a>
                 </div>
 
-                <a href="#"
+                <a href="{{ route('admin-beranda') }}"
                     class="bg-[#e07b11] hover:bg-[#c26a0e] hover:-translate-y-1 transition-all duration-300 w-36 h-36 rounded-[2rem] flex flex-col items-center justify-end pb-4 shadow-lg cursor-pointer relative overflow-hidden group">
                     <img src="https://placehold.co/100x100/transparent/white?text=Img+Admin" alt="Ilustrasi Admin"
                         class="absolute top-2 w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300">
