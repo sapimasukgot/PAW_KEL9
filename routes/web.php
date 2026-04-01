@@ -20,10 +20,14 @@ Route::get('/pilih-role', function () {
     return view('dashboard'); 
 })->name('role.pilih');
 
-Route::get('/admin/toko/tambah', function () {
-    return view('tambah-toko'); 
-})->name('toko.form-tambah');
+// Route::get('/admin/toko/tambah', function () {
+//     return view('tambah-toko'); 
+// })->name('toko.form-tambah');
 
 Route::get('/admin-dashboard', function () {
     return view('admin-beranda'); 
 })->name('admin-beranda');
+
+Route::get('/admin/profile', function () {
+    return view('profile');
+})->name('profile');

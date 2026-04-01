@@ -62,7 +62,7 @@
                 class="{{ $nav == 'beranda' ? 'bg-[#e6d1ba]' : 'bg-white' }} whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm shadow-sm transition-all border border-transparent">
                 Beranda
             </a>
-            <a href="{{ route('admin-beranda', ['nav' => 'profil', 'action' => $action, 'deleted_ids' => implode(',', $deletedIds)]) }}"
+            <a href="{{ route('profile', ['nav' => 'profil', 'action' => $action, 'deleted_ids' => implode(',', $deletedIds)]) }}"
                 class="{{ $nav == 'profil' ? 'bg-[#e6d1ba]' : 'bg-white' }} whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm shadow-sm transition-all border border-transparent">
                 Profil
             </a>
