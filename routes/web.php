@@ -31,3 +31,39 @@ Route::get('/admin-dashboard', function () {
 Route::get('/admin/profile', function () {
     return view('profile');
 })->name('profile');
+
+Route::get('penjual-beranda', function () {
+    return view('penjual-beranda');
+})->name('penjual-beranda');
+
+Route::get('pesanan-detail', function(){
+    return view('pesanan-detail');
+})->name('pesanan-detail');
+
+Route::get('pesanan-penjual', function(){
+    return view('pesanan-penjual');
+})->name('pesanan-penjual');
+
+Route::get('profil-penjual', function(){
+    return view('profil-penjual');
+})->name('profil-penjual');
+
+Route::get('tambah-menu', function(){
+    return view('tambah_menu');
+})->name('tambah_menu');
+
+Route::get('ulasan-penjual', function(){
+    return view('ulasan-penjual');
+})->name('ulasan-penjual');
+
+Route::get('ulasan-detail', function(){
+    return view('ulasan-detail');
+})->name('ulasan-detail');
+
+Route::get('riwayat-penjual', function(){
+    return view('riwayat-penjual');
+})->name('riwayat-penjual');
+
+Route::get('riwayat-detail', function(){
+    return view('riwayat-detail');
+})->name('riwayat-detail');

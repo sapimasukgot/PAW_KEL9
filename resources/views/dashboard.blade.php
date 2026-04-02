@@ -23,16 +23,26 @@
             <h1 class="text-2xl md:text-4xl font-bold text-black mb-8 md:mb-12 text-center tracking-wide">Pilih Role
                 kamu:</h1>
 
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
-                @foreach(['Pembeli', 'Penjual', 'Admin'] as $role)
-                    <a href="{{ $role == 'Admin' ? route('admin-beranda') : '#' }}"
-                        class="bg-[#e07b11] hover:bg-[#c26a0e] hover:-translate-y-1 transition-all duration-300 w-full aspect-square md:w-36 md:h-36 rounded-[2rem] flex flex-col items-center justify-end pb-4 shadow-lg group relative overflow-hidden">
-                        <img src="https://placehold.co/100x100/transparent/white?text={{ substr($role, 0, 1) }}"
-                            class="absolute top-2 w-16 md:w-20 group-hover:scale-110 transition-transform">
-                        <span class="text-white font-semibold text-sm md:text-base z-10">{{ $role }}</span>
-                    </a>
-                @endforeach
-            </div>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+    @foreach(['Pembeli', 'Penjual', 'Admin'] as $role)
+        @php
+            // Logika penentuan route berdasarkan nama role
+            $targetRoute = '#';
+            if ($role == 'Admin') {
+                $targetRoute = route('admin-beranda');
+            } elseif ($role == 'Penjual') {
+                $targetRoute = route('penjual-beranda');
+            }
+        @endphp
+
+        <a href="{{ $targetRoute }}"
+            class="bg-[#e07b11] hover:bg-[#c26a0e] hover:-translate-y-1 transition-all duration-300 w-full aspect-square md:w-36 md:h-36 rounded-[2rem] flex flex-col items-center justify-end pb-4 shadow-lg group relative overflow-hidden">
+            <img src="https://placehold.co/100x100/transparent/white?text={{ substr($role, 0, 1) }}"
+                class="absolute top-2 w-16 md:w-20 group-hover:scale-110 transition-transform">
+            <span class="text-white font-semibold text-sm md:text-base z-10">{{ $role }}</span>
+        </a>
+    @endforeach
+</div>
 
             <a href="{{ route('login') }}"
                 class="bg-[#d6d6d6] hover:bg-[#bebebe] px-10 py-3 rounded-full text-black font-bold text-lg shadow-md transition-all">Kembali</a>
