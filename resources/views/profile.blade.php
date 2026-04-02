@@ -32,8 +32,10 @@
     <header class="bg-[#f7e4cf] p-4 shadow-sm border-b border-[#e6d1ba] sticky top-0 z-40">
         <h1 class="text-xl font-bold text-[#634a2c] mb-3 px-2 text-center">MakanMart</h1>
         <div class="flex gap-3 px-2 justify-center">
-            <span
-                class="bg-white whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm border border-gray-200">Beranda</span>
+            <a href="{{ route('admin-beranda', ['page' => 'index', 'lang' => $lang]) }}"
+                class="bg-white whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm border border-gray-200 hover:bg-gray-50 transition-all block text-center">
+                Beranda
+            </a>
             <span
                 class="bg-[#e6d1ba] whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm">Profil</span>
         </div>
