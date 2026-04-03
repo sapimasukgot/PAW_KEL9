@@ -38,7 +38,7 @@
                 </a>
         
                 <a href="{{ route('profil-penjual') }}" 
-                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('profil-penjual') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
+                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('profil-penjual') || Route::is('ubah-profil') || Route::is('pengaturan-akun') || Route::is('ubah-bahasa') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
                    Profil
                 </a>
             </div>

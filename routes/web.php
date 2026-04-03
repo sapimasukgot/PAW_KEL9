@@ -67,3 +67,19 @@ Route::get('riwayat-penjual', function(){
 Route::get('riwayat-detail', function(){
     return view('riwayat-detail');
 })->name('riwayat-detail');
+
+Route:: get('ubah-bahasa', function(){
+    return view('ubah-bahasa');
+})->name('ubah-bahasa');
+
+Route::get('pengaturan-akun', function(){
+    return view('pengaturan-akun');
+})->name('pengaturan-akun');
+
+Route::get('ubah-profil', function(){
+    return view('ubah-profil');
+})->name('ubah-profil');
+
+Route::get('ubah-sandi', function(){
+    return view('ubah-sandi');
+})->name('ubah-sandi');
