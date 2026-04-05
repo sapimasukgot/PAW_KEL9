@@ -1,42 +1,31 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
 Route::get('/', function () {
-    return view('login'); 
-});
-Route::get('/login', function () {
-    return view('login'); 
+    return view('login');
 })->name('login');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-Route::post('/login', function () {
-    return redirect()->route('dashboard'); 
-});
-Route::post('/login', function () {
-    return redirect()->route('dashboard'); 
-})->name('register');
 
+Route::post('/login-submit', function (Request $request) {
+    return redirect()->route('role.pilih')->with('success', 'Login berhasil!');
+})->name('login.submit');
 
+Route::post('/register-submit', function (Request $request) {
+    return redirect()->route('login')->with('success', 'Akun berhasil dibuat!');
+})->name('register.submit');
 
-Route::post('/login', function () {
-    return "Ini halaman proses cek email dan password (Login)";
-});
+Route::get('/pilih-role', function () {
+    return view('dashboard'); 
+})->name('role.pilih');
 
-Route::post('/register', function () {
-    return "Ini halaman proses pendaftaran akun baru (Register)";
-})->name('register');
+// Route::get('/admin/toko/tambah', function () {
+//     return view('tambah-toko'); 
+// })->name('toko.form-tambah');
 
-Route::post('/login', function () {
-    return redirect()->route('dashboard'); 
-});
-
-Route::get('/lupa-password', function () {
-    return "Ini halaman form lupa password";
-})->name('password.request');
-
-Route::get('/admin-beranda', function () {
-    return view('admin-beranda');
+Route::get('/admin-dashboard', function () {
+    return view('admin-beranda'); 
 })->name('admin-beranda');
+
+Route::get('/admin/profile', function () {
+    return view('profile');
+})->name('profile');
