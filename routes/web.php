@@ -1,9 +1,9 @@
 <?php
 
-
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PembeliController;
+
 Route::get('/', function () {
     return view('login');
 })->name('login');
@@ -83,3 +83,44 @@ Route::get('ubah-profil', function(){
 Route::get('ubah-sandi', function(){
     return view('ubah-sandi');
 })->name('ubah-sandi');
+
+// Halaman utama pembeli
+Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
+
+// Halaman detail pembeli (ada {id} supaya tahu menu mana yang diklik)
+Route::get('/pembeli/detail/{id}', [PembeliController::class, 'show'])->name('pembeli-detail');
+
+// Halaman Form Pemesanan (Wireframe 5)
+Route::get('/pembeli/checkout/{id}', [PembeliController::class, 'checkout'])->name('pembeli-checkout');
+
+// Halaman Instruksi Pembayaran (Wireframe 58)
+Route::get('/pembeli/pembayaran', [PembeliController::class, 'payment'])->name('pembeli-pembayaran');
+
+// Halaman Beranda dengan Pesanan Berlangsung (Wireframe 57)
+Route::get('/pembeli/ongoing', [PembeliController::class, 'ongoing'])->name('pembeli-ongoing');
+
+// Halaman Detail Akhir/Rating (Wireframe 15)
+Route::get('/pembeli/summary', [PembeliController::class, 'summary'])->name('pembeli-summary');
+
+// Proses Rating (Wireframe 19 & 20)
+Route::get('/pembeli/rating/{id}', [PembeliController::class, 'rating'])->name('pembeli-rating');
+Route::post('/pembeli/rating/kirim', [PembeliController::class, 'storeRating'])->name('pembeli-rating-simpan');
+Route::get('/pembeli/terima-kasih', [PembeliController::class, 'thanks'])->name('pembeli-thanks');
+
+// Proses Riwayat (Wireframe 18)
+Route::get('/pembeli/riwayat', [PembeliController::class, 'history'])->name('pembeli-riwayat');
+Route::get('/pembeli/riwayat/detail/{id}', [PembeliController::class, 'historyDetail'])->name('pembeli-riwayat-detail');
+
+Route::get('/pembeli/profil', [PembeliController::class, 'profile'])->name('pembeli-profil');
+Route::get('/pembeli/profil/edit', [PembeliController::class, 'editProfile'])->name('pembeli-edit-profil');
+
+Route::get('/pembeli/bahasa', [PembeliController::class, 'language'])->name('pembeli-bahasa');
+Route::get('/pembeli/pengaturan', [PembeliController::class, 'settings'])->name('pembeli-pengaturan');
+Route::get('/pembeli/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
+
+Route::post('/logout', [PembeliController::class, 'logout'])->name('logout');
+Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
+
+Route::get('/pembeli/edit-profil', [PembeliController::class, 'editProfil'])->name('pembeli-edit-profil');
+Route::get('/pembeli/bahasa', [PembeliController::class, 'bahasa'])->name('pembeli-bahasa');
+Route::get('/pembeli/pengaturan', [PembeliController::class, 'pengaturan'])->name('pembeli-pengaturan');

@@ -32,7 +32,9 @@
                 $targetRoute = route('admin-beranda');
             } elseif ($role == 'Penjual') {
                 $targetRoute = route('penjual-beranda');
-            }
+            } elseif ($role == 'Pembeli') {
+                $targetRoute = route('pembeli-beranda');
+    }
         @endphp
 
         <a href="{{ $targetRoute }}"
