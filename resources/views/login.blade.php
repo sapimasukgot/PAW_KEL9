@@ -37,15 +37,26 @@
 
             <form method="POST" action="{{ route('login.submit') }}" class="flex-grow flex flex-col gap-4">
                 @csrf
+
+                @if (session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                        role="alert">{{ session('success') }}</div>
+                @endif
+
+                @if (session('error'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Email</label>
-                    <input type="email" name="email"
+                    <input type="email" name="email" required
                         class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 ring-[#b5a7a4] transition-all">
                 </div>
 
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Password</label>
-                    <input type="password" name="password"
+                    <input type="password" name="password" required
                         class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 ring-[#b5a7a4] transition-all">
                 </div>
 
@@ -72,7 +83,7 @@
 
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-black tracking-wide">REGISTER</h1>
 
-            <form method="POST" action="{route{'register.submit'}}" class="flex-grow flex flex-col gap-4">
+            <form method="POST" action="{{route('register.submit')  }}" class="flex-grow flex flex-col gap-4">
                 @csrf
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Email</label>

@@ -3,18 +3,85 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PembeliController;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('login');
 })->name('login');
 
 Route::post('/login-submit', function (Request $request) {
-    return redirect()->route('role.pilih')->with('success', 'Login berhasil!');
+    $email = $request->email;
+    $password = $request->password;
+
+    if(Storage::disk('local')->exists('user.json')) {
+        $users = json_decode(Storage::disk('local')->get('user.json'), true);
+        foreach($users as $user) {
+            if($user['email'] === $email && password_verify($password, $user['password'])) {
+                session(['user' => $user]);
+                return redirect()->route('role.pilih')->with('success', 'Login berhasil!');
+            }
+        }
+    }
+    return redirect()->back()->with('error', 'Email atau password salah');
 })->name('login.submit');
 
 Route::post('/register-submit', function (Request $request) {
-    return redirect()->route('login')->with('success', 'Akun berhasil dibuat!');
+    $validatedData = $request->validate([
+        'email' => 'required|string|email|max:255',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $path = 'user.json'; 
+    $users = [];
+    
+    if (Storage::disk('local')->exists($path)) {
+        $users = json_decode(Storage::disk('local')->get($path), true) ?? [];
+    }
+
+    foreach($users as $user) {
+        if($user['email'] === $validatedData['email']) {
+            return redirect()->back()->with('error', 'Email sudah terdaftar!');
+        }
+    }
+
+    $users[] = [
+        'id' => time(),
+        'email' => $validatedData['email'],
+        'password' => bcrypt($validatedData['password']),
+        'role' => 'pembeli',
+    ];
+
+    Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
+    
+    session(['emailMasuk' => $validatedData['email']]);
+    return redirect()->route('role.pilih')->with('success', 'Akun berhasil dibuat!');
 })->name('register.submit');
+
+Route::post('/updateRole', function (Request $request) {
+    $email = session('emailMasuk');
+    $selectedRole = $request->role; 
+    $path = 'user.json';
+
+    if (!$email) {
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+    }
+
+    if (Storage::disk('local')->exists($path)) {
+        $users = json_decode(Storage::disk('local')->get($path), true);
+        foreach ($users as &$user) {
+            if ($user['email'] === $email) {
+                $user['role'] = $selectedRole;
+                break;
+            }
+        }
+        
+        Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
+        session()->forget('emailMasuk');
+
+        return redirect()->route($selectedRole . '-beranda');
+    }
+    return redirect()->route('login');
+})->name('updateRole');
 
 Route::get('/pilih-role', function () {
     return view('dashboard'); 
