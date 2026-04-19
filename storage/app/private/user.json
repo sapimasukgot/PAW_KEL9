@@ -4,5 +4,11 @@
         "email": "abc@gmail.com",
         "password": "$2y$12$xd0vP.szdjSn0ucHfrV7N.UGk\/GmmGhu2Lmr0I8qzKu0NKqRshgZq",
         "role": "pembeli"
+    },
+    {
+        "id": 1776612374,
+        "email": "joshuanatahanaelpurba@gmail.com",
+        "password": "$2y$12$KSKCzafBWM7phUI9tikjHu86uVXR4YNZO4rd1uR2oowQ8p7r2jVle",
+        "role": "penjual"
     }
 ]

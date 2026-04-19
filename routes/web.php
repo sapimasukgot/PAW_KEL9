@@ -26,9 +26,13 @@ Route::post('/login-submit', function (Request $request) {
 })->name('login.submit');
 
 Route::post('/register-submit', function (Request $request) {
-    $validatedData = $request->validate([
+    // Validasi input
+    $request->validate([
         'email' => 'required|string|email|max:255',
         'password' => 'required|string|min:8|confirmed',
+    ], [
+        'password.min' => 'Password harus memiliki minimal 8 karakter!',
+        'password.confirmed' => 'Konfirmasi password tidak cocok!'
     ]);
 
     $path = 'user.json'; 
@@ -38,22 +42,24 @@ Route::post('/register-submit', function (Request $request) {
         $users = json_decode(Storage::disk('local')->get($path), true) ?? [];
     }
 
+    // Cek email ganda
     foreach($users as $user) {
-        if($user['email'] === $validatedData['email']) {
-            return redirect()->back()->with('error', 'Email sudah terdaftar!');
+        if($user['email'] === $request->email) {
+            return redirect()->back()->withErrors(['email' => 'Email sudah terdaftar!'])->withInput();
         }
     }
 
+    // Simpan data
     $users[] = [
         'id' => time(),
-        'email' => $validatedData['email'],
-        'password' => bcrypt($validatedData['password']),
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
         'role' => 'pembeli',
     ];
 
     Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
     
-    session(['emailMasuk' => $validatedData['email']]);
+    session(['emailMasuk' => $request->email]);
     return redirect()->route('role.pilih')->with('success', 'Akun berhasil dibuat!');
 })->name('register.submit');
 
