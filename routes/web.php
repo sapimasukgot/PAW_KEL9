@@ -58,7 +58,7 @@ Route::post('/register-submit', function (Request $request) {
 })->name('register.submit');
 
 Route::post('/updateRole', function (Request $request) {
-    $email = session('emailMasuk');
+    $email = session('emailMasuk') ?? session('user.email');
     $selectedRole = $request->role; 
     $path = 'user.json';
 
@@ -68,28 +68,32 @@ Route::post('/updateRole', function (Request $request) {
 
     if (Storage::disk('local')->exists($path)) {
         $users = json_decode(Storage::disk('local')->get($path), true);
+        $userFound = false;
+
         foreach ($users as &$user) {
             if ($user['email'] === $email) {
                 $user['role'] = $selectedRole;
+                $userFound = true;
+
+                session(['user' => $user]);
                 break;
             }
         }
         
-        Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
-        session()->forget('emailMasuk');
-
-        return redirect()->route($selectedRole . '-beranda');
+        if ($userFound) {
+            Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
+            
+            return redirect()->route($selectedRole . '-beranda');
+        }
     }
-    return redirect()->route('login');
+    
+    return redirect()->route('login')->with('error', 'Data pengguna tidak ditemukan.');
 })->name('updateRole');
 
 Route::get('/pilih-role', function () {
     return view('dashboard'); 
 })->name('role.pilih');
 
-// Route::get('/admin/toko/tambah', function () {
-//     return view('tambah-toko'); 
-// })->name('toko.form-tambah');
 
 Route::get('/admin-dashboard', function () {
     return view('admin-beranda'); 
@@ -143,10 +147,7 @@ Route::get('pengaturan-akun', function(){
     return view('pengaturan-akun');
 })->name('pengaturan-akun');
 
-Route::get('ubah-profil', function(){
-    return view('ubah-profil');
-})->name('ubah-profil');
-
+Route::get('/pembeli/profil/edit', [PembeliController::class, 'editProfile'])->name('pembeli-edit-profil');
 Route::get('ubah-sandi', function(){
     return view('ubah-sandi');
 })->name('ubah-sandi');
@@ -191,3 +192,9 @@ Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('h
 Route::get('/pembeli/edit-profil', [PembeliController::class, 'editProfil'])->name('pembeli-edit-profil');
 Route::get('/pembeli/bahasa', [PembeliController::class, 'bahasa'])->name('pembeli-bahasa');
 Route::get('/pembeli/pengaturan', [PembeliController::class, 'pengaturan'])->name('pembeli-pengaturan');
+
+Route::get('/pembeli/ubah-sandi', function () {
+    return view('pembeli.ubah-sandi');
+})->name('pembeli-ubah-sandi');
+
+Route::post('/pembeli/update-password', [PembeliController::class, 'updatePassword'])->name('pembeli-update-password');
