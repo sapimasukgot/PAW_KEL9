@@ -4,5 +4,11 @@
         "email": "abc@gmail.com",
         "password": "$2y$12$xd0vP.szdjSn0ucHfrV7N.UGk\/GmmGhu2Lmr0I8qzKu0NKqRshgZq",
         "role": "pembeli"
+    },
+    {
+        "id": 1776612272,
+        "email": "asd@gmail.com",
+        "password": "$2y$12$Jlsc2t3muxjji4VNMBhGHOiVSwbj36yLZE3r2FZEA7hVKvIQmOg5e",
+        "role": "pembeli"
     }
 ]
