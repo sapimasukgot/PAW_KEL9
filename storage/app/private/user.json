@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1776327038,
+        "email": "jasonVena@gmail.com",
+        "password": "$2y$12$Ynwwq8YuM4Rl.BHJVQ2bQe5le\/.Pe7t.Q01C6NOaBQJuBhczADYz.",
+        "role": "admin"
+    },
+    {
+        "id": 1776329498,
+        "email": "kontol@gmail.com",
+        "password": "$2y$12$lAhUdUOdQUm7FmaIGW556uVSobfTqPKijK8UiuH3BwVwnCcz2dykG",
+        "role": "admin"
+    },
+    {
+        "id": 1776330125,
+        "email": "heloo@gmail.com",
+        "password": "$2y$12$XKQj3WahkZ48wHdRFyUKmedvPRuMAtvoSt2zWvU73zFZz\/\/TsOVli",
+        "role": "pembeli"
+    },
+    {
+        "id": 1776330443,
+        "email": "awiahe@gmail.com",
+        "password": "$2y$12$w37YFZvVAQcr37u.bPVFq.3mbMY8xXut\/xEuMJsScxVCVJ\/PNfv6e",
+        "role": "pembeli"
+    }
+]
