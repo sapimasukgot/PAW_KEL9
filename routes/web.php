@@ -162,6 +162,14 @@ Route::get('ubah-profil', function(){
     return view('ubah-profil');
 })->name('ubah-profil');
 
+Route::get('ubah-profil-admin', function(){
+    return view('ubah-profil-admin');
+})->name('ubah-profil-admin');
+
+Route::get('ubah-bahasa-admin', function(){
+    return view('ubah-bahasa-admin');
+})->name('ubah-bahasa-admin');
+
 // Halaman utama pembeli
 Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
 

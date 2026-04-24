@@ -10,5 +10,11 @@
         "email": "joshuanatahanaelpurba@gmail.com",
         "password": "$2y$12$KSKCzafBWM7phUI9tikjHu86uVXR4YNZO4rd1uR2oowQ8p7r2jVle",
         "role": "penjual"
+    },
+    {
+        "id": 1777018816,
+        "email": "admin123@gmail.com",
+        "password": "$2y$12$gTbWG7dcZaLDezkGjesjaucp1pNChAPjVnJCKT4vbDdLiMVcr4Bb6",
+        "role": "admin"
     }
 ]
