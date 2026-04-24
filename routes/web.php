@@ -170,6 +170,15 @@ Route::get('ubah-bahasa-admin', function(){
     return view('ubah-bahasa-admin');
 })->name('ubah-bahasa-admin');
 
+Route::get('pengaturan-akun-admin', function(){
+    return view('pengaturan-akun-admin');
+})->name('pengaturan-akun-admin');
+
+Route::get('ubah-sandi-admin', function(){
+    return view('ubah-sandi-admin');
+})->name('ubah-sandi-admin');
+
+
 // Halaman utama pembeli
 Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
 

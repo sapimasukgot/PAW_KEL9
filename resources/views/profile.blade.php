@@ -67,15 +67,15 @@
                 </svg>
             </a>
 
-            <a href="{{ route('pembeli-pengaturan') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
-                <div class="flex items-center gap-4">
-                    <span class="text-xl">🔒</span> 
-                    <span class="font-bold text-gray-800">Pengaturan Akun</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-            </a>
+<a href="{{ route('pengaturan-akun-admin') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
+    <div class="flex items-center gap-4">
+        <span class="text-xl">🔒</span> 
+        <span class="font-bold text-gray-800">Pengaturan Akun</span>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+</a>
 
         </div>
 
