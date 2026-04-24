@@ -7,56 +7,72 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body style="background-color: #FFEDD9;">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col p-6">
+    @include('pembeli.nav')
+
+    <div class="w-full p-6 flex flex-col items-start min-h-screen">
         
-        <div class="mb-6">
-            <a href="{{ route('pembeli-detail-pesanan') }}" class="inline-flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-            </a>
-        </div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-8 self-center">Terima Kasih Sudah Memesan! Selamat Menikmati!</h1>
 
-        <h1 class="text-2xl font-bold text-gray-900 mb-8">Detail Pesanan</h1>
+        <div class="w-full flex flex-row gap-6 mb-6">
+            <div class="w-1/2 h-72 bg-gray-300 rounded-3xl overflow-hidden shadow-md">
+                <img src="https://via.placeholder.com/600x400" alt="Mie Pangsit" class="w-full h-full object-cover">
+            </div>
 
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-orange-100 flex-grow mb-8">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Detail Pesanan</h2>
-            
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-[#D9D9D9] rounded-xl flex items-center justify-center">
-                            <span class="text-[8px] text-gray-400 font-bold uppercase">Gambar</span>
-                        </div>
-                        <div>
-                            <p class="font-bold text-sm text-gray-900">Mie Pangsit</p>
-                            <p class="text-[10px] text-gray-500">1x</p>
-                        </div>
+            <div class="w-1/2 bg-white rounded-3xl p-6 shadow-sm border border-orange-100 flex flex-col justify-center">
+                <h2 class="font-bold text-gray-900 mb-4">Detail Menu:</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4">
+                        <span class="w-28 text-sm font-bold">Reguler:</span>
+                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">1</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-900">Rp25.000</p>
-                </div>
-
-                <hr class="border-gray-100">
-
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Subtotal</span>
-                        <span class="font-bold text-gray-900">Rp25.000</span>
+                    <div class="flex items-center gap-4">
+                        <span class="w-28 text-sm font-bold">Jumbo:</span>
+                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">1</span>
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Biaya Layanan</span>
-                        <span class="font-bold text-gray-900">Rp2.000</span>
+                    <div class="flex items-center gap-4">
+                        <span class="w-28 text-sm font-bold">Topping:</span>
+                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">Telur</span>
                     </div>
-                </div>
-
-                <hr class="border-gray-100">
-
-                <div class="flex justify-between items-center pt-2">
-                    <span class="text-base font-bold text-gray-900">Total</span>
-                    <span class="text-lg font-extrabold text-gray-900">Rp27.000</span>
+                    <div class="flex items-center gap-4">
+                        <span class="w-28 text-sm font-bold">Level Pedas:</span>
+                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">Lvl 0</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="w-full bg-white rounded-3xl p-8 shadow-sm border border-orange-100 mb-12">
+            <h2 class="font-bold text-lg text-gray-900 mb-6">Detail Pesanan</h2>
+            <div class="space-y-4">
+                <div class="flex items-center gap-10">
+                    <span class="w-32 text-sm font-bold">Nama:</span>
+                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm min-w-[200px] inline-block text-center">Aan</span>
+                </div>
+                <div class="flex items-center gap-10">
+                    <span class="w-32 text-sm font-bold">No. Meja:</span>
+                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm min-w-[200px] inline-block text-center">1</span>
+                </div>
+                <div class="flex items-center gap-10">
+                    <span class="w-32 text-sm font-bold">Harga:</span>
+                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm font-bold min-w-[200px] inline-block text-center">Rp 32.000</span>
+                </div>
+                <div class="flex items-center gap-10">
+                    <span class="w-32 text-sm font-bold">Keterangan:</span>
+                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm font-bold text-gray-600 italic min-w-[200px] inline-block text-center">Selesai</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full flex justify-between items-center mb-10">
+            <a href="{{ route('pembeli-beranda') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
+                Kembali
+            </a>
+
+            <a href="{{ route('pembeli-rating', ['id' => 1]) }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
+                Beri Rating
+            </a>
+        </div>
+
     </div>
 </body>
 </html>

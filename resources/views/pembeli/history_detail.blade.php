@@ -3,68 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Riwayat - MakanMart</title>
+    <title>MakanMart - Detail Riwayat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        /* Menampilkan bintang yang sudah diisi (statis untuk riwayat) */
+        .star-filled { color: #FBBF24; }
     </style>
 </head>
-<body class="bg-[#fcebda] min-h-screen flex items-center justify-center p-4">
+<body style="background-color: #FFEDD9;">
+    @include('pembeli.nav')
 
-    <div class="w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 flex flex-col items-center">
+    <div class="w-full p-6 flex flex-col min-h-screen">
         
-        <h1 class="text-2xl font-black text-black tracking-tighter mb-1">RIWAYAT PESANAN</h1>
-        <div class="w-12 h-1 bg-[#e07b11] rounded-full mb-10"></div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-8">Rangkuman Pesanan</h1>
 
-        <div class="w-full space-y-5 text-sm mb-8">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                <span class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">ID Pesanan</span>
-                <span class="font-bold text-black">#{{ $detail['id'] }}</span>
+        <div class="flex flex-row gap-6 mb-10 w-full">
+            <div class="w-1/2 bg-white rounded-3xl p-6 shadow-sm border border-orange-100">
+                <h2 class="font-bold text-gray-900 mb-4">Detail Menu</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Reguler:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">1</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Jumbo:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">1</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Topping:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">Telur</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Level Pedas:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">Lvl 0</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                <span class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Menu</span>
-                <span class="font-bold text-black">{{ $detail['nama'] }}</span>
-            </div>
-
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                <span class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Tanggal</span>
-                <span class="font-bold text-black">{{ $detail['tanggal'] }}</span>
-            </div>
-
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                <span class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Metode Pembayaran</span>
-                <span class="font-bold text-black">{{ $detail['metode'] ?? 'Transfer Bank' }}</span>
-            </div>
-
-            <div class="flex justify-between items-center pt-2">
-                <span class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider">Total Harga</span>
-                <span class="text-xl font-black text-[#e07b11]">Rp {{ $detail['harga'] }}</span>
+            <div class="w-1/2 bg-white rounded-3xl p-6 shadow-sm border border-orange-100">
+                <div class="space-y-3 mt-8">
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Nama:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">Aan</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">No. Meja:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">1</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Harga:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold">Rp32.000</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-24 text-sm font-bold">Keterangan:</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold text-gray-600 italic">Selesai</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="w-full bg-green-50 border border-green-100 rounded-2xl py-3 flex items-center justify-center gap-2 mb-10">
-            <div class="bg-green-500 text-white rounded-full p-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <span class="text-green-700 font-bold text-[10px] uppercase tracking-widest">Pesanan Telah Selesai</span>
-        </div>
-
-        <div class="w-full space-y-3">
-            <a href="{{ route('pembeli-beranda') }}" 
-               class="block w-full bg-[#e07b11] text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-100 text-center uppercase text-xs tracking-[0.2em] transition-transform active:scale-95">
-                Pesan Lagi
-            </a>
+        <div class="w-full flex flex-col items-center space-y-4 mb-10">
+            <h2 class="text-xl font-bold text-gray-900">Rating Pesanan</h2>
             
-            <a href="{{ route('pembeli-riwayat') }}" 
-               class="block w-full bg-gray-100 text-gray-500 font-bold py-4 rounded-2xl text-center uppercase text-xs tracking-[0.2em] transition-transform active:scale-95">
+            <div class="flex justify-center gap-2 text-4xl">
+                <span class="star-filled">★</span>
+                <span class="star-filled">★</span>
+                <span class="star-filled">★</span>
+                <span class="star-filled">★</span>
+                <span class="star-filled">★</span>
+            </div>
+
+            <div class="w-full mt-6">
+                <label class="block text-lg font-bold text-gray-900 mb-2">Ulasan</label>
+                <textarea 
+                    class="w-full h-32 p-4 rounded-2xl border border-orange-100 shadow-sm bg-white focus:outline-none"
+                    placeholder="Ulasan Anda..."
+                    readonly
+                >Mie pangsitnya enak sekali, porsinya pas!</textarea>
+            </div>
+        </div>
+
+        <div class="w-full flex justify-start items-center mb-10">
+            <a href="{{ route('pembeli-riwayat') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
                 Kembali
             </a>
         </div>
     </div>
-
 </body>
 </html>
