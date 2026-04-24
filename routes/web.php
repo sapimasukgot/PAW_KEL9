@@ -158,6 +158,10 @@ Route::get('ubah-sandi', function(){
     return view('ubah-sandi');
 })->name('ubah-sandi');
 
+Route::get('ubah-profil', function(){
+    return view('ubah-profil');
+})->name('ubah-profil');
+
 // Halaman utama pembeli
 Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
 
