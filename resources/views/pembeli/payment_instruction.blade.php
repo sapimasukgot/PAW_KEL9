@@ -6,30 +6,28 @@
     <title>Instruksi Pembayaran</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50">
+<body style="background-color: #FFEDD9;">
+    @include('pembeli.nav')
+
     <div class="max-w-md mx-auto p-6">
-        <div class="flex items-center gap-4 mb-8">
-            <a href="{{ route('pembeli-ongoing') }}" class="p-2 bg-white rounded-full shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
+        <div class="flex justify-center mb-10 mt-4">
+            <div class="w-72 h-72 bg-[#D9D9D9] rounded-3xl flex items-center justify-center">
+                <span class="text-gray-500 font-medium text-center px-6">Gambar</span>
+            </div>
+        </div>
+
+        <div class="text-center space-y-3 mb-12">
+            <h2 class="text-xl font-bold text-gray-900">Silahkan lakukan pembayaran di counter!</h2>
+            <p class="text-base text-gray-700 font-medium">Tunggu konfirmasi pembayaran dari penjual</p>
+        </div>
+
+        <div class="flex justify-end mt-10">
+            <a href="{{ route('pembeli-ongoing') }}" 
+               style="background-color: #D9D9D9;" 
+               class="text-black px-12 py-2 rounded-lg font-bold shadow-sm active:opacity-70 transition-opacity">
+                Selanjutnya
             </a>
-            <h1 class="text-xl font-bold">Pembayaran</h1>
         </div>
-
-        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6 text-center">
-            <p class="text-gray-500 mb-2">Total Pembayaran</p>
-            <h2 class="text-3xl font-extrabold text-orange-500">Rp32.000</h2>
-        </div>
-
-        <div class="bg-orange-50 border border-orange-100 p-4 rounded-xl mb-8">
-            <p class="text-xs text-orange-600 font-bold uppercase tracking-wider mb-1">Nomor Virtual Account (OVO/Dana)</p>
-            <p class="text-lg font-mono font-bold text-gray-800">0812 3456 7890</p>
-        </div>
-
-        <a href="{{ route('pembeli-summary') }}" class="block w-full bg-orange-500 text-white text-center py-4 rounded-xl font-bold shadow-lg shadow-orange-200">
-            KONFIRMASI PEMBAYARAN
-        </a>
     </div>
 </body>
 </html>

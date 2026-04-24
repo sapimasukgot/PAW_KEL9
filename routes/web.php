@@ -195,6 +195,9 @@ Route::get('/pembeli/profil/edit', [PembeliController::class, 'editProfile'])->n
 Route::get('/pembeli/bahasa', [PembeliController::class, 'language'])->name('pembeli-bahasa');
 Route::get('/pembeli/pengaturan', [PembeliController::class, 'settings'])->name('pembeli-pengaturan');
 Route::get('/pembeli/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
+Route::get('/pembeli/detail-pesanan', function () {
+    return view('pembeli.detail-pesanan'); 
+})->name('pembeli-detail-pesanan');
 
 Route::post('/logout', [PembeliController::class, 'logout'])->name('logout');
 Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
