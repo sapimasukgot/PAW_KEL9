@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakanMart - Ubah Bahasa</title>
+    <title>MakanMart - Ubah Bahasa Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body style="background-color: #FFEDD9;">
-    @include('pembeli.nav')
+<body class="bg-[#fcebda]">
+    <header class="bg-[#f7e4cf] p-4 shadow-sm border-b border-[#e6d1ba] sticky top-0 z-40">
+        <h1 class="text-xl md:text-2xl font-bold text-[#634a2c] mb-3 md:mb-2 px-2 md:px-4 text-center md:text-left tracking-tight">
+            MakanMart
+        </h1>
 
-    <div class="w-full p-6 flex flex-col min-h-[85vh]">
+        <div class="flex gap-3 px-2 md:px-4 justify-center md:justify-start">
+            <a href="{{ route('admin-beranda') }}"
+                class="bg-white whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm shadow-sm border border-transparent">
+                Beranda
+            </a>
+            <a href="{{ route('profile') }}"
+                class="bg-[#e6d1ba] whitespace-nowrap px-6 py-1.5 rounded-full font-semibold text-black text-sm shadow-sm border border-transparent">
+                Profil
+            </a>
+        </div>
+    </header>
+
+    <div class="w-full p-6 flex flex-col min-h-[80vh]">
         
         <h1 class="text-2xl font-bold text-gray-900 text-center mb-10">Ubah Bahasa</h1>
 
@@ -31,7 +46,7 @@
         </div>
 
         <div class="mt-auto pt-12">
-            <a href="{{ route('pembeli-profil') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
+            <a href="{{ route('profile') }}" class="bg-[#d1d5db] text-gray-900 px-16 py-2.5 rounded-xl font-bold hover:bg-gray-400 transition-all shadow-sm inline-block">
                 Kembali
             </a>
         </div>

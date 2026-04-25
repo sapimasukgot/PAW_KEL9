@@ -73,6 +73,10 @@ class PembeliController extends Controller
         return view('pembeli.thanks');
     }
 
+    public function detailpesanan() {
+        return view('pembeli.detail-pesanan');
+    }
+
     /**
      * Menampilkan daftar riwayat pesanan
      */

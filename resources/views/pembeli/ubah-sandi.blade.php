@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubah Sandi - MakanMart</title>
+    <title>MakanMart - Ubah Sandi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+<<<<<<< HEAD
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
@@ -16,11 +17,17 @@
 </head>
 
 <body class="bg-[#fcebda] min-h-screen flex items-center justify-center p-6">
+=======
+</head>
+<body style="background-color: #FFEDD9;">
+    @include('pembeli.nav')
+>>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
 
-    <div class="w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-10 flex flex-col items-center">
-        <h1 class="text-2xl font-[900] text-black tracking-tighter mb-1 uppercase text-center">Ubah Sandi</h1>
-        <div class="w-12 h-1.5 bg-[#e07b11] rounded-full mb-10"></div>
+    <div class="w-full p-6 flex flex-col min-h-[85vh]">
+        
+        <h1 class="text-2xl font-bold text-gray-900 text-center mb-10">Ubah Sandi</h1>
 
+<<<<<<< HEAD
         <form action="{{ route('pembeli-update-password') }}" method="POST" class="w-full space-y-5">
             @csrf
 
@@ -52,8 +59,47 @@
                 </a>
             </div>
         </form>
-    </div>
+=======
+        <div class="w-full space-y-6">
+            
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-900 ml-2">Password Lama:</label>
+                <div class="w-full bg-white rounded-3xl p-4 shadow-sm border border-orange-100">
+                    <input type="password" value="********" readonly 
+                           class="w-full bg-transparent focus:outline-none text-gray-600 px-2">
+                </div>
+            </div>
 
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-900 ml-2">Password Baru:</label>
+                <div class="w-full bg-white rounded-3xl p-4 shadow-sm border border-orange-100">
+                    <input type="password" value="********" readonly 
+                           class="w-full bg-transparent focus:outline-none text-gray-600 px-2">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-900 ml-2">Konfirmasi Password:</label>
+                <div class="w-full bg-white rounded-3xl p-4 shadow-sm border border-orange-100">
+                    <input type="password" value="********" readonly 
+                           class="w-full bg-transparent focus:outline-none text-gray-600 px-2">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-auto pt-12 flex justify-between items-center">
+            <a href="{{ route('pembeli-pengaturan') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
+                Kembali
+            </a>
+
+            <a href="{{ route('pembeli-profil') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all">
+                Simpan
+            </a>
+        </div>
+
+>>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
+    </div>
 </body>
 
 </html>

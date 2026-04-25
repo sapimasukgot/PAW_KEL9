@@ -18,7 +18,7 @@
             <h1 class="text-[#7A5C2D] font-bold text-xl mb-3">MakanMart</h1>
             <div class="flex gap-2">
                 <a href="{{ route('penjual-beranda') }}" 
-                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('penjual-beranda') || Route::is('tambah-menu') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
+                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('penjual-beranda') || Route::is('tambah_menu') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
                    Beranda
                 </a>
         
@@ -38,7 +38,7 @@
                 </a>
         
                 <a href="{{ route('profil-penjual') }}" 
-                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('profil-penjual') || Route::is('ubah-profil') || Route::is('pengaturan-akun') || Route::is('ubah-bahasa') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
+                   class="px-4 py-1 rounded-full border transition-colors {{ Route::is('profil-penjual') || Route::is('ubah-profil') || Route::is('pengaturan-akun') || Route::is('ubah-bahasa') || Route::is('ubah-sandi') ? 'bg-[#EFDEB9] border-[#EFDEB9]' : 'bg-white' }}">
                    Profil
                 </a>
             </div>
