@@ -2,92 +2,66 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\PembeliController;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('login');
 })->name('login');
 
 Route::post('/login-submit', function (Request $request) {
-    $email = $request->email;
-    $password = $request->password;
-
-    if(Storage::disk('local')->exists('user.json')) {
-        $users = json_decode(Storage::disk('local')->get('user.json'), true);
-        foreach($users as $user) {
-            if($user['email'] === $email && password_verify($password, $user['password'])) {
-                session(['user' => $user]);
-                return redirect()->route('role.pilih')->with('success', 'Login berhasil!');
-            }
-        }
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        $user = Auth::user();
+        return ($user->role) ? redirect()->route($user->role . '-beranda') : redirect()->route('role.pilih');
     }
-    return redirect()->back()->with('error', 'Email atau password salah');
+
+    return back()->with('error', 'Email atau password salah.')->withInput();
 })->name('login.submit');
 
+
 Route::post('/register-submit', function (Request $request) {
+    try{
     $validatedData = $request->validate([
-        'email' => 'required|string|email|max:255',
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
     ]);
 
-    $path = 'user.json'; 
-    $users = [];
-    
-    if (Storage::disk('local')->exists($path)) {
-        $users = json_decode(Storage::disk('local')->get($path), true) ?? [];
-    }
-
-    foreach($users as $user) {
-        if($user['email'] === $validatedData['email']) {
-            return redirect()->back()->with('error', 'Email sudah terdaftar!');
-        }
-    }
-
-    $users[] = [
-        'id' => time(),
+    $user = User::create([
+        'name' => $validatedData['name'],
         'email' => $validatedData['email'],
-        'password' => bcrypt($validatedData['password']),
+        'password' => Hash::make($validatedData['password']),
         'role' => 'pembeli',
-    ];
+    ]);
 
-    Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
-    
-    session(['emailMasuk' => $validatedData['email']]);
-    return redirect()->route('role.pilih')->with('success', 'Akun berhasil dibuat!');
+    Auth::login($user);
+    $request->session()->regenerate();
+
+    return redirect()->route('role.pilih');}
+    catch (\Illuminate\Validation\ValidationException $e) {
+        return back()->withErrors($e->validator)->withInput();
+    }
 })->name('register.submit');
 
 Route::post('/updateRole', function (Request $request) {
-    $email = session('emailMasuk') ?? session('user.email');
-    $selectedRole = $request->role; 
-    $path = 'user.json';
-
-    if (!$email) {
+    if (!Auth::check()) {
         return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
     }
 
-    if (Storage::disk('local')->exists($path)) {
-        $users = json_decode(Storage::disk('local')->get($path), true);
-        $userFound = false;
+    $selectedRole = $request->role;
+    $user = Auth::user();
+    $user->role = $selectedRole;
+    $user->save(); 
 
-        foreach ($users as &$user) {
-            if ($user['email'] === $email) {
-                $user['role'] = $selectedRole;
-                $userFound = true;
-
-                session(['user' => $user]);
-                break;
-            }
-        }
-        
-        if ($userFound) {
-            Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
-            
-            return redirect()->route($selectedRole . '-beranda');
-        }
-    }
-    
-    return redirect()->route('login')->with('error', 'Data pengguna tidak ditemukan.');
+    return redirect()->route($selectedRole . '-beranda')->with('success', 'Role berhasil dipilih!');
 })->name('updateRole');
 
 Route::get('/pilih-role', function () {
@@ -152,30 +126,21 @@ Route::get('ubah-sandi', function(){
     return view('ubah-sandi');
 })->name('ubah-sandi');
 
-// Halaman utama pembeli
 Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
 
-// Halaman detail pembeli (ada {id} supaya tahu menu mana yang diklik)
 Route::get('/pembeli/detail/{id}', [PembeliController::class, 'show'])->name('pembeli-detail');
 
-// Halaman Form Pemesanan (Wireframe 5)
 Route::get('/pembeli/checkout/{id}', [PembeliController::class, 'checkout'])->name('pembeli-checkout');
 
-// Halaman Instruksi Pembayaran (Wireframe 58)
 Route::get('/pembeli/pembayaran', [PembeliController::class, 'payment'])->name('pembeli-pembayaran');
 
-// Halaman Beranda dengan Pesanan Berlangsung (Wireframe 57)
 Route::get('/pembeli/ongoing', [PembeliController::class, 'ongoing'])->name('pembeli-ongoing');
 
-// Halaman Detail Akhir/Rating (Wireframe 15)
 Route::get('/pembeli/summary', [PembeliController::class, 'summary'])->name('pembeli-summary');
 
-// Proses Rating (Wireframe 19 & 20)
 Route::get('/pembeli/rating/{id}', [PembeliController::class, 'rating'])->name('pembeli-rating');
 Route::post('/pembeli/rating/kirim', [PembeliController::class, 'storeRating'])->name('pembeli-rating-simpan');
 Route::get('/pembeli/terima-kasih', [PembeliController::class, 'thanks'])->name('pembeli-thanks');
-
-// Proses Riwayat (Wireframe 18)
 Route::get('/pembeli/riwayat', [PembeliController::class, 'history'])->name('pembeli-riwayat');
 Route::get('/pembeli/riwayat/detail/{id}', [PembeliController::class, 'historyDetail'])->name('pembeli-riwayat-detail');
 

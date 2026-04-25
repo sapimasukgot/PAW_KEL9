@@ -21,6 +21,7 @@
         class="bg-[#ffedd9] w-full max-w-4xl min-h-[500px] md:h-[600px] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
 
         <input type="checkbox" id="toggle-form" class="hidden peer">
+        {{ $errors->has('name') || $errors->has('password_confirmation') || session('error_register') ? 'checked' : '' }}>
 
         <div
             class="hidden md:block absolute top-0 left-0 w-1/2 h-full z-30 transition-transform duration-700 ease-in-out peer-checked:translate-x-full rounded-[2rem] overflow-hidden">
@@ -48,6 +49,11 @@
                         {{ session('error') }}
                     </div>
                 @endif
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Nama</label>
+                    <input type="text" name="name" required
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                </div>
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Email</label>
                     <input type="email" name="email" required
@@ -77,41 +83,61 @@
             </div>
         </div>
 
-        <div class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700
-                    absolute top-0 left-0 z-10 opacity-0 pointer-events-none
-                    peer-checked:opacity-100 peer-checked:pointer-events-auto md:peer-checked:z-20">
+       <div class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700
+            absolute top-0 left-0 z-10 opacity-0 pointer-events-none
+            peer-checked:opacity-100 peer-checked:pointer-events-auto md:peer-checked:z-20">
 
-            <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-black tracking-wide">REGISTER</h1>
+    <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-black tracking-wide">REGISTER</h1>
 
-            <form method="POST" action="{{route('register.submit')  }}" class="flex-grow flex flex-col gap-4">
-                @csrf
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold ml-1">Email</label>
-                    <input type="email" name="email" required
-                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold ml-1">Password</label>
-                    <input type="password" name="password" required
-                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold ml-1">Konfirmasi Password</label>
-                    <input type="password" name="password_confirmation" required
-                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-                </div>
-                <button type="submit"
-                    class="w-full bg-[#b5a7a4] hover:bg-[#a39592] py-4 rounded-xl font-bold text-lg mt-4 shadow-md">
-                    REGISTER
-                </button>
-            </form>
+    <form method="POST" action="{{ route('register.submit') }}" class="flex-grow flex flex-col gap-4">
+        @csrf
 
-            <div class="text-center mt-8">
-                <p class="text-xs font-bold">Sudah Punya Akun?
-                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Login</label>
-                </p>
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-xs">
+                <ul class="list-disc pl-4">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+        @endif
+
+        <div class="space-y-1">
+            <label class="text-xs font-semibold ml-1">Nama</label>
+            <input type="text" name="name" value="{{ old('name') }}" required
+                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
         </div>
+        
+        <div class="space-y-1">
+            <label class="text-xs font-semibold ml-1">Email</label>
+            <input type="email" name="email" value="{{ old('email') }}" required
+                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-xs font-semibold ml-1">Password</label>
+            <input type="password" name="password" required
+                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-xs font-semibold ml-1">Konfirmasi Password</label>
+            <input type="password" name="password_confirmation" required
+                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+        </div>
+
+        <button type="submit"
+            class="w-full bg-[#b5a7a4] hover:bg-[#a39592] py-4 rounded-xl font-bold text-lg mt-4 shadow-md">
+            REGISTER
+        </button>
+    </form>
+
+    <div class="text-center mt-8">
+        <p class="text-xs font-bold">Sudah Punya Akun?
+            <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Login</label>
+        </p>
+    </div>
+</div>
 
     </div>
 
