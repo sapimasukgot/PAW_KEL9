@@ -17,22 +17,21 @@
 
 <body class="bg-[#2a2a2a] min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-[#ffedd9] w-full max-w-4xl min-h-[500px] md:h-[600px] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
+    <div
+        class="bg-[#ffedd9] w-full max-w-4xl min-h-[500px] md:h-[600px] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
 
-<<<<<<< HEAD
         <input type="checkbox" id="toggle-form" class="hidden peer">
         {{ $errors->has('name') || $errors->has('password_confirmation') || session('error_register') ? 'checked' : '' }}>
-=======
-        <input type="checkbox" id="toggle-form" class="hidden peer"
-    {{ $errors->any() ? 'checked' : '' }}>
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
+        <input type="checkbox" id="toggle-form" class="hidden peer" {{ $errors->any() ? 'checked' : '' }}>
 
-        <div class="hidden md:block absolute top-0 left-0 w-1/2 h-full z-30 transition-transform duration-700 ease-in-out peer-checked:translate-x-full rounded-[2rem] overflow-hidden">
+        <div
+            class="hidden md:block absolute top-0 left-0 w-1/2 h-full z-30 transition-transform duration-700 ease-in-out peer-checked:translate-x-full rounded-[2rem] overflow-hidden">
             <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800"
                 alt="Interior Cafe" class="w-full h-full object-cover">
         </div>
 
-        <div class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700 
+        <div
+            class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700 
                     md:absolute md:top-0 md:right-0 z-20
                     peer-checked:opacity-0 peer-checked:pointer-events-none md:peer-checked:opacity-100 md:peer-checked:-translate-x-full">
 
@@ -42,13 +41,15 @@
                 @csrf
 
                 @if (session('success'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl text-xs relative" role="alert">
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl text-xs relative"
+                        role="alert">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl text-xs relative" role="alert">
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl text-xs relative"
+                        role="alert">
                         {{ session('error') }}
                     </div>
                 @endif
@@ -82,104 +83,67 @@
 
             <div class="text-center mt-8">
                 <p class="text-xs font-bold">Belum Punya Akun?
-                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Sign Up</label>
+                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Sign
+                        Up</label>
                 </p>
             </div>
         </div>
 
-       <div class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700
+        <div class="w-full md:w-1/2 min-h-[500px] md:h-full flex flex-col px-8 md:px-12 py-10 bg-[#ffedd9] transition-all duration-700
             absolute top-0 left-0 z-10 opacity-0 pointer-events-none
             peer-checked:opacity-100 peer-checked:pointer-events-auto md:peer-checked:z-20">
 
-    <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-black tracking-wide">REGISTER</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 text-black tracking-wide">REGISTER</h1>
 
-<<<<<<< HEAD
-    <form method="POST" action="{{ route('register.submit') }}" class="flex-grow flex flex-col gap-4">
-        @csrf
-=======
-<form method="POST" action="{{ route('register.submit') }}" class="flex-grow flex flex-col gap-4">
-    @csrf
+            <form method="POST" action="{{ route('register.submit') }}" class="flex-grow flex flex-col gap-4">
+                @csrf
 
-    @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-xl text-[10px] font-bold">
-            <ul class="list-disc ml-4">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+                @if ($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-xs">
+                        <ul class="list-disc pl-4">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    <div class="space-y-1">
-        <label class="text-xs font-semibold ml-1">Email</label>
-        <input type="email" name="email" required value="{{ old('email') }}"
-            class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-    </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Nama</label>
+                    <input type="text" name="name" value="{{ old('name') }}" required
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                </div>
 
-    <div class="space-y-1">
-        <label class="text-xs font-semibold ml-1">Password (Min. 8 Karakter)</label>
-        <input type="password" name="password" required
-            class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-    </div>
-    
-    <div class="space-y-1">
-        <label class="text-xs font-semibold ml-1">Konfirmasi Password</label>
-        <input type="password" name="password_confirmation" required
-            class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-    </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Email</label>
+                    <input type="email" name="email" value="{{ old('email') }}" required
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                </div>
 
-    <button type="submit" class="w-full bg-[#b5a7a4] hover:bg-[#a39592] py-4 rounded-xl font-bold text-lg mt-4 shadow-md">
-        REGISTER
-    </button>
-</form>
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Password</label>
+                    <input type="password" name="password" required
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                </div>
 
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-xs">
-                <ul class="list-disc pl-4">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" required
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-[#b5a7a4] hover:bg-[#a39592] py-4 rounded-xl font-bold text-lg mt-4 shadow-md">
+                    REGISTER
+                </button>
+            </form>
+
+            <div class="text-center mt-8">
+                <p class="text-xs font-bold">Sudah Punya Akun?
+                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Login</label>
+                </p>
             </div>
-        @endif
-
-        <div class="space-y-1">
-            <label class="text-xs font-semibold ml-1">Nama</label>
-            <input type="text" name="name" value="{{ old('name') }}" required
-                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
         </div>
-        
-        <div class="space-y-1">
-            <label class="text-xs font-semibold ml-1">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}" required
-                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-        </div>
-
-        <div class="space-y-1">
-            <label class="text-xs font-semibold ml-1">Password</label>
-            <input type="password" name="password" required
-                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-        </div>
-
-        <div class="space-y-1">
-            <label class="text-xs font-semibold ml-1">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" required
-                class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
-        </div>
-
-        <button type="submit"
-            class="w-full bg-[#b5a7a4] hover:bg-[#a39592] py-4 rounded-xl font-bold text-lg mt-4 shadow-md">
-            REGISTER
-        </button>
-    </form>
-
-    <div class="text-center mt-8">
-        <p class="text-xs font-bold">Sudah Punya Akun?
-            <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1">Login</label>
-        </p>
-    </div>
-</div>
 
     </div>
 

@@ -28,52 +28,20 @@ Route::post('/login-submit', function (Request $request) {
 
 
 Route::post('/register-submit', function (Request $request) {
-<<<<<<< HEAD
     try{
     $validatedData = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
-=======
-    // Validasi input
-    $request->validate([
-        'email' => 'required|string|email|max:255',
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
         'password' => 'required|string|min:8|confirmed',
-    ], [
-        'password.min' => 'Password harus memiliki minimal 8 karakter!',
-        'password.confirmed' => 'Konfirmasi password tidak cocok!'
     ]);
 
-<<<<<<< HEAD
     $user = User::create([
         'name' => $validatedData['name'],
         'email' => $validatedData['email'],
         'password' => Hash::make($validatedData['password']),
-=======
-    $path = 'user.json'; 
-    $users = [];
-    
-    if (Storage::disk('local')->exists($path)) {
-        $users = json_decode(Storage::disk('local')->get($path), true) ?? [];
-    }
-
-    // Cek email ganda
-    foreach($users as $user) {
-        if($user['email'] === $request->email) {
-            return redirect()->back()->withErrors(['email' => 'Email sudah terdaftar!'])->withInput();
-        }
-    }
-
-    // Simpan data
-    $users[] = [
-        'id' => time(),
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
         'role' => 'pembeli',
     ]);
 
-<<<<<<< HEAD
     Auth::login($user);
     $request->session()->regenerate();
 
@@ -81,12 +49,6 @@ Route::post('/register-submit', function (Request $request) {
     catch (\Illuminate\Validation\ValidationException $e) {
         return back()->withErrors($e->validator)->withInput();
     }
-=======
-    Storage::disk('local')->put($path, json_encode($users, JSON_PRETTY_PRINT));
-    
-    session(['emailMasuk' => $request->email]);
-    return redirect()->route('role.pilih')->with('success', 'Akun berhasil dibuat!');
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
 })->name('register.submit');
 
 Route::post('/updateRole', function (Request $request) {
@@ -164,31 +126,6 @@ Route::get('ubah-sandi', function(){
     return view('ubah-sandi');
 })->name('ubah-sandi');
 
-<<<<<<< HEAD
-=======
-Route::get('ubah-profil', function(){
-    return view('ubah-profil');
-})->name('ubah-profil');
-
-Route::get('ubah-profil-admin', function(){
-    return view('ubah-profil-admin');
-})->name('ubah-profil-admin');
-
-Route::get('ubah-bahasa-admin', function(){
-    return view('ubah-bahasa-admin');
-})->name('ubah-bahasa-admin');
-
-Route::get('pengaturan-akun-admin', function(){
-    return view('pengaturan-akun-admin');
-})->name('pengaturan-akun-admin');
-
-Route::get('ubah-sandi-admin', function(){
-    return view('ubah-sandi-admin');
-})->name('ubah-sandi-admin');
-
-
-// Halaman utama pembeli
->>>>>>> f01c8532a487fa97c7d444466a57fd0363bc7fa2
 Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
 
 Route::get('/pembeli/detail/{id}', [PembeliController::class, 'show'])->name('pembeli-detail');
@@ -213,9 +150,6 @@ Route::get('/pembeli/profil/edit', [PembeliController::class, 'editProfile'])->n
 Route::get('/pembeli/bahasa', [PembeliController::class, 'language'])->name('pembeli-bahasa');
 Route::get('/pembeli/pengaturan', [PembeliController::class, 'settings'])->name('pembeli-pengaturan');
 Route::get('/pembeli/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
-Route::get('/pembeli/detail-pesanan', function () {
-    return view('pembeli.detail-pesanan'); 
-})->name('pembeli-detail-pesanan');
 
 Route::post('/logout', [PembeliController::class, 'logout'])->name('logout');
 Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
