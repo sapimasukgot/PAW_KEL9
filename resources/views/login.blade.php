@@ -24,6 +24,8 @@
         {{ $errors->has('name') || $errors->has('password_confirmation') || session('error_register') ? 'checked' : '' }}>
         <input type="checkbox" id="toggle-form" class="hidden peer" {{ $errors->any() ? 'checked' : '' }}>
 
+        <input type="checkbox" id="toggle-form" class="hidden peer" {{ $errors->any() ? 'checked' : '' }}>
+
         <div
             class="hidden md:block absolute top-0 left-0 w-1/2 h-full z-30 transition-transform duration-700 ease-in-out peer-checked:translate-x-full rounded-[2rem] overflow-hidden">
             <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800"

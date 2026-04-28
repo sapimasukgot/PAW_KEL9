@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class PembeliController extends Controller
 {
-    /**
-     * Menampilkan halaman utama (Beranda) Pembeli
-     */
+
     public function index()
     {
         $menus = [
@@ -21,9 +21,6 @@ class PembeliController extends Controller
         return view('pembeli.beranda', compact('menus'));
     }
 
-    /**
-     * Menampilkan detail menu
-     */
     public function show($id) {
         $menus = [
             1 => ['id' => 1, 'nama' => 'Mie Pangsit', 'harga' => '15.000'],
@@ -36,12 +33,17 @@ class PembeliController extends Controller
         return view('pembeli.detail', compact('menu'));
     }
 
-    /**
-     * Proses Checkout
-     */
     public function checkout($id) {
+        // Simulasi data menu untuk checkout
         $menu = ['id' => $id, 'nama' => 'Mie Pangsit', 'image' => 'https://via.placeholder.com/300'];
         return view('pembeli.checkout', compact('menu'));
+    }
+
+    public function history() {
+        $histories = [
+            ['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'status' => 'Selesai'],
+        ];
+        return view('pembeli.history', compact('histories'));
     }
 
     public function payment() {
@@ -53,18 +55,34 @@ class PembeliController extends Controller
         $ongoing = ['nama' => 'Mie Pangsit', 'status' => 'Menunggu Pembayaran'];
         return view('pembeli.beranda_ongoing', compact('menus', 'ongoing'));
     }
-
-    public function summary() {
-        return view('pembeli.summary');
+    
+    public function profile() {
+        return view('pembeli.profile');
     }
 
-    /**
-     * Fitur Rating
-     */
+    public function editProfile() {
+        $user = Auth::user(); 
+        return view('pembeli.edit-profil', compact('user'));
+    }
+
+    public function updateProfile(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+        ]);
+
+        $user = Auth::user();
+        $user->name = $request->name; 
+        $user->email = $request->email;
+        $user->save();
+
+        return redirect()->route('pembeli-profil')->with('success', 'Profil berhasil diperbarui!');
+    }
+
     public function rating($id) {
         return view('pembeli.rating', ['id' => $id]);
     }
-    
+
     public function storeRating(Request $request) {
         return redirect()->route('pembeli-thanks');
     }
@@ -77,21 +95,27 @@ class PembeliController extends Controller
         return view('pembeli.detail-pesanan');
     }
 
-    /**
-     * Menampilkan daftar riwayat pesanan
-     */
-    public function history()
-    {
-        $histories = [
-            ['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'status' => 'Selesai'],
-            ['id' => 102, 'nama' => 'Nasi Ayam Katsu', 'tanggal' => '20 Mar 2026', 'harga' => '15.000', 'status' => 'Selesai'],
-        ];
-        return view('pembeli.history', compact('histories'));
+    public function changePassword() {
+        return view('pembeli.ubah-sandi');
     }
 
-    /**
-     * Menampilkan detail riwayat (Sesuai Desain Card)
-     */
+    public function updatePassword(Request $request) {
+        $request->validate([
+            'password_lama' => 'required',
+            'password_baru' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+        if (!Hash::check($request->password_lama, $user->password)) {
+            return back()->withErrors(['password_lama' => 'Password lama salah!']);
+        }
+
+        $user->password = Hash::make($request->password_baru);
+        $user->save();
+
+        return redirect()->route('pembeli-pengaturan')->with('success', 'Password berhasil diganti.');
+    }
+
     public function historyDetail($id)
     {
         $all_histories = [
@@ -120,85 +144,25 @@ class PembeliController extends Controller
         return view('pembeli.history_detail', compact('detail'));
     }
 
-    /**
-     * Pengaturan Profil dan Akun
-     */
-    public function profile() {
-        return view('pembeli.profile');
-    }
-
-    public function editProfile() {
-        $user = [
-            'nama' => 'Joshua',
-            'email' => session('user.email') ?? 'joshua@example.com',
-            'nohp' => '081234567890'
-        ];
-        return view('pembeli.edit-profil', compact('user'));
-    }
-
-    public function bahasa() {
-        return view('pembeli.language');
-    }
-
-    public function pengaturan() {
-        return view('pembeli.settings');
-    }
-
-    /**
-     * Proses Ubah Sandi
-     */
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'password_lama' => 'required',
-            'password_baru' => 'required|min:8|confirmed', 
-        ], [
-            'password_baru.confirmed' => 'Konfirmasi password baru tidak cocok!',
-            'password_baru.min' => 'Password minimal 8 karakter.',
-        ]);
-
-        $passwordSekarang = "password123"; // Simulasi password lama
-
-        if ($request->password_lama !== $passwordSekarang) {
-            return back()->withErrors(['password_lama' => 'Password lama salah!']);
+    public function deleteAccount(Request $request) {
+        $user = Auth::user();
+        if ($user) {
+            $user->delete();
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('success', 'Akun berhasil dihapus.');
         }
-
-        return redirect()->route('login')->with('success', 'Password berhasil diganti.');
+        return back()->with('error', 'Gagal menghapus akun.');
     }
 
-    /**
-     * Fitur Hapus Akun (Menghapus dari user.json)
-     */
-    public function deleteAccount(Request $request)
-    {
-        $userSession = session('user');
-        $emailToDelete = $userSession['email'] ?? null;
-        $path = 'user.json';
-
-        if (!$emailToDelete) {
-            return redirect()->route('login')->with('error', 'Sesi tidak valid.');
-        }
-
-        if (Storage::disk('local')->exists($path)) {
-            $users = json_decode(Storage::disk('local')->get($path), true);
-            
-            // Filter user yang emailnya tidak sama dengan user saat ini
-            $filteredUsers = array_filter($users, function($user) use ($emailToDelete) {
-                return $user['email'] !== $emailToDelete;
-            });
-
-            // Simpan kembali data yang sudah difilter
-            Storage::disk('local')->put($path, json_encode(array_values($filteredUsers), JSON_PRETTY_PRINT));
-        }
-
-        // Logout dan hapus session
-        session()->flush();
-
-        return redirect()->route('login')->with('success', 'Akun Anda telah dihapus secara permanen.');
-    }
-
-    public function logout() {
-        session()->flush();
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+    
+    public function bahasa() { return view('pembeli.language'); }
+    public function pengaturan() { return view('pembeli.settings'); }
 }
