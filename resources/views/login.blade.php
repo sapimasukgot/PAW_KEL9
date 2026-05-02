@@ -58,8 +58,11 @@
 
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Nama</label>
-                    <input type="text" name="name" required
-                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none">
+                    <input type="text" name="name" required value="{{ old('name') }}"
+                        class="w-full bg-[#b5a7a4]/30 rounded-xl px-4 py-3 text-sm outline-none @error('name') border border-red-500 @enderror">
+                    @error('name')
+                        <p class="text-red-500 text-[10px] ml-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Email</label>

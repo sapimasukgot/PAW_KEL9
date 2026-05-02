@@ -15,19 +15,27 @@ class AuthController extends Controller
 
     public function login(Request $request) {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'name'     => 'required|string', 
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); 
+        $authData = [
+            'email'    => $credentials['email'],
+            'password' => $credentials['password']
+        ];
 
-            return redirect()->intended('/pembeli');
+        if (Auth::attempt($authData)) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+            return ($user->role) 
+                ? redirect()->intended(route($user->role . '-beranda'))
+                : redirect()->route('role.pilih');
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+        return back()->with('error', 'Kredensial tidak cocok dengan data kami.')->withInput();
     }
-
     public function register(Request $request) {
         $request->validate([
             'name' => 'required|string|max:255',
