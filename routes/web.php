@@ -30,7 +30,8 @@ Route::post('/login-submit', function (Request $request) {
 
     return back()->with('error', 'Nama, Email, atau Password salah.')->withInput();
 })->name('login.submit');
-Route::post('/register-submit', function (Request $request) {
+
+Route::post('/register-submit', function (Illuminate\Http\Request $request) {
     try {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -38,18 +39,18 @@ Route::post('/register-submit', function (Request $request) {
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $validatedData['name'],
+        $user = App\Models\User::create([
+            'nama' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => 'pembeli',
         ]);
 
         Auth::login($user);
-        $request->session()->regenerate();
         return redirect()->route('role.pilih');
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return back()->withErrors($e->validator)->withInput();
+
+    } catch (\Exception $e) {
+        return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
     }
 })->name('register.submit');
 
@@ -123,7 +124,6 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     
-    // Ubah 'register' menjadi 'login'
     Route::get('/register', function () { 
         return view('login'); 
     });
@@ -132,9 +132,7 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Rute Pembeli
     Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
     
-    // Rute Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
