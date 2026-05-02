@@ -126,7 +126,6 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// Rute untuk User (Hanya bisa diakses jika SUDAH login)
 Route::middleware(['auth'])->group(function () {
     // Rute Pembeli
     Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
