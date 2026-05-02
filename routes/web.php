@@ -13,7 +13,6 @@ Route::get('/', function () {
 })->name('login');
 
 Route::post('/login-submit', function (Request $request) {
-    // 1. Tambahkan 'name' ke dalam validasi agar tidak error
     $credentials = $request->validate([
         'name'     => 'required|string', 
         'email'    => 'required|email',
@@ -118,4 +117,20 @@ Route::prefix('pembeli')->group(function () {
     Route::get('/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
     Route::post('/update-password', [PembeliController::class, 'updatePassword'])->name('pembeli-update-password');
     Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
+});
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', function () { return view('register'); }); // Sesuaikan nama view register
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+// Rute untuk User (Hanya bisa diakses jika SUDAH login)
+Route::middleware(['auth'])->group(function () {
+    // Rute Pembeli
+    Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
+    
+    // Rute Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
