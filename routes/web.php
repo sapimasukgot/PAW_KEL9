@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
@@ -14,55 +15,53 @@ Route::get('/', function () {
 
 Route::post('/login-submit', function (Request $request) {
     $credentials = $request->validate([
-        'name'     => 'required|string', 
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
+    'name' => 'required|string', 
+ 'email' => 'required|email',
+'password' => 'required',
+ ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        $user = Auth::user();
+if (Auth::attempt($credentials)) {
+ $request->session()->regenerate();
+ $user = Auth::user();
 
-        return ($user->role) 
-            ? redirect()->route($user->role . '-beranda') 
-            : redirect()->route('role.pilih');
-    }
+ return ($user->role)  ? redirect()->route($user->role . '-beranda') : redirect()->route('role.pilih');
+}
 
     return back()->with('error', 'Nama, Email, atau Password salah.')->withInput();
 })->name('login.submit');
 
 Route::post('/register-submit', function (Illuminate\Http\Request $request) {
-    try {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+try {
+$validatedData = $request->validate([
+ 'name' => 'required|string|max:255',
+ 'email' => 'required|string|email|max:255|unique:users',
+'password' => 'required|string|min:8|confirmed',
+]);
 
-        $user = App\Models\User::create([
-            'nama' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'role' => 'pembeli',
-        ]);
+ $user = App\Models\User::create([
+ 'nama' => $validatedData['name'],
+ 'email' => $validatedData['email'],
+ 'password' => Hash::make($validatedData['password']),
+ 'role' => 'pembeli',
+  ]);
 
-        Auth::login($user);
-        return redirect()->route('role.pilih');
+Auth::login($user);
+return redirect()->route('role.pilih');
 
-    } catch (\Exception $e) {
-        return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
-    }
+} catch (\Exception $e) {
+ return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+ }
 })->name('register.submit');
 
 Route::post('/logout', [PembeliController::class, 'logout'])->name('logout');
 
 Route::get('/pilih-role', function () { return view('dashboard'); })->name('role.pilih');
 Route::post('/updateRole', function (Request $request) {
-    if (!Auth::check()) return redirect()->route('login');
-    $user = Auth::user();
-    $user->role = $request->role;
-    $user->save(); 
-    return redirect()->route($request->role . '-beranda');
+ if (!Auth::check()) return redirect()->route('login');
+ $user = Auth::user();
+$user->role = $request->role;
+ $user->save(); 
+ return redirect()->route($request->role . '-beranda');
 })->name('updateRole');
 
 Route::get('/admin-dashboard', function () { return view('admin-beranda'); })->name('admin-beranda');
@@ -80,13 +79,13 @@ Route::get('ubah-bahasa', function(){ return view('ubah-bahasa'); })->name('ubah
 Route::get('pengaturan-akun', function(){ return view('pengaturan-akun'); })->name('pengaturan-akun');
 Route::get('ubah-sandi', function(){ return view('ubah-sandi'); })->name('ubah-sandi');
 Route::get('ubah-profil', function () {
-    return view('ubah-profil');
+return view('ubah-profil');
 })->name('ubah-profil');
 Route::get('/admin/ubah-profil', function () {
-    return view('ubah-profil-admin');
+ return view('ubah-profil-admin');
 })->name('ubah-profil-admin');
 Route::get('/admin/ubah-bahasa', function () {
-    return view('ubah-bahasa-admin');
+ return view('ubah-bahasa-admin');
 })->name('ubah-bahasa-admin');
 
 Route::get('/admin/ubah-sandi', function () {
@@ -97,42 +96,40 @@ Route::get('/admin/pengaturan-akun', function () {
 })->name('pengaturan-akun-admin');
 
 Route::prefix('pembeli')->group(function () {
-    Route::get('/', [PembeliController::class, 'index'])->name('pembeli-beranda');
-    Route::get('/detail/{id}', [PembeliController::class, 'show'])->name('pembeli-detail');
-    Route::get('/checkout/{id}', [PembeliController::class, 'checkout'])->name('pembeli-checkout');
-    Route::get('/pembayaran', [PembeliController::class, 'payment'])->name('pembeli-pembayaran');
-    Route::get('/ongoing', [PembeliController::class, 'ongoing'])->name('pembeli-ongoing');
-    Route::get('/summary', [PembeliController::class, 'summary'])->name('pembeli-summary');
-    Route::get('/rating/{id}', [PembeliController::class, 'rating'])->name('pembeli-rating');
-    Route::post('/rating/kirim', [PembeliController::class, 'storeRating'])->name('pembeli-rating-simpan');
-    Route::get('/terima-kasih', [PembeliController::class, 'thanks'])->name('pembeli-thanks');
-    Route::get('/riwayat', [PembeliController::class, 'history'])->name('pembeli-riwayat');
-    Route::get('/riwayat/detail/{id}', [PembeliController::class, 'historyDetail'])->name('pembeli-riwayat-detail');
-    Route::get('/pembeli/detail-pesanan', [PembeliController::class, 'detailpesanan'])->name('pembeli-detail-pesanan');
-    
-    Route::get('/profil', [PembeliController::class, 'profile'])->name('pembeli-profil');
-    Route::get('/edit-profil', [PembeliController::class, 'editProfile'])->name('pembeli-edit-profil');
-    Route::post('/update-profil', [PembeliController::class, 'updateProfile'])->name('pembeli-update-profil'); // Tambahan Baru
-    Route::get('/bahasa', [PembeliController::class, 'bahasa'])->name('pembeli-bahasa');
-    Route::get('/pengaturan', [PembeliController::class, 'pengaturan'])->name('pembeli-pengaturan');
-    Route::get('/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
-    Route::post('/update-password', [PembeliController::class, 'updatePassword'])->name('pembeli-update-password');
-    Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
+Route::get('/', [PembeliController::class, 'index'])->name('pembeli-beranda');
+Route::get('/detail/{id}', [PembeliController::class, 'show'])->name('pembeli-detail');
+Route::get('/checkout/{id}', [PembeliController::class, 'checkout'])->name('pembeli-checkout');
+Route::get('/pembayaran', [PembeliController::class, 'payment'])->name('pembeli-pembayaran');
+Route::get('/ongoing', [PembeliController::class, 'ongoing'])->name('pembeli-ongoing');
+Route::get('/summary', [PembeliController::class, 'summary'])->name('pembeli-summary');
+Route::get('/rating/{id}', [PembeliController::class, 'rating'])->name('pembeli-rating');
+Route::post('/rating/kirim', [PembeliController::class, 'storeRating'])->name('pembeli-rating-simpan');
+Route::get('/terima-kasih', [PembeliController::class, 'thanks'])->name('pembeli-thanks');
+Route::get('/riwayat', [PembeliController::class, 'history'])->name('pembeli-riwayat');
+Route::get('/riwayat/detail/{id}', [PembeliController::class, 'historyDetail'])->name('pembeli-riwayat-detail');
+Route::get('/pembeli/detail-pesanan', [PembeliController::class, 'detailpesanan'])->name('pembeli-detail-pesanan');
+ 
+Route::get('/profil', [PembeliController::class, 'profile'])->name('pembeli-profil');
+Route::get('/edit-profil', [PembeliController::class, 'editProfile'])->name('pembeli-edit-profil');
+Route::post('/update-profil', [PembeliController::class, 'updateProfile'])->name('pembeli-update-profil'); // Tambahan Baru
+Route::get('/bahasa', [PembeliController::class, 'bahasa'])->name('pembeli-bahasa');
+Route::get('/pengaturan', [PembeliController::class, 'pengaturan'])->name('pembeli-pengaturan');
+Route::get('/ubah-sandi', [PembeliController::class, 'changePassword'])->name('pembeli-ubah-sandi');
+Route::post('/update-password', [PembeliController::class, 'updatePassword'])->name('pembeli-update-password');
+Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
 });
 
 Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    
-    Route::get('/register', function () { 
-        return view('login'); 
-    });
-    
-    Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']); 
+Route::get('/register', function () { 
+return view('login'); 
+});
+ 
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
-    
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/pembeli', [PembeliController::class, 'index'])->name('pembeli-beranda');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
