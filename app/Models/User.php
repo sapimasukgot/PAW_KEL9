@@ -12,11 +12,23 @@ class User extends Authenticatable {
 
     protected $fillable = ['nama', 'email', 'password', 'role'];
 
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+
     public function toko() {
         return $this->hasOne(Toko::class, 'user_id');
     }
 
     public function pesanan() {
         return $this->hasMany(Pesanan::class, 'user_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
     }
 }

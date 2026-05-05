@@ -16,20 +16,20 @@ Route::get('/', function () {
 Route::post('/login-submit', function (Request $request) {
     $credentials = $request->validate([
     'name' => 'required|string', 
- 'email' => 'required|email',
-'password' => 'required',
- ]);
+    'email' => 'required|email',
+    'password' => 'required',
+    ]);
+    $loginData = $request->only('email', 'password');
 
-if (Auth::attempt($credentials)) {
- $request->session()->regenerate();
- $user = Auth::user();
+    if (Auth::attempt($loginData)) {
+        $request->session()->regenerate();
+        $user = Auth::user();
 
- return ($user->role)  ? redirect()->route($user->role . '-beranda') : redirect()->route('role.pilih');
-}
-
-    return back()->with('error', 'Nama, Email, atau Password salah.')->withInput();
+        return ($user->role) 
+            ? redirect()->route($user->role . '-beranda') 
+            : redirect()->route('role.pilih');
+    }
 })->name('login.submit');
-
 Route::post('/register-submit', function (Illuminate\Http\Request $request) {
 try {
 $validatedData = $request->validate([
