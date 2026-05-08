@@ -1,3 +1,5 @@
+@extends('layout-admin')
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

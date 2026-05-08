@@ -1,42 +1,61 @@
 @include('pembeli.nav')
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda MakanMart</title>
+    <meta charset="UTF-8"><title>Beranda MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#fcebda] pb-10">
     <div class="px-4 mb-6 mt-4">
-        <input type="text" placeholder="Cari Makanan dan Minuman/Nama Toko" 
-               class="w-full p-3 rounded-lg shadow-inner focus:outline-none border-none">
+        <input type="text" id="search-menu" placeholder="Cari Mie Pangsit..." 
+               class="w-full p-4 rounded-xl shadow-inner border-none focus:ring-2 ring-orange-200">
     </div>
 
     <main class="px-4">
         <h2 class="text-2xl font-bold mb-4">Rekomendasi</h2>
-        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($menus as $menu)
-            <div class="bg-white p-3 rounded-2xl shadow-md flex gap-3 relative">
-                <div class="w-24 h-24 bg-gray-200 rounded-xl flex items-center justify-center text-center p-2 shadow-inner">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase leading-tight">
-                        Foto {{ $menu['nama'] }}
-                    </span>
+            <div class="card-item bg-white p-3 rounded-2xl shadow-md flex gap-3 relative transition-all duration-300">
+                <div class="w-24 h-24 bg-gray-200 rounded-xl flex items-center justify-center">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Foto</span>
                 </div>
-
                 <div class="flex flex-col justify-between flex-1">
                     <div>
-                        <h3 class="font-bold text-lg leading-tight">{{ $menu['nama'] }}</h3>
-                        <p class="text-xs text-gray-500">{{ $menu['nama'] }} sedap sekali</p>
+                        <h3 class="card-title font-bold text-lg leading-tight">{{ $menu['nama'] }}</h3>
+                        <p class="text-xs text-gray-500">Menu sedap sekali</p>
                     </div>
-                    <a href="{{ route('pembeli-detail', $menu['id']) }}" 
-                       class="text-right text-sm font-semibold text-blue-600 self-end mt-2">Pesan</a>
+                    <a href="{{ route('pembeli-detail', $menu['id']) }}" class="text-right text-sm font-semibold text-blue-600">Pesan</a>
                 </div>
             </div>
             @endforeach
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-menu');
+            
+            searchInput.value = localStorage.getItem('last_keyword') || '';
+
+            const doFilter = () => {
+                const val = searchInput.value.toLowerCase();
+                localStorage.setItem('last_keyword', val);
+
+                document.querySelectorAll('.card-item').forEach(card => {
+                    const title = card.querySelector('.card-title').innerText.toLowerCase();
+                    if (title.includes(val)) {
+                        card.style.display = 'flex';
+                        card.style.opacity = '1';
+                    } else {
+                        card.style.display = 'none';
+                        card.style.opacity = '0';
+                    }
+                });
+            };
+
+            searchInput.addEventListener('input', doFilter);
+            doFilter();
+        });
+    </script>
 </body>
 </html>

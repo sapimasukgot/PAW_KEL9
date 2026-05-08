@@ -1,30 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakanMart - Penjual</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakanMart - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-        body { overflow-x: hidden; }
-    </style>
+    <style>body { font-family: 'Inter', sans-serif; background-color: #fcebda; }</style>
 </head>
-<body class="bg-[#F7EFDD] min-h-screen flex flex-col">
-    <nav class="bg-white border-b border-gray-200 p-4 flex-none">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-[#7A5C2D] font-bold text-xl mb-3">MakanMart</h1>
-            <div class="flex gap-2 overflow-x-auto no-scrollbar">
-                @php $r = request(); @endphp
-                <a href="{{ route('penjual-beranda') }}" class="px-4 py-1 rounded-full border {{ $r->routeIs('penjual-beranda*') ? 'bg-[#EFDEB9]' : 'bg-white' }}">Beranda</a>
-                <a href="{{ route('pesanan-penjual') }}" class="px-4 py-1 rounded-full border {{ $r->routeIs('pesanan-penjual*') ? 'bg-[#EFDEB9]' : 'bg-white' }}">Pesanan</a>
-                <a href="{{ route('profil-penjual') }}" class="px-4 py-1 rounded-full border {{ $r->routeIs('profil-penjual*') ? 'bg-[#EFDEB9]' : 'bg-white' }}">Profil</a>
-            </div>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-[#f7e4cf] p-4 shadow-sm border-b border-[#e6d1ba] sticky top-0 z-40">
+        <h1 class="text-xl md:text-2xl font-bold text-[#634a2c] text-center mb-3">MakanMart Admin</h1>
+        <div class="flex gap-3 justify-center">
+            <a href="{{ route('admin-beranda') }}" class="{{ request()->routeIs('admin-beranda*') ? 'bg-[#e6d1ba]' : 'bg-white' }} px-6 py-1.5 rounded-full font-semibold text-sm">Beranda</a>
+            <a href="{{ route('profile') }}" class="{{ request()->routeIs('profile*') ? 'bg-[#e6d1ba]' : 'bg-white' }} px-6 py-1.5 rounded-full font-semibold text-sm">Profil</a>
         </div>
-    </nav>
-    <main class="flex-1 p-6"><div class="max-w-4xl mx-auto">@yield('content')</div></main>
-
+    </header>
+    <main class="flex-1 p-6 max-w-5xl mx-auto w-full">@yield('content')</main>
     <script>
     let globalTimer;
     function showCustomModal(config) {
@@ -69,19 +59,6 @@
 
     btn.onclick = () => window.location.href = actionUrl;
 }
-    
-    function initStatusUpdate(selectId, labelClass) {
-        const select = document.getElementById(selectId);
-        if (!select) return;
-        select.addEventListener('change', (e) => {
-            const label = document.querySelector(labelClass);
-            if (label) {
-                label.innerText = e.target.value;
-                label.classList.add('animate-pulse');
-                setTimeout(() => label.classList.remove('animate-pulse'), 2000);
-            }
-        });
-    }
     </script>
 </body>
 </html>

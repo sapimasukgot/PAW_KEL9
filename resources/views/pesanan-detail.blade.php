@@ -55,7 +55,8 @@
 
         <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4 border border-gray-50">
             <span class="font-bold text-gray-700">Status Pesanan:</span>
-            <select class="border border-gray-200 rounded-xl px-4 py-1 bg-white focus:outline-none text-sm">
+            <select id="status-select" ...>
+            <span class="status-label ...">Selesai</span>
                 <option>Pilih</option>
                 <option>Diproses</option>
                 <option>Selesai</option>
@@ -71,8 +72,13 @@
 
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initStatusUpdate('status-select', '.status-label');
+    });
+</script>
+
 <style>
-    /* Styling Scrollbar Khusus Area Detail */
     .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
     }

@@ -1,3 +1,5 @@
+@include('pembeli.nav')
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
