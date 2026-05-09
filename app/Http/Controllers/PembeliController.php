@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PembeliController extends Controller
 {
-    /**
-     * Menampilkan halaman utama (Beranda) Pembeli
-     */
+
     public function index()
     {
         $menus = [
@@ -21,9 +19,7 @@ class PembeliController extends Controller
         return view('pembeli.beranda', compact('menus'));
     }
 
-    /**
-     * Menampilkan detail menu
-     */
+
     public function show($id) {
         $menus = [
             1 => ['id' => 1, 'nama' => 'Mie Pangsit', 'harga' => '15.000'],
@@ -36,9 +32,7 @@ class PembeliController extends Controller
         return view('pembeli.detail', compact('menu'));
     }
 
-    /**
-     * Proses Checkout
-     */
+
     public function checkout($id) {
         $menu = ['id' => $id, 'nama' => 'Mie Pangsit', 'image' => 'https://via.placeholder.com/300'];
         return view('pembeli.checkout', compact('menu'));
@@ -58,9 +52,7 @@ class PembeliController extends Controller
         return view('pembeli.summary');
     }
 
-    /**
-     * Fitur Rating
-     */
+
     public function rating($id) {
         return view('pembeli.rating', ['id' => $id]);
     }
@@ -77,9 +69,7 @@ class PembeliController extends Controller
         return view('pembeli.detail-pesanan');
     }
 
-    /**
-     * Menampilkan daftar riwayat pesanan
-     */
+
     public function history()
     {
         $histories = [
@@ -89,9 +79,7 @@ class PembeliController extends Controller
         return view('pembeli.history', compact('histories'));
     }
 
-    /**
-     * Menampilkan detail riwayat (Sesuai Desain Card)
-     */
+
     public function historyDetail($id)
     {
         $all_histories = [
@@ -120,9 +108,7 @@ class PembeliController extends Controller
         return view('pembeli.history_detail', compact('detail'));
     }
 
-    /**
-     * Pengaturan Profil dan Akun
-     */
+
     public function profile() {
         return view('pembeli.profile');
     }
@@ -144,9 +130,10 @@ class PembeliController extends Controller
         return view('pembeli.settings');
     }
 
-    /**
-     * Proses Ubah Sandi
-     */
+    public function changePassword() {
+        return view('pembeli.ubah-sandi');
+    }
+
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -166,9 +153,7 @@ class PembeliController extends Controller
         return redirect()->route('login')->with('success', 'Password berhasil diganti.');
     }
 
-    /**
-     * Fitur Hapus Akun (Menghapus dari user.json)
-     */
+
     public function deleteAccount(Request $request)
     {
         $userSession = session('user');
@@ -197,8 +182,14 @@ class PembeliController extends Controller
         return redirect()->route('login')->with('success', 'Akun Anda telah dihapus secara permanen.');
     }
 
-    public function logout() {
-        session()->flush();
+    public function logout(Request $request) {
+        // Menghapus autentikasi user
+        \Illuminate\Support\Facades\Auth::logout();
+    
+        // Membersihkan session dan token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    
         return redirect()->route('login');
     }
 }

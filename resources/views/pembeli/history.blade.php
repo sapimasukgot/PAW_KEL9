@@ -5,14 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Pemesanan - MakanMart</title>
+    <title data-translate="title_order_history">Riwayat Pemesanan - MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#fcebda] min-h-screen pb-10">
-    @include('pembeli.nav')
 
     <div class="p-4">
-        <h1 class="text-2xl font-bold text-center mb-6">Riwayat Pemesanan</h1>
+        <h1 class="text-2xl font-bold text-center mb-6" data-translate="title_order_history">Riwayat Pemesanan</h1>
+        
         <div class="space-y-4">
             @foreach($histories as $h)
             <div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center">
@@ -26,7 +26,11 @@
                         <p class="text-sm font-bold text-gray-600">Rp {{ $h['harga'] }}</p>
                     </div>
                 </div>
-                <a href="{{ route('pembeli-riwayat-detail', $h['id']) }}" class="bg-gray-300 px-4 py-1 rounded-lg text-xs font-bold transition hover:bg-gray-400">Lihat Detail</a>
+                <a href="{{ route('pembeli-riwayat-detail', $h['id']) }}" 
+                   class="bg-gray-300 px-4 py-1 rounded-lg text-xs font-bold transition hover:bg-gray-400"
+                   data-translate="btn_see_detail">
+                   Lihat Detail
+                </a>
             </div>
             @endforeach
         </div>

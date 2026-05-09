@@ -1,15 +1,14 @@
 @include('pembeli.nav')
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda - Pesanan Berlangsung</title>
+    <title>Beranda - MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body style="background-color: #FFEDD9;">
-    @include('pembeli.nav')
 
     <div class="p-6 flex flex-col items-start space-y-8 w-full">
         
@@ -21,75 +20,76 @@
                     </svg>
                 </span>
                 <input type="text" 
+                       data-translate="holder_search_all"
                        placeholder="Cari Makanan dan Minuman/Nama Toko" 
                        class="w-full bg-white border-none rounded-full py-3.5 pl-12 pr-4 shadow-sm focus:outline-none text-sm">
             </div>
         </div>
 
         <div class="w-full space-y-4">
-            <h2 class="text-xl font-bold text-gray-900">Pesanan Berlangsung</h2>
+            <h2 class="text-xl font-bold text-gray-900" data-translate="title_ongoing">Pesanan Berlangsung</h2>
             
             <div class="bg-white rounded-3xl p-5 shadow-sm flex items-center border border-orange-100 relative w-full max-w-3xl h-32">
                 <div class="flex items-center gap-5">
                     <div class="w-20 h-20 bg-[#D9D9D9] rounded-2xl flex-none flex items-center justify-center">
-                        <span class="text-[10px] text-gray-400 font-bold uppercase">Gambar</span>
+                        <span class="text-[10px] text-gray-400 font-bold uppercase" data-translate="label_image">Gambar</span>
                     </div>
                     <div class="flex flex-col items-start">
                         <h3 class="font-bold text-lg text-gray-900 leading-tight">Mie Pangsit</h3>
-                        <p class="text-sm text-gray-500">Mie Pangsit sedap sekali</p>
+                        <p class="text-sm text-gray-500" data-translate="desc_mie_pangsit">Mie Pangsit sedap sekali</p>
                     </div>
                 </div>
 
                 <p class="absolute top-5 right-6 font-bold text-lg text-gray-900">Rp25.000</p>
 
                 <a href="{{ route('pembeli-detail-pesanan') }}" class="absolute bottom-5 right-6 text-black font-extrabold text-xs hover:underline">
-                    Lihat Detail
+                    <span data-translate="btn_see_detail">Lihat Detail</span>
                 </a>
             </div>
         </div>
 
         <div class="w-full space-y-4">
-            <h2 class="text-xl font-bold text-gray-900">Rekomendasi</h2>
+            <h2 class="text-xl font-bold text-gray-900" data-translate="title_recommendation">Rekomendasi</h2>
             
             <div class="grid grid-cols-3 gap-3 w-full">
                 
                 <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center border border-gray-50 relative h-28 w-full overflow-hidden">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-14 h-14 bg-[#D9D9D9] rounded-xl flex-none flex items-center justify-center">
-                            <span class="text-[8px] text-gray-400 font-bold uppercase">Gbr</span>
+                            <span class="text-[8px] text-gray-400 font-bold uppercase" data-translate="label_image_short">Gbr</span>
                         </div>
                         <div class="flex flex-col items-start min-w-0">
                             <h3 class="font-bold text-xs text-gray-900 truncate w-full">Mie Pangsit</h3>
-                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5">Mie Pangsit Sedap sekali</p>
+                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5" data-translate="desc_mie_pangsit">Mie Pangsit Sedap sekali</p>
                         </div>
                     </div>
-                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic">PESAN</p>
+                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic" data-translate="btn_order_now">PESAN</p>
                 </div>
 
                 <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center border border-gray-50 relative h-28 w-full overflow-hidden">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-14 h-14 bg-[#D9D9D9] rounded-xl flex-none flex items-center justify-center">
-                            <span class="text-[8px] text-gray-400 font-bold uppercase">Gbr</span>
+                            <span class="text-[8px] text-gray-400 font-bold uppercase" data-translate="label_image_short">Gbr</span>
                         </div>
                         <div class="flex flex-col items-start min-w-0">
                             <h3 class="font-bold text-xs text-gray-900 truncate w-full">Ayam Katsu</h3>
-                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5">Ayam Katsu sedap sekali</p>
+                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5" data-translate="desc_ayam_katsu">Ayam Katsu sedap sekali</p>
                         </div>
                     </div>
-                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic">PESAN</p>
+                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic" data-translate="btn_order_now">PESAN</p>
                 </div>
 
                 <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center border border-gray-50 relative h-28 w-full overflow-hidden">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-14 h-14 bg-[#D9D9D9] rounded-xl flex-none flex items-center justify-center">
-                            <span class="text-[8px] text-gray-400 font-bold uppercase">Gbr</span>
+                            <span class="text-[8px] text-gray-400 font-bold uppercase" data-translate="label_image_short">Gbr</span>
                         </div>
                         <div class="flex flex-col items-start min-w-0">
                             <h3 class="font-bold text-xs text-gray-900 truncate w-full">Mie Ayam</h3>
-                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5">Mie Ayam sedap sekali</p>
+                            <p class="text-[10px] text-gray-500 leading-tight truncate w-full mt-0.5" data-translate="desc_mie_ayam">Mie Ayam sedap sekali</p>
                         </div>
                     </div>
-                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic">PESAN</p>
+                    <p class="absolute bottom-3 right-4 text-blue-600 font-black text-[10px] uppercase cursor-pointer italic" data-translate="btn_order_now">PESAN</p>
                 </div>
 
             </div>

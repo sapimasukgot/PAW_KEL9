@@ -25,12 +25,12 @@
     </div>
 
     <div class="flex justify-between items-center py-10">
-        <a href="{{ route('pengaturan-akun') }}" 
+        <a href="{{ route('pengaturan-akun-penjual') }}" 
            class="bg-[#CBD5E1] px-10 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-300 transition text-black">
             Kembali
         </a>
         
-        <a href="{{ route('pengaturan-akun') }}" 
+        <a href="{{ route('pengaturan-akun-penjual') }}" 
            class="bg-[#CBD5E1] px-10 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-300 transition text-black">
             Simpan
         </a>

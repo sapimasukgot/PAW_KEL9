@@ -32,10 +32,10 @@
     <div class="flex flex-col items-end gap-6 text-right">
         <span class="font-bold text-sm whitespace-nowrap">Rp {{ $item['harga'] }}</span>
         
-        <a href="{{ route('ulasan-detail') }}" 
-           class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition">
-            Lihat Detail
-        </a>
+<a href="{{ route('ulasan-detail', ['id' => $item['id'] ?? 0]) }}" 
+   class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition">
+    Lihat Detail
+</a>
     </div>
 </div>
 @endforeach

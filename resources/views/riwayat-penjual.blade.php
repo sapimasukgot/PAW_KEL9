@@ -31,7 +31,7 @@
     <div class="flex flex-col items-end gap-3 self-stretch justify-between">
         <span class="font-bold text-sm ">Rp {{ $data['harga'] }}</span>
         
-        <a href="{{ route('riwayat-detail') }}" 
+        <a href="{{ route('riwayat-penjual-detail') }}" 
            class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition mt-auto">
             Lihat Detail
         </a>

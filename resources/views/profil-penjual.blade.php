@@ -41,11 +41,11 @@
             <span class="text-xl">📄</span>
             <span class="font-bold">Riwayat Pesanan</span>
         </a>
-        <a href="{{ route('ubah-bahasa') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
+        <a href="{{ route('ubah-bahasa-penjual') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
             <span class="text-xl">🌐</span>
             <span class="font-bold">Bahasa</span>
         </a>
-        <a href="{{ route('pengaturan-akun') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
+        <a href="{{ route('pengaturan-akun-penjual') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
             <span class="text-xl">🔒</span>
             <span class="font-bold">Pengaturan Akun</span>
         </a>

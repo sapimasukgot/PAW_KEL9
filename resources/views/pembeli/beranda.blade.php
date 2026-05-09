@@ -12,7 +12,7 @@
     </div>
 
     <main class="px-4">
-        <h2 class="text-2xl font-bold mb-4">Rekomendasi</h2>
+        <h2 class="text-2xl font-bold mb-4" data-translate="title_recommendation">Rekomendasi</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($menus as $menu)
             <div class="card-item bg-white p-3 rounded-2xl shadow-md flex gap-3 relative transition-all duration-300">
@@ -22,9 +22,9 @@
                 <div class="flex flex-col justify-between flex-1">
                     <div>
                         <h3 class="card-title font-bold text-lg leading-tight">{{ $menu['nama'] }}</h3>
-                        <p class="text-xs text-gray-500">Menu sedap sekali</p>
+                        <p class="text-xs text-gray-500" data-translate="desc_menu">Menu sedap sekali</p>
                     </div>
-                    <a href="{{ route('pembeli-detail', $menu['id']) }}" class="text-right text-sm font-semibold text-blue-600">Pesan</a>
+                    <a href="{{ route('pembeli-detail', $menu['id']) }}" class="text-right text-sm font-semibold text-blue-600" data-translate="btn_see_detail">Pesan</a>
                 </div>
             </div>
             @endforeach

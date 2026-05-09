@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><title>Profil - MakanMart</title>
+    <meta charset="UTF-8">
+    <title data-translate="title_profile">Profil - MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script> 
 </head>
 <body class="bg-[#fcebda] pb-10">
@@ -21,29 +22,32 @@
         </div>
 
         <div class="space-y-3">
-            <a href="{{ route('pembeli-riwayat') }}" class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4">📋 <span class="font-bold flex-1">Riwayat</span></a>
-            <a href="{{ route('pembeli-bahasa') }}" class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4">🌐 <span class="font-bold flex-1">Bahasa</span></a>
+            <a href="{{ route('pembeli-riwayat') }}" class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4">
+                📋 <span class="font-bold flex-1" data-translate="label_riwayat">Riwayat</span>
+            </a>
+            <a href="{{ route('pembeli-bahasa') }}" class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4">
+                🌐 <span class="font-bold flex-1" data-translate="label_bahasa">Bahasa</span>
+            </a>
+            <a href="{{ route('pembeli-pengaturan') }}" class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4">
+                ⚙️ <span class="font-bold flex-1" data-translate="label_pengaturan">Pengaturan Akun</span>
+            </a>
         </div>
 
         <button onclick="triggerLogout()" class="w-full bg-white p-4 rounded-2xl shadow-sm flex items-center justify-center gap-4 text-black font-bold mt-10 hover:bg-red-50 transition-colors">
-            <span>➡️</span> <span data-translate="logout_title">Keluar Akun</span>
+            <span>➡️</span> <span data-translate="label_keluar">Keluar Akun</span>
+            
         </button>
     </div>
-
     <script>
-    function triggerLogout() {
-        showCustomModal({
-            title: 'Konfirmasi Keluar',
-            message: 'Apakah Anda yakin ingin keluar dari akun ini? Anda harus login kembali nanti.',
-            actionText: 'Keluar',
-            actionUrl: "{{ route('login') }}"
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedName = localStorage.getItem('pembeli-edit-#prof-name');
-        if (savedName) document.getElementById('display-name').innerText = savedName;
-    });
+        function triggerLogout() {
+            if (confirm(dictionary[localStorage.getItem('app_lang') || 'id']['modal_logout_confirm_msg'] || "Are you sure you want to log out?")) {
+                document.getElementById('logout-form').submit();
+            }
+        }
     </script>
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
+</button>
 </body>
 </html>
