@@ -1,67 +1,77 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Auth;
-    use App\Models\User;
-    use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-    class AuthController extends Controller
-    {
-        public function showLogin() {
-            return view('login'); 
+class AuthController extends Controller
+{
+    public function showLogin() {
+        return view('login'); 
+    }
+
+    public function login(Request $request) {
+        $credentials = $request->validate([
+            'name'     => 'required|string',
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            if ($user->role === 'pembeli') return redirect()->route('pembeli-beranda');
+            if ($user->role === 'penjual') return redirect()->route('penjual-beranda');
+            if ($user->role === 'admin') return redirect()->route('admin-beranda');
+            
+            return redirect()->route('role.pilih');
         }
 
-        public function login(Request $request) {
-            $credentials = $request->validate([
-                'name'     => 'required|string',
-                'email'    => 'required|email',
-                'password' => 'required',
-            ]);
+        return back()->with('error', 'Kredensial salah.')->withInput();
+    }
 
-             $user = User::where('nama', $request->name)
-                ->where('email', $request->email)
-                ->first();
+    public function register(Request $request) {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
-             if ($user && Hash::check($request->password, $user->password)) {
+        try {
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->role = 'user';
+            $user->save();
 
-                Auth::login($user);
-                $request->session()->regenerate();
+            Auth::login($user);
+            return redirect()->route('role.pilih');
 
-                if ($user->role === 'pembeli') {
-                    return redirect()->intended('pembeli-beranda');
-                } elseif ($user->role === 'penjual') {
-                    return redirect()->intended('penjual-beranda');
-                } elseif ($user->role === 'admin') {
-                    return redirect()->intended('admin-beranda');
-                }
-            }
-
-
-            return back()->with('error', 'Kredensial tidak cocok dengan data kami.')->withInput();
-        }
-
-        public function register(Request $request) {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
-            User::create([
-                'nama' => $request->name, 
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => 'pembeli',
-            ]);
-
-            return redirect('/')->with('success', 'Registrasi berhasil! Silakan login.');
-        }
-
-        public function logout(Request $request) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return redirect('/');
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
+
+    public function updateRole(Request $request) {
+        $request->validate(['role' => 'required|in:pembeli,penjual,admin']);
+        $user = Auth::user();
+        $user->role = $request->role;
+        $user->save();
+
+        if ($user->role === 'pembeli') return redirect()->route('pembeli-beranda');
+        if ($user->role === 'penjual') return redirect()->route('penjual-beranda');
+        if ($user->role === 'admin') return redirect()->route('admin-beranda');
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
+}
