@@ -14,24 +14,23 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        $credentials = $request->validate([
-            'name'     => 'required|string',
+        $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = Auth::user();
+        $user = User::where('email', $request->email)->first();
 
-            if ($user->role === 'pembeli') return redirect()->route('pembeli-beranda');
-            if ($user->role === 'penjual') return redirect()->route('penjual-beranda');
-            if ($user->role === 'admin') return redirect()->route('admin-beranda');
-            
-            return redirect()->route('role.pilih');
+        if ($user && Hash::check($request->password, $user->password)) {
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect()->intended('/pembeli');
         }
 
-        return back()->with('error', 'Kredensial salah.')->withInput();
+        return back()
+            ->withErrors(['email' => 'Email atau password salah.'])
+            ->withInput($request->only('email'));
+            
     }
 
     public function register(Request $request) {
@@ -42,15 +41,15 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->role = 'user';
-            $user->save();
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'role'     => 'pembeli', 
+            ]);
 
             Auth::login($user);
-            return redirect()->route('role.pilih');
+            return redirect()->route('pembeli-beranda');
 
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
@@ -65,7 +64,7 @@ class AuthController extends Controller
 
         if ($user->role === 'pembeli') return redirect()->route('pembeli-beranda');
         if ($user->role === 'penjual') return redirect()->route('penjual-beranda');
-        if ($user->role === 'admin') return redirect()->route('admin-beranda');
+        if ($user->role === 'admin')   return redirect()->route('admin-beranda');
     }
 
     public function logout(Request $request) {

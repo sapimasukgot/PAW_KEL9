@@ -67,7 +67,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/ulasan-penjual', function() {
-    // Pastikan ada kunci 'id' di setiap baris data
     $ulasan = [
         [
             'id' => 1, 
@@ -89,17 +88,16 @@ Route::get('/ulasan-penjual', function() {
 })->name('ulasan-penjual');
 
 Route::get('/ulasan-penjual', function() {
-    // Pastikan ada 'id' di setiap array ulasan
     $ulasan = [
         [
-            'id' => 1, // Tambahkan ini
+            'id' => 1, 
             'nama' => 'Aan', 
             'harga' => '32.000', 
             'menu' => 'Mie Pangsit', 
             'komentar' => 'Enak banget!'
         ],
         [
-            'id' => 2, // Tambahkan ini
+            'id' => 2, 
             'nama' => 'Budi', 
             'harga' => '15.000', 
             'menu' => 'Nasi Ayam Geprek', 
