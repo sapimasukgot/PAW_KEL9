@@ -2,7 +2,6 @@
 
 @section('content')
 @php
-
     if (!session()->has('daftar_menu')) {
         session(['daftar_menu' => ['Nasi Ayam Goreng', 'Nasi Ayam Geprek']]);
         session()->save();
@@ -22,7 +21,6 @@
         }
     }
 
-
     if (request()->has('delete_index')) {
         $indexHapus = request()->query('delete_index');
         
@@ -40,14 +38,14 @@
 @endphp 
 
 <div class="text-center mb-8">
-    <h2 class="text-2xl font-bold">Toko Nasi</h2>
+    <h2 class="text-2xl font-bold" data-translate="title_store">Toko Nasi</h2>
 </div>
 
 <div class="flex justify-between items-center mb-4">
-    <h3 class="font-bold text-lg">Daftar Menu pada Toko Nasi</h3>
+    <h3 class="font-bold text-lg" data-translate="title_menu_list">Daftar Menu pada Toko Nasi</h3>
     <div class="flex gap-2">
-        <a href="{{ route('tambah_menu') }}" class="bg-white border px-4 py-1 rounded-lg text-sm shadow-sm">Tambah Menu</a>
-        <button onclick="toggleHapusMode()" class="bg-[#CBD5E1] px-4 py-1 rounded-lg text-sm shadow-sm">Hapus Menu</button>
+        <a href="{{ route('tambah_menu') }}" class="bg-white border px-4 py-1 rounded-lg text-sm shadow-sm" data-translate="btn_add_menu">Tambah Menu</a>
+        <button onclick="toggleHapusMode()" class="bg-[#CBD5E1] px-4 py-1 rounded-lg text-sm shadow-sm" data-translate="btn_delete_mode">Hapus Menu</button>
     </div>
 </div>
 
@@ -60,7 +58,8 @@
                 <span class="font-medium">{{ $menu }}</span>
             </div>
             <button onclick="confirmHapusMenu('{{ $menu }}', '{{ route('penjual-beranda', ['delete_index' => $index]) }}')" 
-                    class="btn-hapus-item hidden bg-[#FF4D4D] text-white text-[10px] px-3 py-1 rounded-full">
+                    class="btn-hapus-item hidden bg-[#FF4D4D] text-white text-[10px] px-3 py-1 rounded-full"
+                    data-translate="btn_delete_item">
                 Hapus
             </button>
         </div>
@@ -74,10 +73,21 @@
     }
 
     function confirmHapusMenu(nama, url) {
+        // Ambil bahasa aktif
+        const lang = localStorage.getItem('app_lang') || 'id';
+        
+        // Buat pesan modal dinamis berdasarkan bahasa
+        let message = "";
+        if (lang === 'id') {
+            message = `Apakah anda yakin ingin menghapus "${nama}"? Tindakan ini tidak dapat dibatalkan.`;
+        } else {
+            message = `Are you sure you want to delete "${nama}"? This action cannot be undone.`;
+        }
+
         showCustomModal({
-            title: 'Hapus Menu?',
-            message: `Apakah anda yakin ingin menghapus "${nama}"? Tindakan ini tidak dapat dibatalkan.`,
-            actionText: 'Ya, Hapus',
+            title: dictionary[lang]['modal_delete_menu_title'],
+            message: message,
+            actionText: dictionary[lang]['modal_delete_menu_confirm'],
             actionUrl: url
         });
     }

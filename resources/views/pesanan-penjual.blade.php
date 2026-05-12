@@ -2,7 +2,9 @@
 
 @section('content')
 <div class="flex flex-col h-[calc(100vh-180px)]">
-    <h2 class="text-2xl font-bold text-center mb-8 flex-none tracking-wide">Pesanan Pelanggan</h2>
+    <h2 class="text-2xl font-bold text-center mb-8 flex-none tracking-wide" data-translate="title_customer_orders">
+        Pesanan Pelanggan
+    </h2>
 
     <div class="flex-grow overflow-y-auto pr-3 custom-scrollbar pb-25">
         <div class="space-y-6">
@@ -23,10 +25,13 @@
 
                 <div class="flex flex-col items-end gap-3">
                     <span class="font-bold text-lg text-gray-800 leading-none">Rp 32.000</span>
-                    <a href="{{ route('pesanan-detail') }}" class="bg-[#CBD5E1] text-xs px-5 py-2 rounded-xl font-bold shadow-sm">
+                    <a href="{{ route('pesanan-detail') }}" 
+                       class="bg-[#CBD5E1] text-xs px-5 py-2 rounded-xl font-bold shadow-sm"
+                       data-translate="btn_view_detail">
                         Lihat Detail
                     </a>
-                    <span class="bg-[#00FF85] text-black text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-sm">
+                    <span class="bg-[#00FF85] text-black text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-sm"
+                          data-translate="status_order_completed">
                         Pesanan Selesai
                     </span>
                 </div>
@@ -46,8 +51,12 @@
 
                 <div class="flex flex-col items-end gap-3">
                     <span class="font-bold text-lg text-gray-800 leading-none">Rp 14.000</span>
-                    <button class="bg-[#CBD5E1] text-xs px-5 py-2 rounded-xl font-bold shadow-sm">Lihat Detail</button>
-                    <span class="bg-[#00FF85] text-black text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-sm">
+                    <button class="bg-[#CBD5E1] text-xs px-5 py-2 rounded-xl font-bold shadow-sm"
+                            data-translate="btn_view_detail">
+                        Lihat Detail
+                    </button>
+                    <span class="bg-[#00FF85] text-black text-[10px] px-4 py-1.5 rounded-xl font-bold shadow-sm"
+                          data-translate="status_order_completed">
                         Pesanan Selesai
                     </span>
                 </div>

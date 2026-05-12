@@ -72,6 +72,12 @@
                 'desc_delete_warn': 'Akunmu akan dihapus secara permanen.',
                 'btn_back': 'Kembali',
                 'change_password': 'Ubah Sandi',
+                'title_change_pw': 'Ubah Sandi',
+                'label_old_pw': 'Password Lama',
+                'label_new_pw': 'Password Baru',
+                'label_confirm_pw': 'Konfirmasi Password',
+                'btn_save': 'Simpan',
+                'btn_back': 'Kembali',
             },
             'en': {
                 'brand': 'EatMart',
@@ -114,6 +120,12 @@
                 'label_delete_acc': 'Delete Account',
                 'desc_delete_warn': 'Your account will be permanently deleted.',
                 'change_password': 'Change Password',
+                'title_change_pw': 'Change Password',
+                'label_old_pw': 'Old Password',
+                'label_new_pw': 'New Password',
+                'label_confirm_pw': 'Confirm Password',
+                'btn_save': 'Save',
+                'btn_back': 'Back',
             }
         };
 

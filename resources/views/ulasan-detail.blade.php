@@ -8,52 +8,52 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             
             <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-50">
-                <h3 class="font-bold text-lg mb-6">Detail Menu</h3>
+                <h3 class="font-bold text-lg mb-6" data-translate="title_menu_detail">Detail Menu</h3>
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-600 font-medium">Reguler:</span>
+                        <span class="text-gray-600 font-medium" data-translate="label_reguler">Reguler:</span>
                         <span class="bg-[#E2E8F0] px-5 py-1 rounded-xl w-14 text-center">1</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-600 font-medium">Jumbo:</span>
+                        <span class="text-gray-600 font-medium" data-translate="label_jumbo">Jumbo:</span>
                         <span class="bg-[#E2E8F0] px-5 py-1 rounded-xl w-14 text-center">1</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-600 font-medium">Topping:</span>
+                        <span class="text-gray-600 font-medium" data-translate="label_topping">Topping:</span>
                         <span class="bg-[#E2E8F0] px-6 py-1 rounded-xl">Telur</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-600 font-medium">Level Pedas:</span>
+                        <span class="text-gray-600 font-medium" data-translate="label_spicy_lvl">Level Pedas:</span>
                         <span class="bg-[#E2E8F0] px-6 py-1 rounded-xl">Lvl 0</span>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-50">
-                <h3 class="font-bold text-lg mb-6">Detail Pesanan</h3>
+                <h3 class="font-bold text-lg mb-6" data-translate="title_order_detail">Detail Pesanan</h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">Nama:</span>
-                        <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm font-semibold">Aan</span>
+                        <span class="text-gray-400 text-sm" data-translate="label_name">Nama:</span>
+                        <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm font-semibold">Justin</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">No. Meja:</span>
+                        <span class="text-gray-400 text-sm" data-translate="label_table_no">No. Meja:</span>
                         <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm font-semibold">1</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">Harga:</span>
+                        <span class="text-gray-400 text-sm" data-translate="label_price">Harga:</span>
                         <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm font-semibold">Rp 32.000</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">Keterangan:</span>
-                        <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm italic text-green-600 font-medium">Selesai</span>
+                        <span class="text-gray-400 text-sm" data-translate="label_status">Keterangan:</span>
+                        <span class="bg-gray-100 px-4 py-1 rounded-xl text-sm italic text-green-600 font-medium" data-translate="status_completed">Selesai</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-50 mb-8">
-            <h3 class="font-bold text-lg mb-3">Ulasan Pelanggan</h3>
+            <h3 class="font-bold text-lg mb-3" data-translate="title_customer_review">Ulasan Pelanggan</h3>
             <div class="flex text-yellow-400 mb-3 text-lg">★★★★★</div>
             <p class="text-gray-700 italic leading-relaxed bg-gray-50 p-4 rounded-2xl border-l-4 border-[#CBD5E1]">
                 "Mantap Gacor the best lah, kapan kapan mau balik lagi. Porsinya banyak dan rasanya pas di lidah!"
@@ -62,7 +62,9 @@
     </div>
 
     <div class="py-6 flex-none">
-        <a href="{{ route('ulasan-penjual') }}" class="bg-[#CBD5E1] px-12 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-300 transition-all inline-block">
+        <a href="{{ route('ulasan-penjual') }}" 
+           class="bg-[#CBD5E1] px-12 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-300 transition-all inline-block"
+           data-translate="btn_back">
             Kembali
         </a>
     </div>

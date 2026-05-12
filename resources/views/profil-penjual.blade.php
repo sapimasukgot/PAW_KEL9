@@ -2,7 +2,6 @@
 
 @section('content')
 @php
-    // Menangkap data jika datang dari halaman ubah-profil
     if (request()->has('nama')) {
         session([
             'user_nama' => request('nama'),
@@ -10,8 +9,6 @@
             'user_email' => request('email')
         ]);
     }
-
-    // Mengambil data dari session, jika kosong pakai data default
     $nama = session('user_nama', 'Joni Alfreandra');
     $nohp = session('user_nohp', '+6287654321');
     $email = session('user_email', 'jAlfdra123@gmail.com');
@@ -39,27 +36,38 @@
     <div class="space-y-4">
         <a href="{{ route('riwayat-penjual') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
             <span class="text-xl">📄</span>
-            <span class="font-bold">Riwayat Pesanan</span>
+            <span class="font-bold" data-translate="label_order_history">Riwayat Pesanan</span>
         </a>
         <a href="{{ route('ubah-bahasa-penjual') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
             <span class="text-xl">🌐</span>
-            <span class="font-bold">Bahasa</span>
+            <span class="font-bold" data-translate="label_language">Bahasa</span>
         </a>
         <a href="{{ route('pengaturan-akun-penjual') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
             <span class="text-xl">🔒</span>
-            <span class="font-bold">Pengaturan Akun</span>
+            <span class="font-bold" data-translate="label_account_settings">Pengaturan Akun</span>
         </a>
     </div>
 
     <button onclick="handleLogout()" class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 mt-10 hover:bg-red-50 transition group">
         <span class="text-red-500">🚪</span>
-        <span class="font-bold text-gray-800">Keluar Akun</span>
+        <span class="font-bold text-gray-800" data-translate="label_logout">Keluar Akun</span>
     </button>
 </div>
 
 <script>
-    let timerInterval;
+    function handleLogout() {
+        const lang = localStorage.getItem('app_lang') || 'id';
+        
+        showCustomModal({
+            title: dictionary[lang]['modal_logout_seller_title'],
+            message: dictionary[lang]['modal_logout_seller_msg'],
+            actionText: dictionary[lang]['label_logout'],
+            actionUrl: "{{ route('login') }}"
+        });
+    }
+
     function showCustomModal(config) {
+        const lang = localStorage.getItem('app_lang') || 'id';
         const { title, message, actionText, actionUrl } = config;
         const existing = document.getElementById('global-modal');
         if (existing) existing.remove();
@@ -79,7 +87,7 @@
                             ${actionText} (5)
                         </button>
                         <button onclick="document.getElementById('global-modal').remove()" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition-all">
-                            Batal
+                            ${dictionary[lang]['btn_cancel']}
                         </button>
                     </div>
                 </div>
@@ -102,15 +110,6 @@
         }, 1000);
 
         btn.onclick = () => window.location.href = actionUrl;
-    }
-
-    function handleLogout() {
-        showCustomModal({
-            title: 'Keluar Akun?',
-            message: 'Apakah Anda yakin ingin keluar dari akun Penjual? Pastikan semua pesanan hari ini sudah Anda cek.',
-            actionText: 'Keluar Akun',
-            actionUrl: "{{ route('login') }}"
-        });
     }
 </script>
 @endsection

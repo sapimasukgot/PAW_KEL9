@@ -22,7 +22,8 @@
 <body class="bg-[#2a2a2a] min-h-screen flex items-center justify-center p-4">
 
     <div id="auth-box"
-        class="bg-[#ffedd9] w-full max-w-4xl h-[600px] md:h-[560px] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
+        class="bg-[#ffedd9] w-full max-w-4xl h-[650px] md:h-[600px] rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
+        
         <input type="checkbox" id="toggle-form" class="hidden peer" {{ ($errors->any() && !$errors->has('email')) ? 'checked' : '' }}>
 
         <div
@@ -48,6 +49,12 @@
                 @endif
 
                 <div class="space-y-1">
+                    <label class="text-xs font-semibold ml-1">Nama</label>
+                    <input type="text" name="name" value="{{ old('name') }}" required
+                        class="w-full bg-[#b5a7a4]/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 ring-[#b5a7a4] transition-all">
+                </div>
+
+                <div class="space-y-1">
                     <label class="text-xs font-semibold ml-1">Email</label>
                     <input type="email" name="email" value="{{ old('email') }}" required
                         class="w-full bg-[#b5a7a4]/20 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 ring-[#b5a7a4] transition-all">
@@ -67,11 +74,11 @@
 
             <div class="text-center mt-8">
                 <p class="text-xs font-bold text-gray-600">Belum Punya Akun?
-                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1 font-bold">Sign
-                        Up</label>
+                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1 font-bold">Sign Up</label>
                 </p>
             </div>
         </div>
+
         <div
             class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-[#ffedd9] form-transition
                     absolute top-0 left-0 z-20 opacity-0 pointer-events-none translate-x-10
@@ -84,9 +91,11 @@
 
                 @if ($errors->has('name') || $errors->has('password') || $errors->has('error'))
                     <div class="bg-red-100 text-red-700 p-2 rounded-lg text-[10px]">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        <ul class="list-none">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endif
 
@@ -143,5 +152,4 @@
         });
     </script>
 </body>
-
 </html>

@@ -13,25 +13,30 @@ class AuthController extends Controller
         return view('login'); 
     }
 
-    public function login(Request $request) {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+public function login(Request $request) {
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            $request->session()->regenerate();
+    if ($user && Hash::check($request->password, $user->password)) {
+        Auth::login($user);
+        $request->session()->regenerate();
+        if ($user->role === 'admin') {
+            return redirect()->route('admin-beranda');
+        } elseif ($user->role === 'penjual') {
+            return redirect()->route('penjual-beranda');
+        } else {
             return redirect()->intended('/pembeli');
         }
-
-        return back()
-            ->withErrors(['email' => 'Email atau password salah.'])
-            ->withInput($request->only('email'));
-            
     }
+
+    return back()
+        ->withErrors(['email' => 'Email atau password salah.'])
+        ->withInput($request->only('email'));
+}
 
     public function register(Request $request) {
         $request->validate([
