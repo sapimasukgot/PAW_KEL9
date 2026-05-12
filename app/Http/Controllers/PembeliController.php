@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class PembeliController extends Controller
 {
-
     public function index()
     {
         $menus = [
@@ -19,7 +20,6 @@ class PembeliController extends Controller
         return view('pembeli.beranda', compact('menus'));
     }
 
-
     public function show($id) {
         $menus = [
             1 => ['id' => 1, 'nama' => 'Mie Pangsit', 'harga' => '15.000'],
@@ -28,19 +28,67 @@ class PembeliController extends Controller
         ];
         
         $menu = $menus[$id] ?? abort(404);
-
         return view('pembeli.detail', compact('menu'));
     }
 
+    public function profile() {
+        $user = Auth::user(); 
+        return view('pembeli.profile', compact('user'));
+    }
+
+    public function editProfile() {
+        $user = Auth::user(); 
+        return view('pembeli.edit-profil', compact('user'));
+    }
+
+    public function updateProfile(Request $request) {
+        
+        $user = User::find(Auth::id());
+
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+        ]);
+
+        $user->name  = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        Auth::setUser($user->fresh());
+
+        return redirect()->route('pembeli-profil')->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    public function updatePassword(Request $request) {
+        $request->validate([
+            'password_lama' => 'required',
+            'password_baru' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+        if (!Hash::check($request->password_lama, $user->password)) {
+            return back()->withErrors(['password_lama' => 'Password lama salah!']);
+        }
+
+        $userModel = User::find(Auth::id());
+        $userModel->password = Hash::make($request->password_baru);
+        $userModel->save();
+
+        return redirect()->route('pembeli-pengaturan')->with('success', 'Password berhasil diganti.');
+    }
 
     public function checkout($id) {
         $menu = ['id' => $id, 'nama' => 'Mie Pangsit', 'image' => 'https://via.placeholder.com/300'];
         return view('pembeli.checkout', compact('menu'));
     }
 
-    public function payment() {
-        return view('pembeli.payment_instruction');
+    public function history() {
+        $histories = [['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'status' => 'Selesai']];
+        return view('pembeli.history', compact('histories'));
     }
+
+    public function payment() { return view('pembeli.payment_instruction'); }
 
     public function ongoing() {
         $menus = []; 
@@ -48,148 +96,41 @@ class PembeliController extends Controller
         return view('pembeli.beranda_ongoing', compact('menus', 'ongoing'));
     }
 
-    public function summary() {
-        return view('pembeli.summary');
-    }
+    public function rating($id) { return view('pembeli.rating', ['id' => $id]); }
+    public function storeRating(Request $request) { return redirect()->route('pembeli-thanks'); }
+    public function thanks() { return view('pembeli.thanks'); }
+    public function detailpesanan() { return view('pembeli.detail-pesanan'); }
+    public function changePassword() { return view('pembeli.ubah-sandi'); }
+    public function bahasa() { return view('pembeli.language'); }
+    public function pengaturan() { return view('pembeli.settings'); }
 
-
-    public function rating($id) {
-        return view('pembeli.rating', ['id' => $id]);
-    }
-    
-    public function storeRating(Request $request) {
-        return redirect()->route('pembeli-thanks');
-    }
-
-    public function thanks() {
-        return view('pembeli.thanks');
-    }
-
-    public function detailpesanan() {
-        return view('pembeli.detail-pesanan');
-    }
-
-
-    public function history()
-    {
-        $histories = [
-            ['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'status' => 'Selesai'],
-            ['id' => 102, 'nama' => 'Nasi Ayam Katsu', 'tanggal' => '20 Mar 2026', 'harga' => '15.000', 'status' => 'Selesai'],
-        ];
-        return view('pembeli.history', compact('histories'));
-    }
-
-
-    public function historyDetail($id)
-    {
+    public function historyDetail($id) {
         $all_histories = [
-            101 => [
-                'id' => 101, 
-                'nama' => 'Mie Pangsit', 
-                'tanggal' => '27 Mar 2026', 
-                'harga' => '32.000', 
-                'metode' => 'OVO / Dana'
-            ],
-            102 => [
-                'id' => 102, 
-                'nama' => 'Nasi Ayam Katsu', 
-                'tanggal' => '20 Mar 2026', 
-                'harga' => '15.000', 
-                'metode' => 'Tunai'
-            ],
+            101 => ['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'metode' => 'OVO / Dana'],
+            102 => ['id' => 102, 'nama' => 'Nasi Ayam Katsu', 'tanggal' => '20 Mar 2026', 'harga' => '15.000', 'metode' => 'Tunai'],
         ];
-
         $detail = $all_histories[$id] ?? null;
-
-        if (!$detail) {
-            return redirect()->route('pembeli-riwayat');
-        }
-
+        if (!$detail) return redirect()->route('pembeli-riwayat');
         return view('pembeli.history_detail', compact('detail'));
     }
 
-
-    public function profile() {
-        return view('pembeli.profile');
-    }
-
-    public function editProfile() {
-        $user = [
-            'nama' => 'Joshua',
-            'email' => session('user.email') ?? 'joshua@example.com',
-            'nohp' => '081234567890'
-        ];
-        return view('pembeli.edit-profil', compact('user'));
-    }
-
-    public function bahasa() {
-        return view('pembeli.language');
-    }
-
-    public function pengaturan() {
-        return view('pembeli.settings');
-    }
-
-    public function changePassword() {
-        return view('pembeli.ubah-sandi');
-    }
-
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'password_lama' => 'required',
-            'password_baru' => 'required|min:8|confirmed', 
-        ], [
-            'password_baru.confirmed' => 'Konfirmasi password baru tidak cocok!',
-            'password_baru.min' => 'Password minimal 8 karakter.',
-        ]);
-
-        $passwordSekarang = "password123"; // Simulasi password lama
-
-        if ($request->password_lama !== $passwordSekarang) {
-            return back()->withErrors(['password_lama' => 'Password lama salah!']);
-        }
-
-        return redirect()->route('login')->with('success', 'Password berhasil diganti.');
-    }
-
-
-    public function deleteAccount(Request $request)
-    {
-        $userSession = session('user');
-        $emailToDelete = $userSession['email'] ?? null;
-        $path = 'user.json';
-
-        if (!$emailToDelete) {
-            return redirect()->route('login')->with('error', 'Sesi tidak valid.');
-        }
-
-        if (Storage::disk('local')->exists($path)) {
-            $users = json_decode(Storage::disk('local')->get($path), true);
+    public function deleteAccount(Request $request) {
+        $user = Auth::user();
+        if ($user) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             
-            // Filter user yang emailnya tidak sama dengan user saat ini
-            $filteredUsers = array_filter($users, function($user) use ($emailToDelete) {
-                return $user['email'] !== $emailToDelete;
-            });
-
-            // Simpan kembali data yang sudah difilter
-            Storage::disk('local')->put($path, json_encode(array_values($filteredUsers), JSON_PRETTY_PRINT));
+            User::find($user->id)?->delete();
+            return redirect()->route('login')->with('success', 'Akun berhasil dihapus.');
         }
-
-        // Logout dan hapus session
-        session()->flush();
-
-        return redirect()->route('login')->with('success', 'Akun Anda telah dihapus secara permanen.');
+        return back()->with('error', 'Gagal menghapus akun.');
     }
 
     public function logout(Request $request) {
-        // Menghapus autentikasi user
-        \Illuminate\Support\Facades\Auth::logout();
-    
-        // Membersihkan session dan token CSRF
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-    
         return redirect()->route('login');
     }
 }
