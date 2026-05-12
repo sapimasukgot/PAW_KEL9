@@ -1,7 +1,7 @@
 @extends('layout-admin')
 
 @section('content')
-    <h2 class="text-2xl md:text-3xl font-bold text-black text-center mb-10">Profil Admin</h2>
+    <h2 class="text-2xl md:text-3xl font-bold text-black text-center mb-10" data-translate="title_admin_profile">Profil Admin</h2>
 
     <div class="w-full space-y-4">
         <div class="w-full bg-white rounded-3xl p-6 shadow-sm border border-orange-100 flex items-center justify-between">
@@ -25,7 +25,7 @@
         <a href="{{ route('ubah-bahasa-admin') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
             <div class="flex items-center gap-4">
                 <span class="text-xl">🌐</span> 
-                <span class="font-bold text-gray-800">Bahasa</span>
+                <span class="font-bold text-gray-800" data-translate="label_language">Bahasa</span>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -35,7 +35,7 @@
         <a href="{{ route('pengaturan-akun-admin') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
             <div class="flex items-center gap-4">
                 <span class="text-xl">🔒</span> 
-                <span class="font-bold text-gray-800">Pengaturan Akun</span>
+                <span class="font-bold text-gray-800" data-translate="label_account_settings">Pengaturan Akun</span>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -43,28 +43,28 @@
         </a>
     </div>
 
-<div class="mt-auto pt-16 flex justify-center">
-    <button onclick="document.getElementById('logout-form').submit()" 
-            class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 hover:bg-red-50 transition group">
-        <span class="text-red-500">🚪</span>
-        <span class="font-bold text-gray-800">Keluar Akun Admin</span>
-    </button>
-</div>
+    <div class="mt-auto pt-16 flex justify-center">
+        <button onclick="handleAdminLogout()" 
+                class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 hover:bg-red-50 transition group">
+            <span class="text-red-500">🚪</span>
+            <span class="font-bold text-gray-800" data-translate="label_logout">Keluar Akun</span>
+        </button>
+    </div>
 
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 @endsection
 
-@push('scripts')
 <script>
     function handleAdminLogout() {
+        const lang = localStorage.getItem('app_lang') || 'id';
+
         showCustomModal({
-            title: 'Keluar Dashboard Admin?',
-            message: 'Apakah Anda yakin ingin mengakhiri sesi administrasi?',
-            actionText: 'Keluar Sekarang',
+            title: dictionary[lang]['modal_logout_admin_title'],
+            message: dictionary[lang]['modal_logout_admin_msg'],
+            actionText: dictionary[lang]['modal_logout_admin_action'],
             actionUrl: "{{ route('login') }}"
         });
     }
 </script>
-@endpush

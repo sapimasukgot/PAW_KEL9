@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="w-full p-6 flex flex-col min-h-[85vh]">
-    <h1 class="text-2xl font-bold text-gray-900 text-center mb-10">Pengaturan Akun</h1>
+    <h1 class="text-2xl font-bold text-gray-900 text-center mb-10" data-translate="title_account_settings">Pengaturan Akun</h1>
 
     <div class="w-full space-y-4">
         <a href="{{ route('ubah-sandi-admin') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center gap-4 hover:bg-orange-50 transition-all">
@@ -11,7 +11,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
             </div>
-            <span class="font-bold text-gray-800">Ubah Sandi</span>
+            <span class="font-bold text-gray-800" data-translate="change_password">Ubah Sandi</span>
         </a>
 
         <a href="{{ route('login') }}" class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center gap-4 hover:bg-orange-50 transition-all">
@@ -21,8 +21,8 @@
                 </svg>
             </div>
             <div class="flex flex-col">
-                <span class="font-bold text-gray-800">Keluar Akun</span>
-                <p class="text-xs text-gray-500 italic">Yakin mau keluar? Pas balik harus masuk akun lagi ya.</p>
+                <span class="font-bold text-gray-800" data-translate="label_logout">Keluar Akun</span>
+                <p class="text-xs text-gray-500 italic" data-translate="desc_logout_warn">Yakin mau keluar? Pas balik harus masuk akun lagi ya.</p>
             </div>
         </a>
 
@@ -33,14 +33,14 @@
                 </svg>
             </div>
             <div class="flex flex-col">
-                <span class="font-bold text-red-500">Hapus Akun</span>
-                <p class="text-xs text-gray-500">Akunmu akan dihapus secara permanen.</p>
+                <span class="font-bold text-red-500" data-translate="label_delete_acc">Hapus Akun</span>
+                <p class="text-xs text-gray-500" data-translate="desc_delete_warn">Akunmu akan dihapus secara permanen.</p>
             </div>
         </div>
     </div>
 
     <div class="mt-auto pt-12">
-        <a href="{{ route('profile') }}" class="bg-[#d1d5db] text-gray-900 px-16 py-2.5 rounded-xl font-bold hover:bg-gray-400 transition-all shadow-sm inline-block">
+        <a href="{{ route('profile') }}" class="bg-[#d1d5db] text-gray-900 px-16 py-2.5 rounded-xl font-bold hover:bg-gray-400 transition-all shadow-sm inline-block" data-translate="btn_back">
             Kembali
         </a>
     </div>

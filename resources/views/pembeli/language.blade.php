@@ -1,5 +1,3 @@
-@include('pembeli.nav')
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -25,30 +23,35 @@
     </style>
 </head>
 
-<body class="bg-[#fcebda] min-h-screen p-6">
-    <div class="max-w-md mx-auto">
-        <h1 class="text-2xl font-bold text-gray-900 text-center mb-10" data-translate="title_ubah_bahasa">Ubah Bahasa</h1>
-        
-        <div class="space-y-4">
-            <button onclick="setLang('id')" id="btn-id" 
-                class="lang-btn w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent flex justify-between items-center font-bold text-gray-700 transition-all hover:border-orange-200">
-                <span>Bahasa Indonesia (ID)</span>
-                <span id="check-id" class="check-icon hidden text-[#e07b11] text-xl">✔</span>
-            </button>
+<body class="bg-[#fcebda] min-h-screen">
+    
+    @include('pembeli.nav')
 
-            <button onclick="setLang('en')" id="btn-en" 
-                class="lang-btn w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent flex justify-between items-center font-bold text-gray-700 transition-all hover:border-orange-200">
-                <span>English (EN)</span>
-                <span id="check-en" class="check-icon hidden text-[#e07b11] text-xl">✔</span>
-            </button>
-        </div>
+    <div class="p-6">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-2xl font-bold text-gray-900 text-center mb-10" data-translate="title_ubah_bahasa">Ubah Bahasa</h1>
+            
+            <div class="space-y-4">
+                <button onclick="setLang('id')" id="btn-id" 
+                    class="lang-btn w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent flex justify-between items-center font-bold text-gray-700 transition-all hover:border-orange-200">
+                    <span>Bahasa Indonesia (ID)</span>
+                    <span id="check-id" class="check-icon hidden text-[#e07b11] text-xl">✔</span>
+                </button>
 
-        <div class="mt-10">
-            <a href="{{ route('pembeli-profil') }}" 
-                class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-extrabold py-4 rounded-2xl text-center uppercase text-[11px] tracking-[0.2em] transition-all"
-                data-translate="btn_back">
-                Kembali
-            </a>
+                <button onclick="setLang('en')" id="btn-en" 
+                    class="lang-btn w-full bg-white p-6 rounded-3xl shadow-sm border-2 border-transparent flex justify-between items-center font-bold text-gray-700 transition-all hover:border-orange-200">
+                    <span>English (EN)</span>
+                    <span id="check-en" class="check-icon hidden text-[#e07b11] text-xl">✔</span>
+                </button>
+            </div>
+
+            <div class="mt-10">
+                <a href="{{ route('pembeli-profil') }}" 
+                    class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-extrabold py-4 rounded-2xl text-center uppercase text-[11px] tracking-[0.2em] transition-all"
+                    data-translate="btn_back">
+                    Kembali
+                </a>
+            </div>
         </div>
     </div>
 
@@ -56,7 +59,6 @@
         function setLang(lang) {
             localStorage.setItem('app_lang', lang);
             updateUI(lang); 
-            // Panggil fungsi global dari nav.blade.php untuk memperbarui teks seketika
             if (typeof window.refreshLanguage === 'function') {
                 window.refreshLanguage();
             }
