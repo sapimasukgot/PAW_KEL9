@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PembeliController;
+use App\Http\Controllers\PenjualController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
-
 Route::post('/login-submit', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/register-submit', [AuthController::class, 'register'])->name('register.submit');
-Route::post('/logout', [PembeliController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/pilih-role', function () {
@@ -42,68 +43,34 @@ Route::middleware(['auth'])->prefix('pembeli')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/penjual-beranda', function () { return view('penjual-beranda'); })->name('penjual-beranda');
-    Route::get('/pesanan-penjual', function(){ return view('pesanan-penjual'); })->name('pesanan-penjual');
-    Route::get('/profil-penjual', function(){ return view('profil-penjual'); })->name('profil-penjual');
-    Route::get('/tambah-menu', function(){ return view('tambah_menu'); })->name('tambah_menu');
-    Route::get('/pesanan-detail', function(){ return view('pesanan-detail'); })->name('pesanan-detail');
-    Route::get('/ubah-profil-penjual', function () { return view('ubah-profil'); })->name('ubah-profil');
+    Route::get('/profil-penjual', [PenjualController::class, 'profil'])->name('profil-penjual');
+    Route::get('/ubah-profil-penjual', [PenjualController::class, 'editProfil'])->name('ubah-profil');
+    Route::post('/update-profil-penjual', [PenjualController::class, 'updateProfil'])->name('penjual-update-profil');
+    Route::get('/pesanan-penjual', function () { return view('pesanan-penjual'); })->name('pesanan-penjual');
+    Route::get('/tambah-menu', function () { return view('tambah_menu'); })->name('tambah_menu');
+    Route::get('/pesanan-detail', function () { return view('pesanan-detail'); })->name('pesanan-detail');
     Route::get('/riwayat-penjual', function () { return view('riwayat-penjual'); })->name('riwayat-penjual');
     Route::get('/ubah-sandi-penjual', function () { return view('ubah-sandi'); })->name('ubah-sandi-penjual');
     Route::get('/ubah-bahasa-penjual', function () { return view('ubah-bahasa'); })->name('ubah-bahasa-penjual');
     Route::get('/pengaturan-akun-penjual', function () { return view('pengaturan-akun'); })->name('pengaturan-akun-penjual');
     Route::get('/riwayat-penjual-detail', function () { return view('riwayat-detail'); })->name('riwayat-penjual-detail');
-    Route::get('/ulasan-penjual', function () { return view('ulasan-penjual'); })->name('ulasan-penjual');
+    Route::get('/ulasan-penjual', function () {
+        $ulasan = [
+            ['id' => 1, 'nama' => 'Aan', 'harga' => '32.000', 'menu' => 'Mie Pangsit', 'komentar' => 'Rasanya mantap!'],
+            ['id' => 2, 'nama' => 'Budi', 'harga' => '15.000', 'menu' => 'Nasi Goreng', 'komentar' => 'Porsinya banyak.'],
+        ];
+        return view('ulasan-penjual', compact('ulasan'));
+    })->name('ulasan-penjual');
     Route::get('/ulasan-detail/{id}', function ($id) { return view('ulasan-detail', ['id' => $id]); })->name('ulasan-detail');
     Route::get('/ubah-sandi', function () { return view('ubah-sandi'); })->name('ubah-sandi');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin-dashboard', function () { return view('admin-beranda'); })->name('admin-beranda');
-    Route::get('/admin/profile', function () { return view('profile'); })->name('profile');
+    Route::get('/admin/profile', [AdminController::class, 'profil'])->name('profile');
+    Route::get('/admin/ubah-profil', [AdminController::class, 'editProfil'])->name('ubah-profil-admin');
+    Route::post('/admin/update-profil', [AdminController::class, 'updateProfil'])->name('admin-update-profil');
     Route::get('/admin/pengaturan', function () { return view('pengaturan-akun-admin'); })->name('pengaturan-akun-admin');
     Route::get('/admin/ubah-sandi', function () { return view('ubah-sandi-admin'); })->name('ubah-sandi-admin');
     Route::get('/admin/ubah-bahasa', function () { return view('ubah-bahasa-admin'); })->name('ubah-bahasa-admin');
-    Route::get('/admin/ubah-profil', function () { return view('ubah-profil-admin'); })->name('ubah-profil-admin');
 });
-
-Route::get('/ulasan-penjual', function() {
-    $ulasan = [
-        [
-            'id' => 1, 
-            'nama' => 'Aan', 
-            'harga' => '32.000', 
-            'menu' => 'Mie Pangsit', 
-            'komentar' => 'Rasanya mantap!'
-        ],
-        [
-            'id' => 2, 
-            'nama' => 'Budi', 
-            'harga' => '15.000', 
-            'menu' => 'Nasi Goreng', 
-            'komentar' => 'Porsinya banyak.'
-        ],
-    ];
-
-    return view('ulasan-penjual', compact('ulasan'));
-})->name('ulasan-penjual');
-
-Route::get('/ulasan-penjual', function() {
-    $ulasan = [
-        [
-            'id' => 1, 
-            'nama' => 'Aan', 
-            'harga' => '32.000', 
-            'menu' => 'Mie Pangsit', 
-            'komentar' => 'Enak banget!'
-        ],
-        [
-            'id' => 2, 
-            'nama' => 'Budi', 
-            'harga' => '15.000', 
-            'menu' => 'Nasi Ayam Geprek', 
-            'komentar' => 'Sambalnya mantap.'
-        ],
-    ];
-
-    return view('ulasan-penjual', compact('ulasan'));
-})->name('ulasan-penjual');

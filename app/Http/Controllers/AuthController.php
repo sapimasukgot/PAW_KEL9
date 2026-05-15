@@ -50,11 +50,11 @@ public function login(Request $request) {
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
-                'role'     => 'pembeli', 
+                'role'     => 'user',
             ]);
 
             Auth::login($user);
-            return redirect()->route('pembeli-beranda');
+            return redirect()->route('role.pilih');
 
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
