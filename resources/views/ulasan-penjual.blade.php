@@ -7,43 +7,46 @@
     <div class="flex-grow overflow-y-auto pr-3 custom-scrollbar pb-25">
         <div class="space-y-4">
             
-            @php
-                $ulasan = [
-                    ['nama' => 'Justin Laksana', 'tgl' => '27 Mar 2026', 'harga' => '32.000', 'desc' => '1 Mie Pangsit Jumbo, 1 Mie Pangsit ...', 'komentar' => 'Mantap Gacor the best lah...'],
-                    ['nama' => 'John Doe', 'tgl' => '27 Mar 2026', 'harga' => '14.000', 'desc' => '1 Mie Pangsit Jumbo', 'komentar' => 'Mie nya enak banget...'],
-                    ['nama' => 'Isabelle', 'tgl' => '26 Mar 2026', 'harga' => '18.000', 'desc' => '1 Mie Pangsit Jumbo, Topping Telur', 'komentar' => 'Kapan kapan saya kesini lagi...'],
-                ];
-            @endphp
-
-            @foreach($ulasan as $item)
-            <div class="bg-white p-4 rounded-2xl shadow-sm flex items-start gap-4 mb-4">
-                <div class="w-16 h-16 bg-gray-300 rounded-full flex-shrink-0 overflow-hidden">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($item['nama']) }}" alt="avatar">
+            @forelse($ulasan as $item)
+            <div class="bg-white p-4 rounded-2xl shadow-sm flex items-start gap-4 mb-4 border border-gray-50">
+                <div class="w-16 h-16 bg-orange-500 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold uppercase text-xl">
+                    {{ substr($item->user->name ?? 'P', 0, 1) }}
                 </div>
 
                 <div class="flex-grow">
-                    <span class="text-xs text-gray-400 block mb-1">{{ $item['tgl'] }}</span>
-                    <h4 class="font-bold text-lg leading-tight">{{ $item['nama'] }}</h4>
-                    <p class="text-sm text-gray-500 mb-1">{{ $item['desc'] }}</p>
+                    <span class="text-xs text-gray-400 block mb-1">
+                        {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
+                    </span>
+                    <h4 class="font-bold text-lg leading-tight">{{ $item->user->name ?? 'Pelanggan' }}</h4>
+                    <p class="text-sm text-gray-500 mb-1">Nilai Skor: {{ $item->nilai }} / 5</p>
                     
-                    <p class="text-sm italic text-gray-700">
-                        <span data-translate="label_review">Ulasan:</span> {{ $item['komentar'] }}
+                    <p class="text-sm italic text-gray-700 bg-gray-50 p-2.5 rounded-xl mt-1">
+                        <span data-translate="label_review" class="font-bold not-italic">Ulasan:</span> 
+                        "{{ $item->ulasan ?? 'Tidak ada ulasan tertulis.' }}"
                     </p>
                     
-                    <div class="flex text-yellow-400 mt-2 text-sm">★★★★★</div>
+                    <div class="flex text-yellow-400 mt-2 text-sm">
+                        @for($i = 1; $i <= 5; $i++)
+                            {{ $i <= $item->nilai ? '★' : '☆' }}
+                        @endfor
+                    </div>
                 </div>
 
-                <div class="flex flex-col items-end gap-6 text-right">
-                    <span class="font-bold text-sm whitespace-nowrap">Rp {{ $item['harga'] }}</span>
+                <div class="flex flex-col items-end justify-between self-stretch text-right">
+                    <span class="font-bold text-sm text-gray-400 whitespace-nowrap">ID: #{{ $item->rating_id }}</span>
                     
-                    <a href="{{ route('ulasan-detail', ['id' => $item['id'] ?? 0]) }}" 
-                       class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition"
+                    <a href="{{ route('ulasan-detail', $item->rating_id) }}" 
+                       class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition mt-4 inline-block"
                        data-translate="btn_view_detail">
                         Lihat Detail
                     </a>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <p class="text-gray-400 text-sm">Belum ada ulasan yang masuk untuk toko ini.</p>
+            </div>
+            @endforelse
 
         </div>
     </div>

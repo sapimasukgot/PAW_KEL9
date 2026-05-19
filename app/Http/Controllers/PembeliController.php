@@ -6,28 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Menu;
+use App\Models\Pesanan;
+use App\Models\Rating;
 
 class PembeliController extends Controller
 {
     public function index()
     {
-        $menus = [
-            ['id' => 1, 'nama' => 'Mie Pangsit', 'harga' => 'Rp10.000', 'foto' => 'https://via.placeholder.com/150'],
-            ['id' => 2, 'nama' => 'Nasi Ayam Katsu', 'harga' => 'Rp15.000', 'foto' => 'https://via.placeholder.com/150'],
-            ['id' => 3, 'nama' => 'Mie Ayam', 'harga' => 'Rp12.000', 'foto' => 'https://via.placeholder.com/150'],
-        ];
+        $menus = Menu::all();
 
         return view('pembeli.beranda', compact('menus'));
     }
 
     public function show($id) {
-        $menus = [
-            1 => ['id' => 1, 'nama' => 'Mie Pangsit', 'harga' => '15.000'],
-            2 => ['id' => 2, 'nama' => 'Nasi Ayam Katsu', 'harga' => '20.000'],
-            3 => ['id' => 3, 'nama' => 'Mie Ayam', 'harga' => '12.000'],
-        ];
-        
-        $menu = $menus[$id] ?? abort(404);
+        $menu = Menu::findOrFail($id);
+
         return view('pembeli.detail', compact('menu'));
     }
 
@@ -47,7 +41,6 @@ class PembeliController extends Controller
 
         $request->validate([
             'name'  => 'required|string|max:255',
-            
             'email' => 'required|email|unique:users,email,' . Auth::id(),
         ]);
 
@@ -78,40 +71,137 @@ class PembeliController extends Controller
         return redirect()->route('pembeli-pengaturan')->with('success', 'Password berhasil diganti.');
     }
 
+    public function storePesanan(Request $request, $id)
+    {
+        $request->validate([
+            'nama_pembeli' => 'required|string|max:255',
+            'no_meja'      => 'required|integer|min:1',
+            'harga_total'  => 'required|numeric',
+            'keterangan'   => 'nullable|string',
+        ]);
+
+        $menu = Menu::findOrFail($id);
+
+        $pesanan = Pesanan::create([
+            'user_id'       => Auth::id(),
+            'toko_id'       => $menu->toko_id,
+            'nama_pembeli'  => $request->nama_pembeli,
+            'no_meja'       => $request->no_meja,
+            'total_harga'   => $request->harga_total,
+            'status'        => 'Pending',
+            'keterangan'    => $request->keterangan,
+            'tanggal_order' => now(), 
+        ]);
+
+        return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
+    }
+
     public function checkout($id) {
-        $menu = ['id' => $id, 'nama' => 'Mie Pangsit', 'image' => 'https://via.placeholder.com/300'];
+        $menu = Menu::findOrFail($id);
         return view('pembeli.checkout', compact('menu'));
     }
 
-    public function history() {
-        $histories = [['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'status' => 'Selesai']];
-        return view('pembeli.history', compact('histories'));
+    public function history()
+    {
+        $user_id = Auth::id();
+        $histories = Pesanan::where('user_id', $user_id)
+                        ->whereIn('status', ['Siap', 'Selesai', 'Batal'])
+                        ->latest()
+                        ->get();
+
+        return view('pembeli.history', compact('histories')); 
     }
 
-    public function payment() { return view('pembeli.payment_instruction'); }
-
-    public function ongoing() {
-        $menus = []; 
-        $ongoing = ['nama' => 'Mie Pangsit', 'status' => 'Menunggu Pembayaran'];
-        return view('pembeli.beranda_ongoing', compact('menus', 'ongoing'));
+    public function payment() { 
+        return view('pembeli.payment_instruction'); 
     }
 
-    public function rating($id) { return view('pembeli.rating', ['id' => $id]); }
-    public function storeRating(Request $request) { return redirect()->route('pembeli-thanks'); }
-    public function thanks() { return view('pembeli.thanks'); }
-    public function detailpesanan() { return view('pembeli.detail-pesanan'); }
-    public function changePassword() { return view('pembeli.ubah-sandi'); }
-    public function bahasa() { return view('pembeli.language'); }
-    public function pengaturan() { return view('pembeli.settings'); }
+    public function ongoing()
+    {
+        $user_id = Auth::id();
 
-    public function historyDetail($id) {
-        $all_histories = [
-            101 => ['id' => 101, 'nama' => 'Mie Pangsit', 'tanggal' => '27 Mar 2026', 'harga' => '32.000', 'metode' => 'OVO / Dana'],
-            102 => ['id' => 102, 'nama' => 'Nasi Ayam Katsu', 'tanggal' => '20 Mar 2026', 'harga' => '15.000', 'metode' => 'Tunai'],
-        ];
-        $detail = $all_histories[$id] ?? null;
-        if (!$detail) return redirect()->route('pembeli-riwayat');
-        return view('pembeli.history_detail', compact('detail'));
+        $pesanans = Pesanan::where('user_id', $user_id)
+                        ->whereIn('status', ['Pending', 'Dimasak', 'Proses'])
+                        ->latest()
+                        ->get();
+
+        $menus = Menu::all(); 
+
+        return view('pembeli.beranda_ongoing', compact('pesanans', 'menus')); 
+    }
+    public function rating($id)
+    {
+        $pesanan = \App\Models\Pesanan::findOrFail($id);
+
+        return view('pembeli.rating', compact('pesanan'));
+}
+
+    public function storeRating(Request $request, $id)
+    {
+        $request->validate([
+            'toko_id' => 'required',
+            'nilai'   => 'required|integer|min:1|max:5',
+            'ulasan'  => 'nullable|string|max:500',
+        ]);
+
+        Rating::create([
+            'pesanan_id' => $id, 
+            'user_id'    => Auth::id(),
+            'toko_id'    => $request->toko_id,
+            'nilai'      => $request->nilai,
+            'ulasan'     => $request->ulasan ?? 'Tidak ada ulasan teks.',
+            'tanggal'    => now(),
+        ]);
+
+        $pesanan = Pesanan::find($id);
+        if ($pesanan) {
+            $pesanan->update(['status' => 'Selesai']);
+        }
+
+        return redirect()->route('pembeli-riwayat-detail', $id)->with('success', 'Rating berhasil disimpan!');
+    }
+    
+    public function thanks() { 
+        return view('pembeli.thanks'); 
+    }
+
+    public function changePassword() { 
+        return view('pembeli.ubah-sandi'); 
+    }
+
+    public function bahasa() { 
+        return view('pembeli.language'); 
+    }
+
+    public function pengaturan() { 
+        return view('pembeli.settings'); 
+    }
+
+    public function historyDetail($id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+        $rating = \App\Models\Rating::where('pesanan_id', $id)->first();
+        return view('pembeli.history_detail', compact('pesanan', 'rating'));
+    }
+
+    public function pesanan()
+    {
+        $toko = $this->getToko();
+        $semuaPesanan = \App\Models\Pesanan::all();
+        dd([
+            'ID_User_Penjual_Login' => \Illuminate\Support\Facades\Auth::id(),
+            'Toko_Object_Penjual' => $toko ? $toko->toArray() : 'Tidak Punya Toko',
+            'Semua_Data_Pesanan_Di_MakanMart' => $semuaPesanan->toArray()
+            ]);
+    }
+    public function detailpesanan($id) 
+    {
+        $pesanan = Pesanan::findOrFail($id);
+        $menu = new \stdClass();
+        $menu->nama_menu = "Nota Pesanan #" . $pesanan->pesanan_id;
+        $menu->deskripsi = "Pesanan Anda telah direkam di sistem MakanMart pada " . $pesanan->tanggal_order;
+
+        return view('pembeli.detail-pesanan', compact('pesanan', 'menu'));
     }
 
     public function deleteAccount(Request $request) {

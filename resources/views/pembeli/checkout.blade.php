@@ -3,89 +3,168 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><title data-translate="title_order_menu">Order Menu - MakanMart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakanMart - Order Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#fcebda] min-h-screen pb-10">
-    <div class="p-4 max-w-lg mx-auto">
-        <h2 class="text-xl font-bold text-center mb-6" data-translate="title_order_menu">Order Menu</h2>
-        
-        <div class="bg-white p-6 rounded-3xl shadow-sm space-y-6">
-            <div>
-                <label class="block text-sm font-bold mb-2" data-translate="label_detail_menu">Detail Menu (Topping, Level)</label>
-                <textarea id="persist-topping" data-translate="holder_detail_menu" placeholder="Masukkan topping atau level..." 
-                          class="w-full p-3 border rounded-2xl bg-gray-50 h-24"></textarea>
+<body style="background-color: #FFEDD9;" class="min-h-screen pb-10">
+
+    <div class="max-w-3xl mx-auto p-4">
+
+        <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Order {{ $menu->nama_menu }}</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm">
+                <img src="https://via.placeholder.com/400x300" alt="{{ $menu->nama_menu }}" class="w-full h-full object-cover">
             </div>
-            <div>
-                <label class="block text-sm font-bold mb-2" data-translate="label_note">Keterangan Pesanan</label>
-                <textarea id="persist-keterangan" data-translate="holder_note" placeholder="Tambahkan catatan untuk penjual..." 
-                          class="w-full p-3 border rounded-2xl bg-gray-50 h-24"></textarea>
+
+            <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
+                <h4 class="font-bold text-sm text-gray-800 mb-1">Deskripsi</h4>
+                <p class="text-xs text-gray-600 leading-relaxed">
+                    {{ $menu->nama_menu }} {{ $menu->deskripsi ?? 'adalah salah satu menu yang cukup digemari pelanggan, terlebih karena rasanya yang gurih and aromanya yang menggugah selera.' }}
+                </p>
             </div>
         </div>
 
-        <div class="flex justify-between mt-10">
-            <a href="{{ url()->previous() }}" class="bg-gray-300 px-8 py-2 rounded-xl font-bold" data-translate="btn_back">Kembali</a>
-            <button onclick="openPaymentModal()" class="bg-blue-500 text-white px-10 py-2 rounded-xl font-bold" data-translate="btn_pay_now">Bayar</button>
-        </div>
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Harga</h4>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <p>Reguler: Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                    <p>Jumbo: Rp {{ number_format($menu->harga + 4000, 0, ',', '.') }} <span class="text-gray-400 text-[10px]">(+Rp 4.000 dari reguler)</span></p>
+                </div>
+            </div>
 
-    <div id="payModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] p-4">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center">
-            <h3 class="text-xl font-bold mb-6" data-translate="modal_ready_pay">Siap Membayar?</h3>
-            <div class="flex gap-3">
-                <button onclick="document.getElementById('payModal').classList.add('hidden')" class="flex-1 py-3 bg-gray-200 rounded-xl font-bold" data-translate="btn_batal">Batal</button>
-                <button id="timerBtn" disabled class="flex-1 py-3 bg-orange-500 text-white rounded-xl font-bold opacity-50"></button>
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Topping</h4>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <p>Kerupuk - Rp 4.000</p>
+                    <p>Kulit - Rp 3.000</p>
+                    <p>Telur - Rp 4.000</p>
+                </div>
             </div>
         </div>
+
+       <form action="{{ route('pembeli-checkout.store', $menu->menu_id) }}" method="POST" class="space-y-4">
+            @csrf
+
+            <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Menu</h4>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Reguler:</span>
+                    <input type="number" id="qty_reguler" name="qty_reguler" value="0" min="0" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none border-none shadow-sm">
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Jumbo:</span>
+                    <input type="number" id="qty_jumbo" name="qty_jumbo" value="0" min="0" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none border-none shadow-sm">
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Topping:</span>
+                    <select id="topping_select" name="topping" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-32 text-center focus:outline-none border-none shadow-sm cursor-pointer">
+                        <option value="-">Tanpa Topping</option>
+                        <option value="Telur">Telur (+4k)</option>
+                        <option value="Kerupuk">Kerupuk (+4k)</option>
+                        <option value="Kulit">Kulit (+3k)</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Level Pedas:</span>
+                    <select name="level_pedas" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-24 text-center focus:outline-none border-none shadow-sm appearance-none cursor-pointer">
+                        <option value="Lvl 0">Lvl 0</option>
+                        <option value="Lvl 1">Lvl 1</option>
+                        <option value="Lvl 2">Lvl 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Pesanan</h4>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Nama:</span>
+                    <input type="text" name="nama_pembeli" value="Aan" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">No. Meja:</span>
+                    <input type="number" name="no_meja" value="1" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
+                </div>
+                
+               <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Harga:</span>
+                        <input type="text" id="total_harga" readonly class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-orange-600 min-w-[150px] text-center focus:outline-none border-none">
+                        <input type="hidden" id="total_harga_raw" name="harga_total">
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Keterangan:</span>
+                    <input type="text" name="keterangan" placeholder="Contoh: Sendok plastik dipisah..." class="bg-gray-100 px-4 py-1.5 rounded-full text-xs w-full max-w-sm text-left focus:outline-none focus:ring-1 ring-orange-300">
+                </div>
+            </div>
+
+            <div class="w-full flex justify-between items-center pt-2">
+                <a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
+                    Kembali
+                </a>
+                <button type="submit" class="bg-[#CBD5E1] text-gray-700 px-16 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
+                    Bayar
+                </button>
+            </div>
+        </form>
+
     </div>
 
     <script>
-    let timerJob;
+        document.addEventListener('DOMContentLoaded', () => {
+            const qtyRegulerInput = document.getElementById('qty_reguler');
+            const qtyJumboInput = document.getElementById('qty_jumbo');
+            const toppingSelect = document.getElementById('topping_select');
+            const totalHargaDisplay = document.getElementById('total_harga');
+            const totalHargaRaw = document.getElementById('total_harga_raw');
 
-    function openPaymentModal() {
-        const modal = document.getElementById('payModal');
-        const btn = document.getElementById('timerBtn');
-        
-        // Ambil bahasa dan kata "Ya/Yes" dari dictionary global di nav.blade.php
-        const lang = localStorage.getItem('app_lang') || 'id';
-        const wordYes = (dictionary[lang] && dictionary[lang]['btn_yes']) ? dictionary[lang]['btn_yes'] : 'Ya';
-        
-        modal.classList.remove('hidden');
-        
-        clearInterval(timerJob);
-        let timeLeft = 5;
-        btn.disabled = true;
-        btn.classList.add('opacity-50');
-        btn.innerText = `${wordYes} (${timeLeft}s)`;
+            const HARGA_REGULER = {{ $menu->harga }}; 
+            const BIAYA_TAMBAHAN_JUMBO = 4000;
 
-        timerJob = setInterval(() => {
-            timeLeft--;
-            btn.innerText = `${wordYes} (${timeLeft}s)`;
-            if (timeLeft <= 0) {
-                clearInterval(timerJob);
-                btn.innerText = wordYes;
-                btn.disabled = false;
-                btn.classList.remove('opacity-50');
+            function hitungTotal() {
+                const qtyReguler = parseInt(qtyRegulerInput.value) || 0;
+                const qtyJumbo = parseInt(qtyJumboInput.value) || 0;
+                const toppingValue = toppingSelect.value;
+
+                const totalHargaReguler = qtyReguler * HARGA_REGULER;
+                const totalHargaJumbo = qtyJumbo * (HARGA_REGULER + BIAYA_TAMBAHAN_JUMBO);
+
+                let total = totalHargaReguler + totalHargaJumbo;
+
+                let totalPorsi = qtyReguler + qtyJumbo;
+                if (totalPorsi > 0) {
+                    if (toppingValue === 'Telur' || toppingValue === 'Kerupuk') {
+                        total += (4000 * totalPorsi);
+                    } else if (toppingValue === 'Kulit') {
+                        total += (3000 * totalPorsi);
+                    }
+                }
+
+                const formatted = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(total);
+
+                totalHargaDisplay.value = formatted.replace('Rp', 'Rp ');
+                totalHargaRaw.value = total;
             }
-        }, 1000);
 
-        btn.onclick = () => window.location.href = "{{ route('pembeli-pembayaran') }}";
-    }
+            qtyRegulerInput.addEventListener('input', hitungTotal);
+            qtyJumboInput.addEventListener('input', hitungTotal);
+            toppingSelect.addEventListener('change', hitungTotal);
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Persistensi form
-        const fields = ['persist-topping', 'persist-keterangan'];
-        fields.forEach(id => {
-            const el = document.getElementById(id);
-            el.value = localStorage.getItem(id) || '';
-            el.addEventListener('input', () => localStorage.setItem(id, el.value));
+            hitungTotal();
         });
-
-        // Tampilkan teks tombol "Ya" awal sesuai bahasa
-        const lang = localStorage.getItem('app_lang') || 'id';
-        const wordYes = (dictionary[lang] && dictionary[lang]['btn_yes']) ? dictionary[lang]['btn_yes'] : 'Ya';
-        document.getElementById('timerBtn').innerText = `${wordYes} (5s)`;
-    });
     </script>
 </body>
 </html>

@@ -5,9 +5,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pesanan extends Model {
     protected $table = 'pesanan';
-    protected $primaryKey = 'order_id';
-    protected $fillable = ['user_id', 'toko_id', 'tanggal_order', 'total_harga', 'status'];
-
+    protected $primaryKey = 'pesanan_id';
+    protected $fillable = [
+        'user_id',
+        'toko_id',
+        'nama_pembeli',
+        'no_meja',
+        'total_harga',
+        'status',
+        'keterangan',
+        'tanggal_order'
+    ];
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }

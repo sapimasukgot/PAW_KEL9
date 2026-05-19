@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><title>Beranda MakanMart</title>
+    <meta charset="UTF-8">
+    <title>Beranda MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#fcebda] pb-10">
@@ -16,15 +17,19 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($menus as $menu)
             <div class="card-item bg-white p-3 rounded-2xl shadow-md flex gap-3 relative transition-all duration-300">
-                <div class="w-24 h-24 bg-gray-200 rounded-xl flex items-center justify-center">
+                <div class="w-24 h-24 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span class="text-[10px] font-bold text-gray-400 uppercase">Foto</span>
                 </div>
                 <div class="flex flex-col justify-between flex-1">
                     <div>
-                        <h3 class="card-title font-bold text-lg leading-tight">{{ $menu['nama'] }}</h3>
-                        <p class="text-xs text-gray-500" data-translate="desc_menu">Menu sedap sekali</p>
+                        <h3 class="card-title font-bold text-lg leading-tight text-gray-900">{{ $menu->nama_menu }}</h3>
+                        
+                        <span class="text-xs font-bold text-orange-500 block mt-0.5">Rp {{ number_format($menu->harga, 0, ',', '.') }}</span>
+                        <p class="text-[11px] text-gray-500 mt-1 line-clamp-2" data-translate="desc_menu">
+                            {{ $menu->deskripsi ?? 'Menu sedap sekali' }}
+                        </p>
                     </div>
-                    <a href="{{ route('pembeli-detail', $menu['id']) }}" class="text-right text-sm font-semibold text-blue-600" data-translate="btn_see_detail">Pesan</a>
+                    <a href="{{ route('pembeli-detail', $menu->menu_id) }}" class="text-right text-sm font-semibold text-blue-600 hover:text-blue-800 transition-all" data-translate="btn_see_detail">Pesan</a>
                 </div>
             </div>
             @endforeach

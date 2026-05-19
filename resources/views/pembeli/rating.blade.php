@@ -15,8 +15,11 @@
 </head>
 <body style="background-color: #FFEDD9;">
 
-    <div class="w-full p-6 flex flex-col min-h-screen">
-        
+        <form action="{{ route('pembeli-rating-store', $pesanan->pesanan_id ?? $pesanan->id) }}" method="POST" class="w-full p-6 flex flex-col min-h-screen">
+        @csrf
+
+        <input type="hidden" name="toko_id" value="{{ $pesanan->toko_id }}">
+
         <h1 class="text-2xl font-bold text-gray-900 mb-8" data-translate="title_order_summary">Rangkuman Pesanan</h1>
 
         <div class="flex flex-row gap-6 mb-10 w-full">
@@ -46,19 +49,19 @@
                 <div class="space-y-3 mt-8">
                     <div class="flex items-center gap-4">
                         <span class="w-24 text-sm font-bold" data-translate="label_name">Nama:</span>
-                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">Aan</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">{{ $pesanan->nama_pembeli }}</span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="w-24 text-sm font-bold" data-translate="label_table_no">No. Meja:</span>
-                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">1</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm">{{ $pesanan->no_meja }}</span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="w-24 text-sm font-bold" data-translate="label_price">Harga:</span>
-                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold">Rp32.000</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="w-24 text-sm font-bold" data-translate="label_info">Keterangan:</span>
-                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold text-gray-600 italic" data-translate="val_done">Selesai</span>
+                        <span class="bg-gray-200 px-6 py-1 rounded-lg text-sm font-bold text-gray-600 italic">"{{ $pesanan->keterangan ?? '-' }}"</span>
                     </div>
                 </div>
             </div>
@@ -68,21 +71,23 @@
             <h2 class="text-xl font-bold text-gray-900" data-translate="title_give_rating">Berikan Rating Pesanan</h2>
             
             <div class="flex flex-row-reverse justify-center gap-2 star-rating">
-                <input type="radio" id="star5" name="rating" value="5" class="hidden" />
+                <input type="radio" id="star5" name="nilai" value="5" class="hidden" required />
                 <label for="star5" class="cursor-pointer text-4xl text-gray-300">★</label>
-                <input type="radio" id="star4" name="rating" value="4" class="hidden" />
+                <input type="radio" id="star4" name="nilai" value="4" class="hidden" />
                 <label for="star4" class="cursor-pointer text-4xl text-gray-300">★</label>
-                <input type="radio" id="star3" name="rating" value="3" class="hidden" />
+                <input type="radio" id="star3" name="nilai" value="3" class="hidden" />
                 <label for="star3" class="cursor-pointer text-4xl text-gray-300">★</label>
-                <input type="radio" id="star2" name="rating" value="2" class="hidden" />
+                <input type="radio" id="star2" name="nilai" value="2" class="hidden" />
                 <label for="star2" class="cursor-pointer text-4xl text-gray-300">★</label>
-                <input type="radio" id="star1" name="rating" value="1" class="hidden" />
+                <input type="radio" id="star1" name="nilai" value="1" class="hidden" />
                 <label for="star1" class="cursor-pointer text-4xl text-gray-300">★</label>
             </div>
 
             <div class="w-full mt-6">
                 <label class="block text-lg font-bold text-gray-900 mb-2" data-translate="label_review_input">Ulasan</label>
+
                 <textarea 
+                    name="ulasan"
                     data-translate="holder_review_input"
                     class="w-full h-32 p-4 rounded-2xl border border-orange-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
                     placeholder="Masukkan ulasan Anda di sini..."
@@ -91,13 +96,13 @@
         </div>
 
         <div class="w-full flex justify-between items-center mb-10">
-            <a href="{{ route('pembeli-beranda') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all" data-translate="btn_back">
+            <a href="{{ route('pembeli-beranda') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all text-center" data-translate="btn_back">
                 Kembali
             </a>
-            <a href="{{ route('pembeli-thanks') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all" data-translate="btn_send">
+            <button type="submit" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all" data-translate="btn_send">
                 Kirim
-            </a>
+            </button>
         </div>
-    </div>
+    </form>
 </body>
 </html>

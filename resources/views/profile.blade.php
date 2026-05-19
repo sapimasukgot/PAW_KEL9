@@ -36,13 +36,8 @@
         <a href="{{ route('ubah-bahasa-admin') }}"
             class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
             <div class="flex items-center gap-4">
-<<<<<<< HEAD
                 <span class="text-xl">🌐</span> 
                 <span class="font-bold text-gray-800" data-translate="label_language">Bahasa</span>
-=======
-                <span class="text-xl">🌐</span>
-                <span class="font-bold text-gray-800">Bahasa</span>
->>>>>>> 51b0182 (perbaikinhalaman profil penjual dan admin)
             </div>
             <svg xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
@@ -54,13 +49,8 @@
         <a href="{{ route('pengaturan-akun-admin') }}"
             class="w-full bg-white rounded-3xl p-5 shadow-sm border border-orange-100 flex items-center justify-between hover:bg-orange-50 transition-all group">
             <div class="flex items-center gap-4">
-<<<<<<< HEAD
                 <span class="text-xl">🔒</span> 
                 <span class="font-bold text-gray-800" data-translate="label_account_settings">Pengaturan Akun</span>
-=======
-                <span class="text-xl">🔒</span>
-                <span class="font-bold text-gray-800">Pengaturan Akun</span>
->>>>>>> 51b0182 (perbaikinhalaman profil penjual dan admin)
             </div>
             <svg xmlns="http://www.w3.org/2000/svg"
                 class="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
@@ -71,38 +61,28 @@
     </div>
 
     <div class="mt-auto pt-16 flex justify-center">
-<<<<<<< HEAD
         <button onclick="handleAdminLogout()" 
-                class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 hover:bg-red-50 transition group">
+                class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 hover:bg-red-50 transition group border border-orange-50">
             <span class="text-red-500">🚪</span>
-            <span class="font-bold text-gray-800" data-translate="label_logout">Keluar Akun</span>
-=======
-        <button onclick="document.getElementById('logout-form').submit()"
-            class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-center items-center gap-2 hover:bg-red-50 transition group">
-            <span class="text-red-500">🚪</span>
-            <span class="font-bold text-gray-800">Keluar Akun Admin</span>
->>>>>>> 51b0182 (perbaikinhalaman profil penjual dan admin)
+            <span class="font-bold text-gray-800" data-translate="label_logout">Keluar Akun Admin</span>
         </button>
     </div>
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
         @csrf
     </form>
-<<<<<<< HEAD
-@endsection
 
-<script>
-    function handleAdminLogout() {
-        const lang = localStorage.getItem('app_lang') || 'id';
+    <script>
+        function handleAdminLogout() {
+            const lang = localStorage.getItem('app_lang') || 'id';
 
-        showCustomModal({
-            title: dictionary[lang]['modal_logout_admin_title'],
-            message: dictionary[lang]['modal_logout_admin_msg'],
-            actionText: dictionary[lang]['modal_logout_admin_action'],
-            actionUrl: "{{ route('login') }}"
-        });
-    }
-</script>
-=======
+            const msg = (typeof dictionary !== 'undefined' && dictionary[lang] && dictionary[lang]['modal_logout_admin_msg'])
+                ? dictionary[lang]['modal_logout_admin_msg']
+                : 'Apakah Anda yakin ingin mengakhiri sesi administrasi?';
+
+            if (confirm(msg)) {
+                document.getElementById('logout-form').submit();
+            }
+        }
+    </script>
 @endsection
->>>>>>> 51b0182 (perbaikinhalaman profil penjual dan admin)

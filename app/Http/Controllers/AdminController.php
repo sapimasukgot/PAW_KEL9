@@ -6,9 +6,53 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Toko;
 
 class AdminController extends Controller
 {
+    public function dashboard()
+    {
+        $tokos = Toko::all();
+        return view('admin-beranda', compact('tokos'));
+    }
+
+    public function createToko()
+    {
+        $users = \App\Models\User::where('role', 'penjual')->get();
+        return view('tambah-toko-admin', compact('users'));
+    }
+
+    public function storeToko(Request $request)
+    {
+        $request->validate([
+            'nama_toko' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'lokasi'    => 'required|string',
+            'jam_buka'  => 'required',
+            'jam_tutup' => 'required',
+            'user_id'   => 'required|exists:users,id',
+        ]);
+
+        Toko::create([
+            'user_id'   => $request->user_id,
+            'nama_toko' => $request->nama_toko,
+            'deskripsi' => $request->deskripsi,
+            'lokasi'    => $request->lokasi,
+            'jam_buka'  => $request->jam_buka,
+            'jam_tutup' => $request->jam_tutup,
+        ]);
+
+        return redirect()->route('admin-beranda')->with('success', 'Toko berhasil ditambahkan!');
+    }
+
+    public function deleteToko($id)
+    {
+        $toko = Toko::findOrFail($id);
+        $toko->delete();
+
+        return redirect()->route('admin-beranda')->with('success', 'Toko berhasil dihapus!');
+    }    
+
     public function profil()
     {
         $user = Auth::user();

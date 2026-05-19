@@ -9,7 +9,7 @@
         <span class="font-bold text-lg" data-translate="label_change_pw">Ubah Sandi</span>
     </a>
 
-    <a href="{{ route('login') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
+    <a href="{{ route('logout') }}" class="bg-white p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-gray-50 transition">
         <span class="text-xl">🚪</span>
         <div class="flex flex-col">
             <span class="font-bold text-lg" data-translate="label_logout">Keluar Akun</span>

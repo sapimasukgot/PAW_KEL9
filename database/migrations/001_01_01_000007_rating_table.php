@@ -9,6 +9,7 @@ return new class extends Migration
     {
         Schema::create('rating', function (Blueprint $table) {
             $table->id('rating_id');
+            $table->foreignId('pesanan_id')->constrained('pesanan')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users', 'user_id');
             $table->foreignId('toko_id')->constrained('toko', 'toko_id');
             $table->tinyInteger('nilai');

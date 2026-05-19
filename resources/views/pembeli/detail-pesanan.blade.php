@@ -5,75 +5,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="title_order_detail">MakanMart - Detail Pesanan</title>
+    <title>MakanMart - Detail Pesanan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body style="background-color: #FFEDD9;">
+<body style="background-color: #FFEDD9;" class="min-h-screen pb-10">
 
-    <div class="w-full p-6 flex flex-col items-start min-h-screen">
-        
-        <h1 class="text-2xl font-bold text-gray-900 mb-8 self-center" data-translate="thanks_order">Terima Kasih Sudah Memesan! Selamat Menikmati!</h1>
+    <div class="max-w-3xl mx-auto p-4">
 
-        <div class="w-full flex flex-row gap-6 mb-6">
-            <div class="w-1/2 h-72 bg-gray-300 rounded-3xl overflow-hidden shadow-md">
-                <img src="https://via.placeholder.com/600x400" alt="Mie Pangsit" class="w-full h-full object-cover">
+        <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Pesanan Anda</h1>
+
+        {{-- Grid Atas: Gambar dan Deskripsi Status --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm">
+                <img src="https://via.placeholder.com/400x300" alt="Detail Pesanan" class="w-full h-full object-cover">
             </div>
 
-            <div class="w-1/2 bg-white rounded-3xl p-6 shadow-sm border border-orange-100 flex flex-col justify-center">
-                <h2 class="font-bold text-gray-900 mb-4" data-translate="label_menu_detail">Detail Menu:</h2>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-4">
-                        <span class="w-28 text-sm font-bold" data-translate="label_regular">Reguler:</span>
-                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">1</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-28 text-sm font-bold" data-translate="label_jumbo">Jumbo:</span>
-                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold">1</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-28 text-sm font-bold" data-translate="label_topping">Topping:</span>
-                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold" data-translate="val_egg">Telur</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-28 text-sm font-bold" data-translate="label_spicy_level">Level Pedas:</span>
-                        <span class="bg-gray-200 px-8 py-1 rounded-lg text-sm font-bold" data-translate="val_lvl_0">Lvl 0</span>
-                    </div>
+            <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
+                <h4 class="font-bold text-sm text-gray-800 mb-1">Status Pantauan Dapur</h4>
+                <div class="h-full flex flex-col justify-center items-center text-center p-2">
+                    @if($pesanan->status == 'Pending')
+                        <span class="text-xl font-black text-amber-600 uppercase tracking-wider animate-pulse">⏳ MENUNGGU ANTRIAN</span>
+                        <p class="text-[11px] text-gray-400 mt-1">Pesanan masuk sistem, menunggu konfirmasi lapak.</p>
+                    @elseif($pesanan->status == 'Dimasak' || $pesanan->status == 'Proses')
+                        <span class="text-xl font-black text-orange-600 uppercase tracking-wider">🍳 SEDANG DIMASAK</span>
+                        <p class="text-[11px] text-gray-400 mt-1">Koki sedang meracik hidangan sedap pesananmu.</p>
+                    @elseif($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
+                        <span class="text-xl font-black text-green-600 uppercase tracking-wider">✅ SIAP DISAJIKAN</span>
+                        <p class="text-[11px] text-gray-400 mt-1">Pesanan selesai! Silakan ambil makanan Anda di loket lapak.</p>
+                    @else
+                        <span class="text-xl font-black text-gray-600 uppercase tracking-wider">ℹ️ {{ strtoupper($pesanan->status) }}</span>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <div class="w-full bg-white rounded-3xl p-8 shadow-sm border border-orange-100 mb-12">
-            <h2 class="font-bold text-lg text-gray-900 mb-6" data-translate="title_order_detail">Detail Pesanan</h2>
-            <div class="space-y-4">
-                <div class="flex items-center gap-10">
-                    <span class="w-32 text-sm font-bold" data-translate="label_name">Nama:</span>
-                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm min-w-[200px] inline-block text-center">Aan</span>
+        {{-- Form Rincian Data Pesanan (Read-Only) --}}
+        <div class="space-y-4">
+            
+            <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Identitas Pelanggan</h4>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Nama:</span>
+                    <input type="text" readonly value="{{ $pesanan->nama_pembeli ?? Auth::user()->name }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none border-none text-gray-600 select-none">
                 </div>
-                <div class="flex items-center gap-10">
-                    <span class="w-32 text-sm font-bold" data-translate="label_table_no">No. Meja:</span>
-                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm min-w-[200px] inline-block text-center">1</span>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">No. Meja:</span>
+                    <input type="text" readonly value="{{ $pesanan->no_meja }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none border-none text-gray-600 select-none">
                 </div>
-                <div class="flex items-center gap-10">
-                    <span class="w-32 text-sm font-bold" data-translate="label_price">Harga:</span>
-                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm font-bold min-w-[200px] inline-block text-center">Rp 32.000</span>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Harga Total:</span>
+                    <input type="text" readonly value="Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-orange-600 min-w-[150px] text-center focus:outline-none border-none select-none">
                 </div>
-                <div class="flex items-center gap-10">
-                    <span class="w-32 text-sm font-bold" data-translate="label_info">Keterangan:</span>
-                    <span class="bg-gray-100 px-12 py-2 rounded-2xl text-sm font-bold text-gray-600 italic min-w-[200px] inline-block text-center" data-translate="val_done">Selesai</span>
+                
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-xs font-bold text-gray-700">Keterangan:</span>
+                    <input type="text" readonly value="{{ $pesanan->keterangan ?? '-' }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs w-full max-w-sm text-left focus:outline-none border-none italic text-gray-500 select-none">
                 </div>
             </div>
-        </div>
 
-        <div class="w-full flex justify-between items-center mb-10">
-            <a href="{{ route('pembeli-beranda') }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all" data-translate="btn_back">
-                Kembali
-            </a>
+            {{-- Tombol Navigasi Bawah Dinamis --}}
+            <div class="w-full flex justify-between items-center pt-2">
+                
+                {{-- LOGIKA TOMBOL KEMBALI --}}
+                @if($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
+                    {{-- Jika makanan sudah siap, kembali ke beranda utama pembeli --}}
+                    <a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
+                        Kembali ke Beranda
+                    </a>
+                @else
+                    {{-- Jika makanan belum siap, kembali ke antrean ongoing --}}
+                    <a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
+                        Kembali ke Antrean
+                    </a>
+                @endif
 
-            <a href="{{ route('pembeli-rating', ['id' => 1]) }}" class="bg-[#D9D9D9] text-gray-900 px-16 py-2 rounded-md font-bold hover:bg-gray-400 transition-all" data-translate="btn_rate">
-                Beri Rating
-            </a>
+                {{-- LOGIKA TOMBOL BERI RATING --}}
+                @if($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
+                    {{-- Tombol Aktif jika status makanan sudah siap --}}
+                    <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center transition-all">
+                        Beri Rating
+                    </a>
+                @else
+                    {{-- Tombol Terkunci (Disabled) jika status makanan belum siap --}}
+                    <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed border border-gray-400/20 text-center" title="Rating dapat diberikan setelah makanan siap">
+                        Beri Rating
+                    </div>
+                @endif
+
+            </div>
         </div>
 
     </div>
+
 </body>
 </html>
