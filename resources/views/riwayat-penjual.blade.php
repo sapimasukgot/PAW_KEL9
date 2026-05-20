@@ -24,10 +24,10 @@
                 <div class="flex flex-col items-end gap-3 self-stretch justify-between">
                     <span class="font-bold text-sm text-gray-800">Rp {{ number_format($data->total_harga, 0, ',', '.') }}</span>
                     
-                    <a href="{{ route('riwayat-penjual-detail', $data->order_id) }}" 
-                       class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition mt-auto inline-block"
-                       data-translate="btn_view_detail">
-                        Lihat Detail
+                    <a href="{{ route('riwayat-penjual-detail', $data->pesanan_id) }}" 
+                        class="bg-[#CBD5E1] text-[10px] px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-300 transition mt-auto inline-block"
+                        data-translate="btn_view_detail">
+                            Lihat Detail
                     </a>
                 </div>
             </div>

@@ -4,11 +4,25 @@
 <div class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold text-center mb-10 tracking-wide" data-translate="title_add_menu">Tambah Menu</h2>
 
-    {{-- Form diarahkan ke rute 'store_menu' sesuai file web.php --}}
     <form action="{{ route('store_menu') }}" method="POST" class="space-y-6">
-        @csrf {{-- Token keamanan wajib Laravel --}}
+        @csrf 
 
-        {{-- PERBAIKAN UTAMA: Mengubah 'Tersedia' menjadi 'tersedia' (huruf kecil) agar lolos CHECK constraint SQLite --}}
+    @if (session('error'))
+        <div style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: bold;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+            <strong style="display: block; margin-bottom: 5px;">Gagal menyimpan menu:</strong>
+            <ul style="margin-left: 20px; list-style-type: disc;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
         <input type="hidden" name="stok" value="99">
         <input type="hidden" name="status" value="tersedia">
 

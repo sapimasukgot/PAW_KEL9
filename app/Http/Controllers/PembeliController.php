@@ -131,10 +131,9 @@ class PembeliController extends Controller
     }
     public function rating($id)
     {
-        $pesanan = \App\Models\Pesanan::findOrFail($id);
-
+        $pesanan = Pesanan::findOrFail($id);
         return view('pembeli.rating', compact('pesanan'));
-}
+    }
 
     public function storeRating(Request $request, $id)
     {
@@ -179,11 +178,10 @@ class PembeliController extends Controller
 
     public function historyDetail($id)
     {
-        $pesanan = Pesanan::findOrFail($id);
-        $rating = \App\Models\Rating::where('pesanan_id', $id)->first();
-        return view('pembeli.history_detail', compact('pesanan', 'rating'));
+        $pesanan = Pesanan::with(['details.menu', 'rating'])->findOrFail($id);
+    
+        return view('pembeli.history_detail', compact('pesanan'));
     }
-
     public function pesanan()
     {
         $toko = $this->getToko();

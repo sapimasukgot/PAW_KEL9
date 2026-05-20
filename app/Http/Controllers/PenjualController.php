@@ -42,7 +42,7 @@ class PenjualController extends Controller
             'nama_menu' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'harga'     => 'required|numeric',
-            'stok'      => 'required|integer|min:0',
+            'stok'      => 'required|numeric|min:0',
             'status'    => 'required|string',
         ]);
 
@@ -125,7 +125,11 @@ class PenjualController extends Controller
     public function ulasanDetail($id)
     {
         $toko = $this->getToko();
-        $ulasanDetail = Rating::with('user')->where('toko_id', $toko->toko_id)->findOrFail($id);
+    
+        $ulasanDetail = Rating::with(['user', 'pesanan.details.menu'])
+            ->where('toko_id', $toko->toko_id)
+            ->findOrFail($id);
+
         return view('ulasan-detail', compact('ulasanDetail'));
     }
     

@@ -15,7 +15,6 @@
 
         <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Riwayat Pesanan</h1>
 
-        {{-- Grid Atas: Gambar dan Tampilan Rating Bintang --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm">
                 <img src="https://via.placeholder.com/400x300" alt="Detail Pesanan" class="w-full h-full object-cover">
@@ -26,11 +25,14 @@
                 <div class="h-full flex flex-col justify-center items-center text-center p-2">
                     
                     <div class="flex items-center gap-1 text-2xl text-orange-400 mb-2">
-                        @if($rating)
+                        {{-- PERBAIKAN LOGIKA: Cetak bintang secara dinamis berdasarkan nilai input database --}}
+                        @if($pesanan->rating)
                             @for($i = 1; $i <= 5; $i++)
-                                <i class="{{ $i <= $rating->bintang ? 'fas' : 'far' }} fa-star"></i>
+                                {{-- Jika nilai indeks kurang dari atau sama dengan nilai rating, gunakan bintang penuh (fas), jika lebih gunakan bintang kosong (far) --}}
+                                <i class="{{ $i <= $pesanan->rating->nilai ? 'fas' : 'far' }} fa-star"></i>
                             @endfor
                         @else
+                            {{-- Jika pesanan ini benar-benar belum dirating --}}
                             <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
                             <i class="far fa-star"></i>
@@ -40,8 +42,8 @@
                     </div>
 
                     <p class="text-xs text-gray-500 italic mt-1">
-                        @if($rating)
-                            " {{ $rating->ulasan }} "
+                        @if($pesanan->rating)
+                            " {{ $pesanan->rating->ulasan ?? 'Tidak ada komentar tertulis.' }} "
                         @else
                             (Belum memberikan ulasan untuk pesanan ini)
                         @endif
@@ -81,7 +83,7 @@
                     Kembali
                 </a>
 
-                @if(!$rating)
+                @if(!$pesanan->rating)
                     <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center transition-all">
                         Beri Rating
                     </a>

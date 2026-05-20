@@ -22,4 +22,9 @@ class Rating extends Model {
     public function toko() {
         return $this->belongsTo(Toko::class, 'toko_id');
     }
+
+    public function pesanan()
+    {
+        return $this->belongsTo(Pesanan::class, 'pesanan_id', 'pesanan_id');
+    }
 }

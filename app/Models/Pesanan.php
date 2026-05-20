@@ -31,4 +31,9 @@ class Pesanan extends Model {
     public function toko() {
         return $this->belongsTo(Toko::class, 'toko_id', 'toko_id');
     }
+
+    public function rating()
+    {
+        return $this->hasOne(Rating::class, 'pesanan_id', 'pesanan_id'); 
+    }
 }
