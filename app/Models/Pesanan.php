@@ -27,4 +27,8 @@ class Pesanan extends Model {
     public function pembayaran() {
         return $this->hasOne(Pembayaran::class, 'order_id');
     }
+
+    public function toko() {
+        return $this->belongsTo(Toko::class, 'toko_id', 'toko_id');
+    }
 }

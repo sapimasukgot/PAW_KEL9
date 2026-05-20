@@ -76,7 +76,7 @@ class PembeliController extends Controller
         $request->validate([
             'nama_pembeli' => 'required|string|max:255',
             'no_meja'      => 'required|integer|min:1',
-            'harga_total'  => 'required|numeric',
+            'harga_total'  => 'required|integer',
             'keterangan'   => 'nullable|string',
         ]);
 
