@@ -160,6 +160,13 @@ class PembeliController extends Controller
         return redirect()->route('pembeli-riwayat-detail', $id)->with('success', 'Rating berhasil disimpan!');
     }
     
+    public function ratingForm($id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+
+        return view('pembeli.rating', compact('pesanan'));
+    }
+
     public function thanks() { 
         return view('pembeli.thanks'); 
     }
