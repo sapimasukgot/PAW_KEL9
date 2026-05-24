@@ -1,4 +1,4 @@
-@include('pembeli.nav')
+@include('layout-penjual')
 
 <!DOCTYPE html>
 <html lang="id">
