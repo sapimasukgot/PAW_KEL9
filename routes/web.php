@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PembeliController;
 use App\Http\Controllers\PenjualController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CheckRole;
+use App\Http\Controllers\PesananController;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login-submit', [AuthController::class, 'login'])->name('login.submit');
@@ -40,8 +40,7 @@ Route::middleware(['auth', 'role:pembeli,user'])->prefix('pembeli')->group(funct
     Route::post('/hapus-akun', [PembeliController::class, 'deleteAccount'])->name('hapus-akun');
     Route::get('/thanks', [PembeliController::class, 'thanks'])->name('pembeli-thanks');
     Route::post('/rating/store/{id}', [PembeliController::class, 'storeRating'])->name('pembeli-rating-store');
-    Route::get('/pembeli/rating/{id}', [PembeliController::class, 'ratingForm'])
-    ->name('pembeli-rating');
+    Route::get('/pembeli/rating/{id}', [PembeliController::class, 'ratingForm'])->name('pembeli-rating');
 });
 
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->group(function () {
@@ -83,4 +82,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/tambah-toko', [AdminController::class, 'createToko'])->name('admin.tambah_toko');
     Route::post('/store-toko', [AdminController::class, 'storeToko'])->name('admin.store_toko'); 
     Route::post('/delete-toko/{id}', [AdminController::class, 'deleteToko'])->name('admin.delete_toko');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/api/penjual/update-status/{id}', [PenjualController::class, 'updateStatusAjax'])->name('api.penjual.update-status');
+    
+    Route::get('/api/pembeli/cek-status/{id}', [PembeliController::class, 'cekStatusAjax'])->name('api.pembeli.cek-status');
+    
+    Route::get('/api/pembeli/search-menu', [PembeliController::class, 'searchMenuAjax'])->name('api.pembeli.search-menu');
 });
