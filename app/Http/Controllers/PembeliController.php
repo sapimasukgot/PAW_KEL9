@@ -88,7 +88,7 @@ class PembeliController extends Controller
             'nama_pembeli'  => $request->nama_pembeli,
             'no_meja'       => $request->no_meja,
             'total_harga'   => $request->harga_total,
-            'status'        => 'Pending',
+            'status'        => 'menunggu',
             'keterangan'    => $request->keterangan,
             'tanggal_order' => now(), 
         ]);
@@ -105,7 +105,7 @@ class PembeliController extends Controller
     {
         $user_id = Auth::id();
         $histories = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['Siap', 'Selesai', 'Batal'])
+                        ->whereIn('status', ['siap diambil', 'selesai', 'dibatalkan'])
                         ->latest()
                         ->get();
 
@@ -121,7 +121,7 @@ class PembeliController extends Controller
         $user_id = Auth::id();
 
         $pesanans = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['Pending', 'Dimasak', 'Proses'])
+                        ->whereIn('status', ['menunggu', 'diproses'])
                         ->latest()
                         ->get();
 
