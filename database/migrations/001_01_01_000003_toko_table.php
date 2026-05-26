@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('toko', function (Blueprint $table) {
             $table->id('toko_id');
             
-            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->string('nama_toko', 100);
             $table->text('deskripsi')->nullable();
