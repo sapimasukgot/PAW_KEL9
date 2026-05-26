@@ -88,7 +88,7 @@ class PembeliController extends Controller
             'nama_pembeli'  => $request->nama_pembeli,
             'no_meja'       => $request->no_meja,
             'total_harga'   => $request->harga_total,
-            'status'        => 'menunggu',
+            'status'        => 'Pending',
             'keterangan'    => $request->keterangan,
             'tanggal_order' => now(), 
         ]);
@@ -105,7 +105,7 @@ class PembeliController extends Controller
     {
         $user_id = Auth::id();
         $histories = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['siap diambil', 'selesai', 'dibatalkan'])
+                        ->whereIn('status', ['Siap', 'Selesai', 'Batal'])
                         ->latest()
                         ->get();
 
@@ -121,7 +121,7 @@ class PembeliController extends Controller
         $user_id = Auth::id();
 
         $pesanans = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['menunggu', 'diproses'])
+                        ->whereIn('status', ['Pending', 'Dimasak', 'Proses'])
                         ->latest()
                         ->get();
 
@@ -228,4 +228,21 @@ class PembeliController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+
+    public function cekStatusAjax($id) {
+        $pesanan = \App\Models\Pesanan::find($id);
+        if ($pesanan) {
+        return response()->json([
+            'success' => true,
+            'status' => $pesanan->status
+        ]);
+    }
+    return response()->json(['success' => false, 'message' => 'Pesanan tidak ditemukan.'], 404);
+}
+
+    public function searchMenuAjax(Request $request) {
+    $keyword = $request->query('keyword', '');
+    $menus = \App\Models\Menu::where('nama_menu', 'like', '%' . $keyword . '%')->get();
+    return response()->json($menus);
+}
 }
