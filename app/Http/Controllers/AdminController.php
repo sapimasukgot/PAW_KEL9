@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Toko;
 
@@ -18,7 +17,7 @@ class AdminController extends Controller
 
     public function createToko()
     {
-        $users = \App\Models\User::where('role', 'penjual')->get();
+        $users = User::where('role', 'penjual')->get();
         return view('tambah-toko-admin', compact('users'));
     }
 
@@ -47,7 +46,7 @@ class AdminController extends Controller
 
     public function deleteToko($id)
     {
-        $toko = Toko::findOrFail($id);
+        $toko = Toko::where('toko_id', $id)->firstOrFail();
         $toko->delete();
 
         return redirect()->route('admin-beranda')->with('success', 'Toko berhasil dihapus!');
