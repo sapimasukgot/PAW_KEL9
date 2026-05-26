@@ -88,7 +88,7 @@ class PembeliController extends Controller
             'nama_pembeli'  => $request->nama_pembeli,
             'no_meja'       => $request->no_meja,
             'total_harga'   => $request->harga_total,
-            'status'        => 'Pending',
+            'status'        => 'menunggu',
             'keterangan'    => $request->keterangan,
             'tanggal_order' => now(), 
         ]);
@@ -105,7 +105,7 @@ class PembeliController extends Controller
     {
         $user_id = Auth::id();
         $histories = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['Siap', 'Selesai', 'Batal'])
+                        ->whereIn('status', ['siap diambil', 'selesai', 'dibatalkan'])
                         ->latest()
                         ->get();
 
@@ -121,7 +121,7 @@ class PembeliController extends Controller
         $user_id = Auth::id();
 
         $pesanans = Pesanan::where('user_id', $user_id)
-                        ->whereIn('status', ['Pending', 'Dimasak', 'Proses'])
+                        ->whereIn('status', ['menunggu', 'diproses'])
                         ->latest()
                         ->get();
 
@@ -131,7 +131,7 @@ class PembeliController extends Controller
     }
     public function rating($id)
     {
-        $pesanan = Pesanan::findOrFail($id);
+        $pesanan = Pesanan::where('order_id', $id)->firstOrFail();
         return view('pembeli.rating', compact('pesanan'));
     }
 
@@ -152,7 +152,7 @@ class PembeliController extends Controller
             'tanggal'    => now(),
         ]);
 
-        $pesanan = Pesanan::find($id);
+        $pesanan = Pesanan::where('order_id', $id)->firstOrFail();
         if ($pesanan) {
             $pesanan->update(['status' => 'Selesai']);
         }
@@ -185,7 +185,7 @@ class PembeliController extends Controller
 
     public function historyDetail($id)
     {
-        $pesanan = Pesanan::with(['details.menu', 'rating'])->findOrFail($id);
+        $pesanan = Pesanan::with(['details.menu', 'rating'])->where('order_id', $id)->firstOrFail();
     
         return view('pembeli.history_detail', compact('pesanan'));
     }
@@ -201,9 +201,9 @@ class PembeliController extends Controller
     }
     public function detailpesanan($id) 
     {
-        $pesanan = Pesanan::findOrFail($id);
+        $pesanan = Pesanan::where('order_id', $id)->firstOrFail();
         $menu = new \stdClass();
-        $menu->nama_menu = "Nota Pesanan #" . $pesanan->pesanan_id;
+        $menu->nama_menu = "Nota Pesanan #" . $pesanan->order_id;
         $menu->deskripsi = "Pesanan Anda telah direkam di sistem MakanMart pada " . $pesanan->tanggal_order;
 
         return view('pembeli.detail-pesanan', compact('pesanan', 'menu'));
