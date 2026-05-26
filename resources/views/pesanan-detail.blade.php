@@ -22,11 +22,11 @@
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Aksi Perubahan Status</h4>
 
-                <form action="{{ route('penjual.update-status', $pesanan->pesanan_id ?? $pesanan->id) }}" method="POST" class="h-full flex flex-col justify-between">
+                <form id="form-update-status" class="h-full flex flex-col justify-between">
                     @csrf
                     <div class="space-y-2">
                         <p class="text-[11px] text-gray-400">Pilih status terbaru untuk memperbarui status antrean di halaman pembeli:</p>
-                        <select name="status" class="w-full bg-gray-100 px-4 py-2 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 ring-orange-400">
+                        <select id="select-status" name="status" class="w-full bg-gray-100 px-4 py-2 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 ring-orange-400">
                             <option value="Pending" {{ $pesanan->status == 'Pending' ? 'selected' : '' }}>⏳ Menunggu Antrian</option>
                             <option value="Dimasak" {{ $pesanan->status == 'Dimasak' ? 'selected' : '' }}>🍳 Sedang Dimasak</option>
                             <option value="Siap" {{ $pesanan->status == 'Siap' ? 'selected' : '' }}>✅ Siap Disajikan / Selesai</option>
@@ -35,14 +35,13 @@
                     </div>
 
                     <button type="submit" class="mt-4 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-sm transition-all text-center">
-                        Simpan Perubahan Status
+                        Update Status Pesanan
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="space-y-4">
-
             <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Identitas Pelanggan</h4>
                 
@@ -71,13 +70,39 @@
                 <a href="{{ route('pesanan-penjual') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
                     Kembali
                 </a>
-                <div class="bg-orange-100 text-orange-700 px-10 py-1.5 rounded-lg font-bold text-xs shadow-sm select-none border border-orange-200">
+                <div id="status-indicator" class="bg-orange-100 text-orange-700 px-10 py-1.5 rounded-lg font-bold text-xs shadow-sm select-none border border-orange-200">
                     Status: {{ $pesanan->status }}
                 </div>
             </div>
         </div>
-
     </div>
 
+    <script>
+        document.getElementById('form-update-status').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const statusValue = document.getElementById('select-status').value;
+            const fetchUrl = "{{ route('api.penjual.update-status', $pesanan->pesanan_id ?? $pesanan->id) }}";
+
+            fetch(fetchUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: statusValue })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('status-indicator').innerText = "Status: " + data.status;
+                    alert(data.message);
+                } else {
+                    alert('Gagal memperbarui status data.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
 </html>
