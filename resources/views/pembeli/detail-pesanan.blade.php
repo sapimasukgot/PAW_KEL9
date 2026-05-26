@@ -14,7 +14,6 @@
 
         <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Pesanan Anda</h1>
 
-        {{-- Grid Atas: Gambar dan Deskripsi Status --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm">
                 <img src="https://via.placeholder.com/400x300" alt="Detail Pesanan" class="w-full h-full object-cover">
@@ -22,26 +21,13 @@
 
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
                 <h4 class="font-bold text-sm text-gray-800 mb-1">Status Pantauan Dapur</h4>
-                <div class="h-full flex flex-col justify-center items-center text-center p-2">
-                    @if($pesanan->status == 'Pending')
-                        <span class="text-xl font-black text-amber-600 uppercase tracking-wider animate-pulse">⏳ MENUNGGU ANTRIAN</span>
-                        <p class="text-[11px] text-gray-400 mt-1">Pesanan masuk sistem, menunggu konfirmasi lapak.</p>
-                    @elseif($pesanan->status == 'Dimasak' || $pesanan->status == 'Proses')
-                        <span class="text-xl font-black text-orange-600 uppercase tracking-wider">🍳 SEDANG DIMASAK</span>
-                        <p class="text-[11px] text-gray-400 mt-1">Koki sedang meracik hidangan sedap pesananmu.</p>
-                    @elseif($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
-                        <span class="text-xl font-black text-green-600 uppercase tracking-wider">✅ SIAP DISAJIKAN</span>
-                        <p class="text-[11px] text-gray-400 mt-1">Pesanan selesai! Silakan ambil makanan Anda di loket lapak.</p>
-                    @else
-                        <span class="text-xl font-black text-gray-600 uppercase tracking-wider">ℹ️ {{ strtoupper($pesanan->status) }}</span>
-                    @endif
+                <div id="area-status-dapur" class="h-full flex flex-col justify-center items-center text-center p-2">
+                    <span class="text-xs text-gray-400">Sinkronisasi dengan dapur...</span>
                 </div>
             </div>
         </div>
 
-        {{-- Form Rincian Data Pesanan (Read-Only) --}}
         <div class="space-y-4">
-            
             <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Identitas Pelanggan</h4>
                 
@@ -66,39 +52,58 @@
                 </div>
             </div>
 
-            {{-- Tombol Navigasi Bawah Dinamis --}}
-            <div class="w-full flex justify-between items-center pt-2">
-                
-                {{-- LOGIKA TOMBOL KEMBALI --}}
-                @if($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
-                    {{-- Jika makanan sudah siap, kembali ke beranda utama pembeli --}}
-                    <a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
-                        Kembali ke Beranda
-                    </a>
-                @else
-                    {{-- Jika makanan belum siap, kembali ke antrean ongoing --}}
-                    <a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
-                        Kembali ke Antrean
-                    </a>
-                @endif
-
-                {{-- LOGIKA TOMBOL BERI RATING --}}
-                @if($pesanan->status == 'Siap' || $pesanan->status == 'Selesai')
-                    {{-- Tombol Aktif jika status makanan sudah siap --}}
-                    <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center transition-all">
-                        Beri Rating
-                    </a>
-                @else
-                    {{-- Tombol Terkunci (Disabled) jika status makanan belum siap --}}
-                    <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed border border-gray-400/20 text-center" title="Rating dapat diberikan setelah makanan siap">
-                        Beri Rating
-                    </div>
-                @endif
-
-            </div>
+            <div id="tombol-aksi-navigasi" class="w-full flex justify-between items-center pt-2"></div>
         </div>
 
     </div>
 
+    <script>
+        function dapatkanStatusDapurOtomatis() {
+            const endpointTracking = "{{ route('api.pembeli.cek-status', $pesanan->pesanan_id ?? $pesanan->id) }}";
+            
+            fetch(endpointTracking)
+            .then(res => res.json())
+            .then(resData => {
+                if(resData.success) {
+                    perbaruiKomponenTampilan(resData.status);
+                }
+            })
+            .catch(error => console.error("Koneksi pelacakan terputus:", error));
+        }
+
+        function perbaruiKomponenTampilan(statusPesanan) {
+            const statusBox = document.getElementById('area-status-dapur');
+            const navBox = document.getElementById('tombol-aksi-navigasi');
+            
+            let htmlStatus = '';
+            let htmlNavigasi = '';
+            
+            if(statusPesanan === 'Pending') {
+                htmlStatus = `<span class="text-xl font-black text-amber-600 uppercase tracking-wider animate-pulse">⏳ MENUNGGU ANTRIAN</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Pesanan masuk sistem, menunggu konfirmasi lapak.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Antrean</a>
+                                <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed text-center">Beri Rating</div>`;
+            } else if(statusPesanan === 'Dimasak' || statusPesanan === 'Proses') {
+                htmlStatus = `<span class="text-xl font-black text-orange-600 uppercase tracking-wider">🍳 SEDANG DIMASAK</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Koki sedang meracik hidangan sedap pesananmu.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Antrean</a>
+                                <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed text-center">Beri Rating</div>`;
+            } else if(statusPesanan === 'Siap' || statusPesanan === 'Selesai') {
+                htmlStatus = `<span class="text-xl font-black text-green-600 uppercase tracking-wider">✅ SIAP DISAJIKAN</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Pesanan selesai! Silakan ambil makanan Anda di loket lapak.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Beranda</a>
+                                <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center">Beri Rating</a>`;
+            } else {
+                htmlStatus = `<span class="text-xl font-black text-gray-600 uppercase tracking-wider">❌ {{ strtoupper('${statusPesanan}') }}</span>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Beranda</a>`;
+            }
+            
+            statusBox.innerHTML = htmlStatus;
+            navBox.innerHTML = htmlNavigasi;
+        }
+
+        setInterval(dapatkanStatusDapurOtomatis, 3000);
+        dapatkanStatusDapurOtomatis();
+    </script>
 </body>
 </html>
