@@ -34,13 +34,13 @@ class RatingApiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pesanan_id' => 'required|exists:pesanan,pesanan_id',
+            'pesanan_id' => 'required|exists:pesanan,order_id',
             'toko_id'    => 'required|exists:toko,toko_id',
             'nilai'      => 'required|integer|min:1|max:5',
             'ulasan'     => 'nullable|string|max:500',
         ]);
 
-        $pesanan = Pesanan::where('pesanan_id', $request->pesanan_id)
+        $pesanan = Pesanan::where('order_id', $request->pesanan_id)
             ->where('user_id', Auth::id())
             ->first();
 
@@ -60,7 +60,6 @@ class RatingApiController extends Controller
         }
 
         $rating = Rating::create([
-            'pesanan_id' => $request->pesanan_id,
             'user_id'    => Auth::id(),
             'toko_id'    => $request->toko_id,
             'nilai'      => $request->nilai,
@@ -68,7 +67,7 @@ class RatingApiController extends Controller
             'tanggal'    => now(),
         ]);
 
-        $pesanan->update(['status' => 'Selesai']);
+        $pesanan->update(['status' => 'selesai']);
 
         return response()->json([
             'success' => true,

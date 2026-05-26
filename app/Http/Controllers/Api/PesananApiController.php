@@ -14,7 +14,7 @@ class PesananApiController extends Controller
     {
         $pesanans = Pesanan::with(['toko', 'details.menu', 'rating'])
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['Siap', 'Selesai', 'Batal'])
+            ->whereIn('status', ['selesai', 'dibatalkan'])
             ->latest()
             ->get()
             ->map(fn($p) => $this->formatPesanan($p));
@@ -29,7 +29,7 @@ class PesananApiController extends Controller
     {
         $pesanans = Pesanan::with(['toko', 'details.menu'])
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['Pending', 'Dimasak', 'Proses'])
+            ->whereIn('status', ['menunggu', 'diproses'])
             ->latest()
             ->get()
             ->map(fn($p) => $this->formatPesanan($p));
@@ -43,8 +43,9 @@ class PesananApiController extends Controller
     public function show($id)
     {
         $pesanan = Pesanan::with(['toko', 'details.menu', 'pembayaran', 'rating'])
-            ->where('user_id', Auth::id())
-            ->find($id);
+    ->where('user_id', Auth::id())
+    ->where('pesanan_id', $id)
+    ->first();
 
         if (!$pesanan) {
             return response()->json([
@@ -77,7 +78,7 @@ class PesananApiController extends Controller
             'nama_pembeli'  => $request->nama_pembeli,
             'no_meja'       => $request->no_meja,
             'total_harga'   => $request->total_harga,
-            'status'        => 'Pending',
+            'status'        => 'menunggu',
             'keterangan'    => $request->keterangan,
             'tanggal_order' => now(),
         ]);
