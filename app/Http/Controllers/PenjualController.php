@@ -171,4 +171,25 @@ class PenjualController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+
+    public function updateStatusAjax(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string'
+            ]);
+            
+        $pesanan = \App\Models\Pesanan::find($id);
+        if ($pesanan) {
+            $pesanan->status = $request->status;
+            $pesanan->save();
+            
+            return response()->json([
+            'success' => true,
+            'status' => $pesanan->status,
+            'message' => 'Status antrean pesanan berhasil diperbarui secara real-time!'
+            ]);
+            }
+            
+        return response()->json(['success' => false, 'message' => 'Data pesanan gagal ditemukan.'], 404);
+        }
 }
