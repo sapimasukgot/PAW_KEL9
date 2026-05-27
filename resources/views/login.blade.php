@@ -42,9 +42,19 @@
             <form method="POST" action="{{ route('login.submit') }}" class="flex flex-col gap-4">
                 @csrf
 
-                @if ($errors->has('email') && !$errors->has('name'))
+                @if ($errors->any())
                     <div class="bg-red-100 text-red-700 p-3 rounded-xl text-xs">
-                        {{ $errors->first('email') }}
+                        @if ($errors->has('email'))
+                            {{ $errors->first('email') }}
+                        @else
+                            Sesi halaman Anda telah kedaluwarsa. Silakan refresh halaman (F5) dan coba lagi.
+                        @endif
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="bg-red-100 text-red-700 p-3 rounded-xl text-xs">
+                        {{ session('error') }}
                     </div>
                 @endif
 
@@ -79,8 +89,7 @@
             </div>
         </div>
 
-        <div
-            class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-[#ffedd9] form-transition
+        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-[#ffedd9] form-transition
                     absolute top-0 left-0 z-20 opacity-0 pointer-events-none translate-x-10
                     peer-checked:opacity-100 peer-checked:pointer-events-auto peer-checked:z-30 peer-checked:translate-x-0 transition-all duration-700">
 
@@ -131,8 +140,7 @@
 
             <div class="text-center mt-6">
                 <p class="text-xs font-bold text-gray-600">Sudah Punya Akun?
-                    <label for="toggle-form"
-                        class="text-blue-600 hover:underline cursor-pointer ml-1 font-bold">Login</label>
+                    <label for="toggle-form" class="text-blue-600 hover:underline cursor-pointer ml-1 font-bold">Login</label>
                 </p>
             </div>
         </div>
@@ -152,4 +160,5 @@
         });
     </script>
 </body>
+
 </html>
