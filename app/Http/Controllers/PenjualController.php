@@ -101,7 +101,7 @@ class PenjualController extends Controller
         $toko = $this->getToko();
         $histories = $toko ? Pesanan::with('user')
             ->where('toko_id', $toko->toko_id)
-            ->whereIn('status', ['Selesai', 'selesai', 'Batal', 'batal'])
+            ->whereIn('status', ['Pending','pending','Selesai', 'selesai', 'Batal', 'batal','Siap', 'siap diambil', 'dibatalkan'])
             ->latest()
             ->get() : [];
             

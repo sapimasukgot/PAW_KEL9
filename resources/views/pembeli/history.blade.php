@@ -2,42 +2,47 @@
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-translate="title_order_history">Riwayat Pemesanan - MakanMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-[#fcebda] min-h-screen pb-10">
 
     <div class="p-4">
         <h1 class="text-2xl font-bold text-center mb-6" data-translate="title_order_history">Riwayat Pemesanan</h1>
-        
+
         <div class="space-y-4">
             @foreach($histories as $h)
-            <div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center">
-                <div class="flex gap-4">
-                    <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-center p-1 shadow-inner">
-                        <span class="text-2xl">🛍️</span>
-                    </div>
-                    
-                    <div>
-                        <p class="text-xs text-gray-400">{{ $h->tanggal_order ?? $h->created_at }}</p>
-                        
-                        <p class="font-bold">Pesanan An. {{ $h->nama_pembeli }}</p>
+                <div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center">
+                    <div class="flex gap-4">
+                        <div
+                            class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-center p-1 shadow-inner">
+                            <span class="text-2xl">🛍️</span>
+                        </div>
 
-                        <p class="text-sm font-bold text-gray-600">Rp {{ number_format($h->total_harga, 0, ',', '.') }}</p>
+                        <div>
+                            <p class="text-xs text-gray-400">{{ $h->tanggal_order ?? $h->created_at }}</p>
+
+                            <p class="font-bold">Pesanan An. {{ $h->nama_pembeli }}</p>
+
+                            <p class="text-sm font-bold text-gray-600">Rp {{ number_format($h->total_harga, 0, ',', '.') }}
+                            </p>
+                        </div>
                     </div>
+
+                    <a href="{{ route('pembeli-riwayat-detail', $h->pesanan_id) }}"
+                        class="bg-gray-300 px-4 py-1 rounded-lg text-xs font-bold transition hover:bg-gray-400"
+                        data-translate="btn_see_detail">
+                        Lihat Detail
+                    </a>
                 </div>
-
-                <a href="{{ route('pembeli-riwayat-detail', $h->pesanan_id ?? $h->id) }}" 
-                   class="bg-gray-300 px-4 py-1 rounded-lg text-xs font-bold transition hover:bg-gray-400"
-                   data-translate="btn_see_detail">
-                    Lihat Detail
-                </a>
-            </div>
             @endforeach
         </div>
     </div>
 </body>
+
 </html>
