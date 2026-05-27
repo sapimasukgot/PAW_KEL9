@@ -89,4 +89,13 @@ class AdminController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+    public function deleteAccount(Request $request)
+{
+    $user = Auth::user();
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    User::find($user->id)?->delete();
+    return redirect()->route('login')->with('success', 'Akun berhasil dihapus.');
+}
 }

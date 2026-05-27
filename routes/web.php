@@ -65,6 +65,7 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->group(function (
     Route::get('/ubah-sandi', function () { return view('ubah-sandi'); })->name('ubah-sandi-penjual');
     Route::get('/ubah-bahasa', function () { return view('ubah-bahasa'); })->name('ubah-bahasa-penjual');
     Route::get('/pengaturan-akun', function () { return view('pengaturan-akun'); })->name('pengaturan-akun-penjual');
+    Route::post('/hapus-akun', [PenjualController::class, 'deleteAccount'])->name('hapus-akun-penjual');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
@@ -82,6 +83,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/tambah-toko', [AdminController::class, 'createToko'])->name('admin.tambah_toko');
     Route::post('/store-toko', [AdminController::class, 'storeToko'])->name('admin.store_toko'); 
     Route::post('/delete-toko/{id}', [AdminController::class, 'deleteToko'])->name('admin.delete_toko');
+    Route::post('/hapus-akun', [AdminController::class, 'deleteAccount'])->name('hapus-akun-admin');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -192,4 +192,16 @@ class PenjualController extends Controller
             
         return response()->json(['success' => false, 'message' => 'Data pesanan gagal ditemukan.'], 404);
         }
+        public function deleteAccount(Request $request)
+{
+    $user = Auth::user();
+    if ($user) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        User::find($user->id)?->delete();
+        return redirect()->route('login')->with('success', 'Akun berhasil dihapus.');
+    }
+    return back()->with('error', 'Gagal menghapus akun.');
+}
 }
