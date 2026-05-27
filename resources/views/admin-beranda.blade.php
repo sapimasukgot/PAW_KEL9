@@ -8,12 +8,10 @@
 <div class="flex justify-between items-center mb-4">
     <h3 class="font-bold text-lg" data-translate="title_add_store">Kelola Toko Lapak</h3>
     <div class="flex gap-2">
-        {{-- Tombol Tambah Toko Baru --}}
         <a href="{{ route('admin.tambah_toko') }}" class="bg-white border px-4 py-1.5 rounded-lg text-sm shadow-sm hover:bg-gray-50 transition-all font-medium" data-translate="btn_add_new_store">
             Tambah Toko Baru
         </a>
         
-        {{-- TOMBOL KONTROL: Mengubah div menjadi button dengan ID khusus sebagai pemicu JavaScript --}}
         <button id="btn-mode-hapus" class="bg-[#CBD5E1] px-4 py-1.5 rounded-lg text-sm shadow-sm hover:bg-gray-300 transition-all text-gray-700 font-medium select-none cursor-pointer transition-colors duration-200">
             Mode Hapus Toko
         </button>
@@ -37,10 +35,8 @@
                 </div>
             </div>
             
-            {{-- TOMBOL AKSI: Menambahkan class 'form-hapus' dan utility class Tailwind 'hidden' --}}
             <form action="{{ route('admin.delete_toko', $toko->toko_id) }}" method="POST" class="form-hapus m-0 hidden transition-all duration-300">
                 @csrf
-                {{-- Ditambahkan onclick confirm agar tidak langsung terhapus jika tidak sengaja terklik --}}
                 <button type="submit" 
                         onclick="return confirm('Apakah Anda benar-benar yakin ingin menghapus mitra toko {{ $toko->nama_toko }}?')"
                         class="bg-[#FF4D4D] text-white text-xs px-4 py-1.5 rounded-full shadow-sm hover:bg-red-600 transition-all font-semibold"
@@ -62,7 +58,6 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #E6D1BA; border-radius: 10px; }
 </style>
 
-{{-- LOGIKA INTERAKSI JAVASCRIPT VANILLA --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const btnModeHapus = document.getElementById('btn-mode-hapus');

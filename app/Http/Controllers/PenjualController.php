@@ -83,8 +83,11 @@ class PenjualController extends Controller
 
     public function pesananDetail($id)
     {
-        $pesanan = \App\Models\Pesanan::findOrFail($id);
-        return view('pesanan-detail', compact('pesanan')); 
+        $pesanan = \App\Models\Pesanan::with([
+            'detailPesanan.menu'
+        ])->findOrFail($id);
+
+        return view('pesanan-detail', compact('pesanan'));
     }
 
     public function updateStatus(Request $request, $id)

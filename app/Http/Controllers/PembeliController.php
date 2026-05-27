@@ -19,10 +19,14 @@ class PembeliController extends Controller
         return view('pembeli.beranda', compact('menus'));
     }
 
-    public function show($id) {
-        $menu = Menu::findOrFail($id);
+   public function show($id)
+    {
+        $menu = Menu::with(['toko.ratings.user'])->findOrFail($id);
+        $toppings = Menu::where('toko_id', $menu->toko_id)
+                    ->where('kategori', 'topping')
+                    ->get();
 
-        return view('pembeli.detail', compact('menu'));
+        return view('pembeli.detail', compact('menu', 'toppings'));
     }
 
     public function profile() {
@@ -72,56 +76,62 @@ class PembeliController extends Controller
     }
 
     public function storePesanan(Request $request, $id)
-{
-    $request->validate([
-        'nama_pembeli' => 'required|string|max:255',
-        'no_meja'      => 'required|integer|min:1',
-        'harga_total'  => 'required|integer',
-        'keterangan'   => 'nullable|string',
-        'qty_reguler'  => 'required|integer|min:0',
-        'qty_jumbo'    => 'required|integer|min:0',
-    ]);
-
-    $menu = Menu::findOrFail($id);
-
-    $totalQty = $request->qty_reguler + $request->qty_jumbo;
-    if ($totalQty < 1) {
-        return back()->withErrors(['qty' => 'Minimal pesan 1 porsi.']);
-    }
-
-    $pesanan = Pesanan::create([
-        'user_id'       => Auth::id(),
-        'toko_id'       => $menu->toko_id,
-        'nama_pembeli'  => $request->nama_pembeli,
-        'no_meja'       => $request->no_meja,
-        'total_harga'   => $request->harga_total,
-        'status'        => 'Pending',
-        'keterangan'    => $request->keterangan,
-        'tanggal_order' => now(),
-    ]);
-
-    if ($request->qty_reguler > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_reguler,
-            'harga_satuan' => $menu->harga,
-            'subtotal'     => $request->qty_reguler * $menu->harga,
+    {
+        $request->validate([
+            'nama_pembeli' => 'required|string|max:255',
+            'no_meja'      => 'required|integer|min:1',
+            'harga_total'  => 'required|integer',
+            'keterangan'   => 'nullable|string',
+            'qty_reguler'  => 'required|integer|min:0',
+            'qty_jumbo'    => 'required|integer|min:0',
+            'topping'      => 'nullable|string',
+            'level_pedas'  => 'nullable|string',
         ]);
-    }
 
-    if ($request->qty_jumbo > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_jumbo,
-            'harga_satuan' => $menu->harga + 4000,
-            'subtotal'     => $request->qty_jumbo * ($menu->harga + 4000),
+        $menu = Menu::findOrFail($id);
+
+        $totalQty = $request->qty_reguler + $request->qty_jumbo;
+        if ($totalQty < 1) {
+            return back()->withErrors(['qty' => 'Minimal pesan 1 porsi.']);
+        }
+
+        $pesanan = Pesanan::create([
+            'user_id'       => Auth::id(),
+            'toko_id'       => $menu->toko_id,
+            'nama_pembeli'  => $request->nama_pembeli,
+            'no_meja'       => $request->no_meja,
+            'total_harga'   => $request->harga_total,
+            'status'        => 'Pending',
+            'keterangan'    => $request->keterangan,
+            'tanggal_order' => now(),
         ]);
-    }
 
-    return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
-}
+        if ($request->qty_reguler > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_reguler,
+                'harga_satuan' => $menu->harga,
+                'subtotal'     => $request->qty_reguler * $menu->harga,
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+            ]);
+        }
+
+        if ($request->qty_jumbo > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_jumbo,
+                'harga_satuan' => $menu->harga + 4000,
+                'subtotal'     => $request->qty_jumbo * ($menu->harga + 4000),
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+            ]);
+        }
+
+        return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
+    }
     public function checkout($id) {
         $menu = Menu::findOrFail($id);
         return view('pembeli.checkout', compact('menu'));
@@ -155,9 +165,11 @@ class PembeliController extends Controller
 
         return view('pembeli.beranda_ongoing', compact('pesanans', 'menus')); 
     }
+    
     public function rating($id)
     {
-        $pesanan = Pesanan::findOrFail($id);
+        $pesanan = Pesanan::with(['detailPesanan.menu', 'detail_pesanan.menu'])->findOrFail($id);
+
         return view('pembeli.rating', compact('pesanan'));
     }
 
@@ -211,10 +223,11 @@ class PembeliController extends Controller
 
     public function historyDetail($id)
     {
-        $pesanan = Pesanan::with(['details.menu', 'rating'])->findOrFail($id);
+        $pesanan = Pesanan::with(['detailPesanan.menu', 'rating'])->findOrFail($id);
     
         return view('pembeli.history_detail', compact('pesanan'));
     }
+    
     public function pesanan()
     {
         $toko = $this->getToko();

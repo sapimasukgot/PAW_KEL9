@@ -24,7 +24,7 @@
                     <h4 class="font-bold text-lg text-gray-800 mb-1" data-translate="label_desc">Deskripsi</h4>
                     <p class="text-xs text-gray-600 leading-relaxed">
                         <span class="font-semibold text-orange-600">{{ $menu->nama_menu }}</span> 
-                        {{ $menu->deskripsi ?? 'adalah salah satu menu yang cukup digemari pelanggan, terlebih karena rasanya yang gurih dan aromanya yang menggugah selera.' }}
+                        adalah salah satu menu yang cukup digemari pelanggan, terlebih karena rasanya yang gurih dan aromanya yang menggugah selera.
                     </p>
                 </div>
                 
@@ -44,19 +44,33 @@
 
         <div class="border-2 border-dashed border-orange-300 rounded-2xl p-4 bg-white/60 mb-10 shadow-sm">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                
                 <div class="bg-white/80 border border-orange-100 p-3 rounded-xl text-center shadow-inner">
                     <h5 class="font-bold mb-2 text-gray-800 text-sm" data-translate="label_price_detail">Pilihan Porsi</h5>
-                    <p class="text-[11px] text-gray-600">Reguler: Rp 15.000</p>
-                    <p class="text-[11px] text-gray-600">Jumbo: + Rp 4.000</p>
+                    <p class="text-[11px] text-gray-600">Reguler: Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                    @if(isset($menu->harga_jumbo))
+                        <p class="text-[11px] text-gray-600">Jumbo: + Rp {{ number_format($menu->harga_jumbo - $menu->harga, 0, ',', '.') }}</p>
+                    @else
+                        <p class="text-[11px] text-gray-400 italic">Porsi jumbo tidak tersedia</p>
+                    @endif
                 </div>
+
                 <div class="bg-white/80 border border-orange-100 p-3 rounded-xl text-center shadow-inner">
                     <h5 class="font-bold mb-2 text-gray-800 text-sm" data-translate="label_topping">Topping Ekstra</h5>
-                    <p class="text-[11px] text-gray-600">Katsu (+4k) | Telur (+4k)</p>
-                    <p class="text-[11px] text-gray-600">Kulit Krispi (+3k)</p>
+                    @if(!empty($menu->deskripsi))
+                        <p class="text-[11px] text-gray-600 font-medium leading-relaxed">
+                            {{ $menu->deskripsi }}
+                        </p>
+                    @else
+                        <p class="text-[11px] text-gray-500 italic">Original (Tanpa Topping)</p>
+                    @endif
                 </div>
+
                 <div class="bg-white/80 border border-orange-100 p-3 rounded-xl text-center shadow-inner">
                     <h5 class="font-bold mb-2 text-gray-800 text-sm" data-translate="label_spicy_level">Level Pedas</h5>
-                    <p class="text-[11px] text-gray-600 font-medium text-orange-600">Level 0 s/d Level 3</p>
+                    <p class="text-[11px] text-gray-600 font-medium text-orange-600">
+                        Level 0 s/d {{ $menu->max_pedas ?? '3' }}
+                    </p>
                     <p class="text-[10px] text-gray-400 mt-1">*Tulis di catatan checkout</p>
                 </div>
             </div>
@@ -64,13 +78,22 @@
             <div class="space-y-3 bg-white/40 p-3 rounded-xl border border-orange-50">
                 <h5 class="font-bold italic text-gray-700 text-sm" data-translate="label_review">Review Lapak</h5>
                 <div class="text-xs space-y-2 text-gray-600">
-                    <p class="bg-white/80 p-2 rounded-lg">⭐ 4.0 <strong>User1:</strong> porsinya banyak, tapi pas jam makan siang nunggunya agak lama.</p>
-                    <p class="bg-white/80 p-2 rounded-lg">⭐ 4.5 <strong>User2:</strong> Rasanya gurih mantap, katsunya juga renyah pas dikombinasiin.</p>
+                    @if(isset($menu->toko->ratings) && $menu->toko->ratings->count() > 0)
+                        @foreach($menu->toko->ratings->take(3) as $rating)
+                            <p class="bg-white/80 p-2 rounded-lg">
+                                ⭐ {{ number_format($rating->nilai, 1) }} 
+                                <strong>{{ $rating->user->nama ?? 'Pelanggan' }}:</strong> 
+                                {{ $rating->ulasan ?? 'Tidak ada komentar.' }}
+                            </p>
+                        @endforeach
+                    @else
+                        <p class="bg-white/80 p-2 rounded-lg italic text-gray-400 text-center">Belum ada ulasan untuk lapak ini.</p>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <div class="flex justify-between items-center px-2">
+        <div class="flex justify-between items-center px-2 mb-6">
             <a href="{{ route('pembeli-beranda') }}" class="bg-white border text-gray-700 px-8 py-2 rounded-xl font-bold transition hover:bg-gray-100 shadow-sm text-sm" data-translate="btn_back">
                 Kembali
             </a>

@@ -25,4 +25,9 @@ class Toko extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'toko_id', 'toko_id');
+    }
 }

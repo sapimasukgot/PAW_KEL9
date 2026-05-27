@@ -22,7 +22,7 @@
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
                 <h4 class="font-bold text-sm text-gray-800 mb-1">Deskripsi</h4>
                 <p class="text-xs text-gray-600 leading-relaxed">
-                    {{ $menu->nama_menu }} {{ $menu->deskripsi ?? 'adalah salah satu menu yang cukup digemari pelanggan, terlebih karena rasanya yang gurih and aromanya yang menggugah selera.' }}
+                    {{ $menu->nama_menu }} adalah salah satu menu yang cukup digemari pelanggan, terlebih karena rasanya yang gurih and aromanya yang menggugah selera.
                 </p>
             </div>
         </div>
@@ -36,12 +36,15 @@
                 </div>
             </div>
 
+            <!-- Topping Info Box (Dinamis mengambil isi kolom deskripsi) -->
             <div class="bg-white rounded-xl p-4 shadow-sm">
-                <h4 class="font-bold text-sm text-gray-800 mb-2">Topping</h4>
-                <div class="text-xs text-gray-600 space-y-1">
-                    <p>Kerupuk - Rp 4.000</p>
-                    <p>Kulit - Rp 3.000</p>
-                    <p>Telur - Rp 4.000</p>
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Topping Tersedia</h4>
+                <div class="text-xs text-gray-600 space-y-1 leading-relaxed">
+                    @if(!empty($menu->deskripsi))
+                        <p class="font-medium text-orange-600">{{ $menu->deskripsi }}</p>
+                    @else
+                        <p class="text-gray-400 italic">Original (Tidak ada pilihan topping khusus)</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -54,7 +57,7 @@
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Reguler:</span>
-                    <input type="number" id="qty_reguler" name="qty_reguler" value="0" min="0" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none border-none shadow-sm">
+                    <input type="number" id="qty_reguler" name="qty_reguler" value="1" min="0" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none border-none shadow-sm">
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -66,18 +69,33 @@
                     <span class="w-24 text-xs font-bold text-gray-700">Topping:</span>
                     <select id="topping_select" name="topping" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-32 text-center focus:outline-none border-none shadow-sm cursor-pointer">
                         <option value="-">Tanpa Topping</option>
-                        <option value="Telur">Telur (+4k)</option>
-                        <option value="Kerupuk">Kerupuk (+4k)</option>
-                        <option value="Kulit">Kulit (+3k)</option>
+                        @if(!empty($menu->deskripsi))
+                            @if(Str::contains(Str::lower($menu->deskripsi), 'telur'))
+                                <option value="Telur">Telur (+4k)</option>
+                            @endif
+                            @if(Str::contains(Str::lower($menu->deskripsi), 'katsu'))
+                                <option value="Katsu">Katsu (+4k)</option>
+                            @endif
+                            @if(Str::contains(Str::lower($menu->deskripsi), 'kerupuk'))
+                                <option value="Kerupuk">Kerupuk (+4k)</option>
+                            @endif
+                            @if(Str::contains(Str::lower($menu->deskripsi), 'kulit'))
+                                <option value="Kulit">Kulit (+3k)</option>
+                            @endif
+                        @else
+                            <option value="Telur">Telur (+4k)</option>
+                            <option value="Kerupuk">Kerupuk (+4k)</option>
+                            <option value="Kulit">Kulit (+3k)</option>
+                        @endif
                     </select>
                 </div>
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Level Pedas:</span>
-                    <select name="level_pedas" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-24 text-center focus:outline-none border-none shadow-sm appearance-none cursor-pointer">
-                        <option value="Lvl 0">Lvl 0</option>
-                        <option value="Lvl 1">Lvl 1</option>
-                        <option value="Lvl 2">Lvl 2</option>
+                    <select name="level_pedas" class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-24 text-center focus:outline-none border-none shadow-sm cursor-pointer">
+                        @for($i = 0; $i <= ($menu->max_pedas ?? 3); $i++)
+                            <option value="Lvl {{ $i }}">Lvl {{ $i }}</option>
+                        @endfor
                     </select>
                 </div>
             </div>
@@ -87,12 +105,12 @@
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Nama:</span>
-                    <input type="text" name="nama_pembeli" value="Aan" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
+                    <input type="text" name="nama_pembeli" value="{{ Auth::user()->nama ?? auth()->user()->name ?? 'Pelanggan' }}" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
                 </div>
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">No. Meja:</span>
-                    <input type="number" name="no_meja" value="1" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
+                    <input type="number" name="no_meja" value="1" min="1" required class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none focus:ring-1 ring-orange-300">
                 </div>
                 
                <div class="flex items-center gap-4">
@@ -111,7 +129,7 @@
                 <a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
                     Kembali
                 </a>
-                <button type="submit" class="bg-[#CBD5E1] text-gray-700 px-16 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
+                <button type="submit" class="bg-orange-500 text-white px-16 py-1.5 rounded-lg font-semibold hover:bg-orange-600 transition-all text-xs shadow-md">
                     Bayar
                 </button>
             </div>
@@ -142,7 +160,7 @@
 
                 let totalPorsi = qtyReguler + qtyJumbo;
                 if (totalPorsi > 0) {
-                    if (toppingValue === 'Telur' || toppingValue === 'Kerupuk') {
+                    if (toppingValue === 'Telur' || toppingValue === 'Kerupuk' || toppingValue === 'Katsu') {
                         total += (4000 * totalPorsi);
                     } else if (toppingValue === 'Kulit') {
                         total += (3000 * totalPorsi);

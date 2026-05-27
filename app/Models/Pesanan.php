@@ -20,8 +20,9 @@ class Pesanan extends Model {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function details() {
-        return $this->hasMany(DetailPesanan::class, 'order_id');
+    public function detailPesanan()
+    {
+        return $this->hasMany(DetailPesanan::class, 'order_id', 'pesanan_id');
     }
 
     public function pembayaran() {
