@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model {
     protected $table = 'menu';
     protected $primaryKey = 'menu_id';
-    protected $fillable = ['toko_id', 'nama_menu', 'deskripsi', 'harga', 'stok', 'status'];
+    protected $fillable = ['toko_id', 'nama_menu', 'deskripsi', 'harga', 'tambahan_jumbo','topping','stok', 'status'];
 
     public function toko()
     {
