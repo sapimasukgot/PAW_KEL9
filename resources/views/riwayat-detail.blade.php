@@ -61,33 +61,58 @@
             <h4 class="font-bold text-sm text-gray-800 mb-2">Rincian Menu yang Harus Dimasak</h4>
             
             @if(isset($details) && $details->count() > 0)
-                <div class="space-y-3">
-                    @foreach($details as $item)
-                        <div class="flex justify-between items-start border-b border-gray-100 pb-3 last:border-none last:pb-0">
-                            <div class="space-y-0.5">
-                                <p class="font-bold text-xs text-orange-600">
-                                    📋 {{ $item->menu->nama_menu ?? 'Menu Pilihan' }}
-                                </p>
-                                <div class="text-[11px] text-gray-500 space-y-0.5 pl-1">
-                                    @if($item->harga_satuan == ($item->menu->harga ?? 0))
-                                        <p><span class="font-medium text-gray-700">Porsi:</span> Reguler ({{ $item->jumlah ?? 0 }}x)</p>
-                                    @else
-                                        <p><span class="font-medium text-gray-700">Porsi:</span> Jumbo ({{ $item->jumlah ?? 0 }}x)</p>
-                                    @endif
-                                    <p><span class="font-medium text-gray-700">Topping:</span> {{ $item->topping ?? '-' }}</p>
-                                    <p><span class="font-medium text-gray-700">Pedas:</span> {{ $item->level_pedas ?? '-' }}</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs font-bold text-gray-900 block">
-                                    Rp {{ number_format($item->subtotal ?? ($item->harga_satuan * $item->jumlah), 0, ',', '.') }}
-                                </span>
-                                <span class="text-[10px] text-gray-400 block">
-                                    @Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}
-                                </span>
-                            </div>
+                @php
+                    $firstItem = $details->first();
+                    $namaMenu = $firstItem->menu->nama_menu ?? 'Menu Pilihan';
+                    $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
+                    $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
+
+                    $dataReguler = $details->values()->get(0);
+                    $dataJumbo = $details->values()->get(1);
+
+                    if ($details->count() == 1) {
+                        if ($tambahanJumbo > 0 && $firstItem->harga_satuan > $hargaRegulerAsli) {
+                            $dataReguler = null;
+                            $dataJumbo = $firstItem;
+                        } else {
+                            $dataReguler = $firstItem;
+                            $dataJumbo = null;
+                        }
+                    }
+
+                    $qtyReguler = $dataReguler ? ($dataReguler->jumlah ?? 0) : 0;
+                    $qtyJumbo = $dataJumbo ? ($dataJumbo->jumlah ?? 0) : 0;
+
+                    $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
+                    $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
+
+                    // Hitung harga topping berdasarkan selisih harga porsi reguler asli
+                    $hargaToppingSatuan = $firstItem->harga_satuan - ($qtyJumbo > 0 ? ($hargaRegulerAsli + $tambahanJumbo) : $hargaRegulerAsli);
+                    if ($hargaToppingSatuan <= 0) { $hargaToppingSatuan = 3000; } // Sedia cadangan tetap 3rb jika selisih 0
+                @endphp
+
+                <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
+                    <p class="font-bold text-xs text-orange-600">📋 {{ $namaMenu }}</p>
+                    
+                    <div class="mt-2 space-y-2 pl-2 text-xs text-gray-600">
+                        <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                            <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $qtyReguler }}x</p>
+                            <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalReguler, 0, ',', '.') }}</span>
                         </div>
-                    @endforeach
+
+                        <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                            <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> <span class="text-orange-500 font-bold">{{ $qtyJumbo }}x</span></p>
+                            <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalJumbo, 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $firstItem->topping ?? '-' }}</p>
+                                <span class="text-[10px] text-orange-600 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                            </div>
+                            <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $firstItem->level_pedas ?? '-' }}</p>
+                        </div>
+                    </div>
                 </div>
             @else
                 <p class="text-xs text-gray-400 italic">Rincian menu belanjaan tidak ditemukan.</p>

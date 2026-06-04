@@ -1,4 +1,4 @@
-@include('layout-penjual')
+@include('pembeli.nav')
 
 <!DOCTYPE html>
 <html lang="id">
@@ -12,11 +12,12 @@
 
     <div class="max-w-3xl mx-auto p-4">
 
-        <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Pesanan Masuk</h1>
+        <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Pesanan Anda</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="w-full h-44 bg-orange-50 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-orange-100">
                 @php
+                    // Menarik relasi item menu pertama dari daftar detail pesanan pembeli
                     $details = $pesanan->detail_pesanan ?? $pesanan->detailPesanan ?? $pesanan->details ?? null;
                     $firstDetail = isset($details) && $details->count() > 0 ? $details->first() : null;
                     $gambarMenu = ($firstDetail && $firstDetail->menu) ? $firstDetail->menu->gambar_menu : null;
@@ -35,86 +36,20 @@
             </div>
 
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
-                <h4 class="font-bold text-sm text-gray-800 mb-2">Aksi Perubahan Status</h4>
-
-                <form id="form-update-status" class="h-full flex flex-col justify-between">
-                    @csrf
-                    <div class="space-y-2">
-                        <p class="text-[11px] text-gray-400">Pilih status terbaru untuk memperbarui status antrean di halaman pembeli:</p>
-                        <select id="select-status" name="status" class="w-full bg-gray-100 px-4 py-2 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 ring-orange-400">
-                            <option value="Pending" {{ $pesanan->status == 'Pending' ? 'selected' : '' }}>⏳ Menunggu Antrian</option>
-                            <option value="Dimasak" {{ $pesanan->status == 'Dimasak' ? 'selected' : '' }}>🍳 Sedang Dimasak</option>
-                            <option value="Siap" {{ $pesanan->status == 'Siap' ? 'selected' : '' }}>✅ Siap Disajikan / Selesai</option>
-                            <option value="Batal" {{ $pesanan->status == 'Batal' ? 'selected' : '' }}>❌ Batalkan Pesanan</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="mt-4 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-sm transition-all text-center">
-                        Update Status Pesanan
-                    </button>
-                </form>
+                <h4 class="font-bold text-sm text-gray-800 mb-1">Status Pantauan Dapur</h4>
+                <div id="area-status-dapur" class="h-full flex flex-col justify-center items-center text-center p-2">
+                    <span class="text-xs text-gray-400">Sinkronisasi dengan dapur...</span>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            
-            <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
-                <h4 class="font-bold text-sm text-gray-800 mb-2">Daftar Menu yang Harus Dimasak</h4>
-                
-                @if(isset($details) && $details->count() > 0)
-                    @php
-                        $firstItem = $details->first();
-                        $namaMenu = $firstItem->menu->nama_menu ?? 'Menu Pilihan';
-                        $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
-
-                        // Cari data porsi reguler dan jumbo dari koleksi data di database
-                        $dataReguler = $details->first(function($item) use ($hargaRegulerAsli) {
-                            return $item->harga_satuan == $hargaRegulerAsli;
-                        });
-
-                        $dataJumbo = $details->first(function($item) use ($hargaRegulerAsli) {
-                            return $item->harga_satuan > $hargaRegulerAsli;
-                        });
-
-                        // Set nilai default ke 0 jika pembeli tidak memilih porsi tersebut
-                        $qtyReguler = $dataReguler ? ($dataReguler->jumlah ?? 0) : 0;
-                        $qtyJumbo = $dataJumbo ? ($dataJumbo->jumlah ?? 0) : 0;
-
-                        $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
-                        $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
-                    @endphp
-
-                    <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
-                        <p class="font-bold text-xs text-orange-600">📋 {{ $namaMenu }}</p>
-                        
-                        <div class="mt-2 space-y-2 pl-2 text-xs text-gray-600">
-                            <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
-                                <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $qtyReguler }}x</p>
-                                <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalReguler, 0, ',', '.') }}</span>
-                            </div>
-
-                            <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
-                                <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> <span class="text-orange-500 font-bold">{{ $qtyJumbo }}x</span></p>
-                                <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalJumbo, 0, ',', '.') }}</span>
-                            </div>
-
-                            <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
-                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $firstItem->topping ?? '-' }}</p>
-                                <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $firstItem->level_pedas ?? '-' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @else
-                    <p class="text-xs text-gray-400 italic">Rincian item porsi menu tidak ditemukan.</p>
-                @endif
-            </div>
-
+        <div class="space-y-4">
             <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Identitas Pelanggan</h4>
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Nama:</span>
-                    <input type="text" readonly value="{{ $pesanan->nama_pembeli }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none border-none text-gray-600 select-none">
+                    <input type="text" readonly value="{{ $pesanan->nama_pembeli ?? Auth::user()->name }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs min-w-[150px] text-center focus:outline-none border-none text-gray-600 select-none">
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -124,7 +59,7 @@
                 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Harga Total:</span>
-                    <input type="text" readonly value="Rp {{ number_format($pesanan->harga_total ?? $pesanan->total_harga ?? 0, 0, ',', '.') }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-orange-600 min-w-[150px] text-center focus:outline-none border-none select-none">
+                    <input type="text" readonly value="Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-orange-600 min-w-[150px] text-center focus:outline-none border-none select-none">
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -132,45 +67,59 @@
                     <input type="text" readonly value="{{ $pesanan->keterangan ?? '-' }}" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs w-full max-w-sm text-left focus:outline-none border-none italic text-gray-500 select-none">
                 </div>
             </div>
-        </div>
 
-        <div class="w-full flex justify-between items-center pt-2">
-            <a href="{{ route('pesanan-penjual') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 transition-all text-xs shadow-sm">
-                Kembali
-            </a>
-            <div id="status-indicator" class="bg-orange-100 text-orange-700 px-10 py-1.5 rounded-lg font-bold text-xs shadow-sm select-none border border-orange-200">
-                Status: {{ $pesanan->status }}
-            </div>
+            <div id="tombol-aksi-navigasi" class="w-full flex justify-between items-center pt-2"></div>
         </div>
 
     </div>
 
     <script>
-        document.getElementById('form-update-status').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const statusValue = document.getElementById('select-status').value;
-            const fetchUrl = "{{ route('api.penjual.update-status', $pesanan->pesanan_id ?? $pesanan->id) }}";
-
-            fetch(fetchUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ status: statusValue })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    document.getElementById('status-indicator').innerText = "Status: " + data.status;
-                    alert(data.message);
-                } else {
-                    alert('Gagal memperbarui status data.');
+        function dapatkanStatusDapurOtomatis() {
+            const endpointTracking = "{{ route('api.pembeli.cek-status', $pesanan->pesanan_id ?? $pesanan->id) }}";
+            
+            fetch(endpointTracking)
+            .then(res => res.json())
+            .then(resData => {
+                if(resData.success) {
+                    perbaruiKomponenTampilan(resData.status);
                 }
             })
-            .catch(error => console.error('Error:', error));
-        });
+            .catch(error => console.error("Koneksi pelacakan terputus:", error));
+        }
+
+        function perbaruiKomponenTampilan(statusPesanan) {
+            const statusBox = document.getElementById('area-status-dapur');
+            const navBox = document.getElementById('tombol-aksi-navigasi');
+            
+            let htmlStatus = '';
+            let htmlNavigasi = '';
+            
+            if(statusPesanan === 'Pending') {
+                htmlStatus = `<span class="text-xl font-black text-amber-600 uppercase tracking-wider animate-pulse">⏳ MENUNGGU ANTRIAN</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Pesanan masuk sistem, menunggu konfirmasi lapak.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Antrean</a>
+                                <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed text-center">Beri Rating</div>`;
+            } else if(statusPesanan === 'Dimasak' || statusPesanan === 'Proses') {
+                htmlStatus = `<span class="text-xl font-black text-orange-600 uppercase tracking-wider">🍳 SEDANG DIMASAK</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Koki sedang meracik hidangan sedap pesananmu.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-ongoing') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Antrean</a>
+                                <div class="bg-gray-300 text-gray-500 px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm select-none cursor-not-allowed text-center">Beri Rating</div>`;
+            } else if(statusPesanan === 'Siap' || statusPesanan === 'Selesai') {
+                htmlStatus = `<span class="text-xl font-black text-green-600 uppercase tracking-wider">✅ SIAP DISAJIKAN</span>
+                              <p class="text-[11px] text-gray-400 mt-1">Pesanan selesai! Silakan ambil makanan Anda di loket lapak.</p>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Beranda</a>
+                                <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}" class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center">Beri Rating</a>`;
+            } else {
+                htmlStatus = `<span class="text-xl font-black text-gray-600 uppercase tracking-wider">❌ ${statusPesanan.toUpperCase()}</span>`;
+                htmlNavigasi = `<a href="{{ route('pembeli-beranda') }}" class="bg-[#CBD5E1] text-gray-700 px-12 py-1.5 rounded-lg font-semibold hover:bg-gray-400 text-xs shadow-sm">Kembali ke Beranda</a>`;
+            }
+            
+            statusBox.innerHTML = htmlStatus;
+            navBox.innerHTML = htmlNavigasi;
+        }
+
+        setInterval(dapatkanStatusDapurOtomatis, 3000);
+        dapatkanStatusDapurOtomatis();
     </script>
 </body>
 </html>

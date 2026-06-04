@@ -72,28 +72,50 @@
                 
                 @if(isset($details) && $details->count() > 0)
                     <div class="space-y-3">
-                        @foreach($details as $detail)
+                        @foreach($details as $detailItem)
+                            @php
+                                $hargaRegulerAsli = $detailItem->menu->harga ?? 0;
+                                $tambahanJumbo = $detailItem->menu->tambahan_jumbo ?? 0;
+                                $isJumbo = $detailItem->harga_satuan > $hargaRegulerAsli;
+
+                                // Logika pemisahan harga topping mandiri dari basis harga_satuan transaksi
+                                $hargaToppingSatuan = $detailItem->harga_satuan - ($isJumbo ? ($hargaRegulerAsli + $tambahanJumbo) : $hargaRegulerAsli);
+                                
+                                // Jika hasil selisih kosong atau bernilai minus karena penataan awal, set standar nominal topping Rp 3.000
+                                if ($hargaToppingSatuan <= 0 && !empty($detailItem->topping) && $detailItem->topping != '-') {
+                                    $hargaToppingSatuan = 3000;
+                                }
+                            @endphp
+                            
                             <div class="flex justify-between items-start border-b border-gray-100 pb-3 last:border-none last:pb-0">
                                 <div class="space-y-0.5">
                                     <p class="font-bold text-xs text-gray-900">
-                                        {{ $detail->menu->nama_menu ?? 'Menu Pilihan' }}
+                                        {{ $detailItem->menu->nama_menu ?? 'Menu Pilihan' }}
                                     </p>
-                                    <div class="text-[11px] text-gray-500 space-y-0.5 pl-1">
-                                        @if($detail->harga_satuan == ($detail->menu->harga ?? 0))
-                                            <p><span class="font-medium text-gray-700">Porsi:</span> Reguler ({{ $detail->jumlah ?? 0 }}x)</p>
+                                    <div class="text-[11px] text-gray-500 space-y-1 pl-1 mt-1">
+                                        @if($detailItem->harga_satuan == $hargaRegulerAsli)
+                                            <p><span class="font-medium text-gray-700">Porsi:</span> Reguler ({{ $detailItem->jumlah ?? 0 }}x) <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli, 0, ',', '.') }}</span></p>
                                         @else
-                                            <p><span class="font-medium text-gray-700">Porsi:</span> Jumbo ({{ $detail->jumlah ?? 0 }}x)</p>
+                                            <p><span class="font-medium text-gray-700">Porsi:</span> <span class="text-orange-500 font-semibold">Jumbo</span> ({{ $detailItem->jumlah ?? 0 }}x) <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli + $tambahanJumbo, 0, ',', '.') }}</span></p>
+                                            <span class="text-[10px] text-orange-400 block -mt-0.5">(Tambahan Jumbo: +Rp {{ number_format($tambahanJumbo, 0, ',', '.') }})</span>
                                         @endif
-                                        <p><span class="font-medium text-gray-700">Topping:</span> {{ $detail->topping ?? '-' }}</p>
-                                        <p><span class="font-medium text-gray-700">Pedas:</span> {{ $detail->level_pedas ?? '-' }}</p>
+
+                                        <div class="flex items-center gap-2 pt-0.5">
+                                            <p><span class="font-medium text-gray-700">Topping:</span> {{ $detailItem->topping ?? '-' }}</p>
+                                            @if(!empty($detailItem->topping) && $detailItem->topping != '-')
+                                                <span class="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded border border-amber-200 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                                            @endif
+                                        </div>
+                                        
+                                        <p><span class="font-medium text-gray-700">Pedas:</span> {{ $detailItem->level_pedas ?? '-' }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-xs font-bold text-orange-500 block">
-                                        Rp {{ number_format($detail->subtotal ?? ($detail->harga_satuan * $detail->jumlah), 0, ',', '.') }}
+                                        Rp {{ number_format($detailItem->subtotal ?? ($detailItem->harga_satuan * $detailItem->jumlah), 0, ',', '.') }}
                                     </span>
                                     <span class="text-[10px] text-gray-400 block">
-                                        @Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}
+                                        {{ $detailItem->jumlah ?? 1 }}x Pesanan
                                     </span>
                                 </div>
                             </div>

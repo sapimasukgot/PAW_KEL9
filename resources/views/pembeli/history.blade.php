@@ -19,9 +19,18 @@
             @foreach($histories as $h)
                 <div class="bg-white p-4 rounded-2xl shadow-md flex justify-between items-center">
                     <div class="flex gap-4">
-                        <div
-                            class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-center p-1 shadow-inner">
-                            <span class="text-2xl">🛍️</span>
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-center overflow-hidden shadow-inner border border-gray-100">
+                            @php
+                                // Mengambil data detail pesanan pertama dari riwayat transaksi
+                                $firstDetail = $h->detailPesanan ? $h->detailPesanan->first() : null;
+                                $gambarMenu = ($firstDetail && $firstDetail->menu) ? $firstDetail->menu->gambar_menu : null;
+                            @endphp
+
+                            @if($gambarMenu)
+                                <img src="{{ asset('images/menu/' . $gambarMenu) }}" alt="Menu Gambar" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-2xl">🛍️</span>
+                            @endif
                         </div>
 
                         <div>

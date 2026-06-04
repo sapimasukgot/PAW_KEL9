@@ -66,17 +66,20 @@
                         $firstItem = $details->first();
                         $namaMenu = $firstItem->menu->nama_menu ?? 'Menu Pilihan';
                         $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
+                        $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
 
-                        // Mengambil data berdasarkan index collection karena sistem memisahkan penyimpanan item
                         $dataReguler = $details->values()->get(0);
                         $dataJumbo = $details->values()->get(1);
 
-                        // Jika item di dalam transaksi hanya dibeli 1 jenis (Reguler saja ATAU Jumbo saja)
                         if ($details->count() == 1) {
-                            if ($firstItem->harga_satuan > $hargaRegulerAsli) {
+                            if ($tambahanJumbo > 0 && $firstItem->harga_satuan > $hargaRegulerAsli) {
                                 $dataReguler = null;
                                 $dataJumbo = $firstItem;
-                            } else {
+                            } 
+                            else {
+                                $totalHargaPesanan = $pesanan->harga_total ?? $pesanan->total_harga ?? 0;
+                                $hitungSubtotalReguler = $firstItem->jumlah * $hargaRegulerAsli;
+
                                 $dataReguler = $firstItem;
                                 $dataJumbo = null;
                             }
