@@ -36,7 +36,7 @@
                             <p class="font-bold text-orange-600 text-sm mb-2">📋 {{ $detail->menu->nama_menu ?? 'Menu Pilihan' }}</p>
                 
                             <div class="space-y-3">
-                                @if($detail->harga_satuan == ($detail->menu->harga ?? 0))
+                                @if(!$detail->is_jumbo)
                                     <div class="flex items-center gap-4">
                                         <span class="w-24 text-xs font-bold text-gray-600" data-translate="label_regular">Reguler:</span>
                                         <span class="bg-gray-200 px-4 py-0.5 rounded-lg text-xs font-bold">

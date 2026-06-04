@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Cek Test Order</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        td, th { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #f0f0f0; }
+        .jumbo { background: #fff3cd; }
+        .reguler { background: #e8f4f8; }
+    </style>
+</head>
+<body>
+    <h2>📋 Cek Pesanan Terakhir</h2>
+    <p>Buka browser dan akses: <strong>http://localhost:8000/penjual/pesanan-detail/[order_id]</strong></p>
+    
+    <h3>Apa yang Harus Dilihat:</h3>
+    <ul>
+        <li><strong>✅ Jumbo muncul dengan qty > 0</strong> (jika ada porsi jumbo)</li>
+        <li><strong>✅ Harga topping tidak 0</strong> (jika ada topping dengan harga)</li>
+        <li><strong>✅ Subtotal benar</strong> = qty × harga</li>
+    </ul>
+
+    <h3>📝 Langkah Test:</h3>
+    <ol>
+        <li>Buka http://localhost:8000/pembeli/</li>
+        <li>Klik order menu (misal: Nasi Goreng)</li>
+        <li>Isi: 
+            <ul>
+                <li>Reguler: 2 porsi</li>
+                <li>Jumbo: 3 porsi</li>
+                <li>Topping: Pilih salah satu (misal Telur)</li>
+                <li>Level Pedas: Pilih Lvl 1</li>
+            </ul>
+        </li>
+        <li>Klik Bayar</li>
+        <li>Lihat di penjual/pesanan untuk lihat order detail</li>
+        <li><strong>Cek apakah jumbo dan harga topping muncul ✅</strong></li>
+    </ol>
+
+    <hr>
+    <h3>📊 Kalau Masih Tidak Muncul:</h3>
+    <p>Cek di DevTools Browser (F12) → Console untuk lihat error JavaScript</p>
+</body>
+</html>

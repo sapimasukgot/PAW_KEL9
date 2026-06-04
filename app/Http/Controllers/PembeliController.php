@@ -15,11 +15,10 @@ class PembeliController extends Controller
     public function index()
     {
         $menus = Menu::all();
-
         return view('pembeli.beranda', compact('menus'));
     }
 
-   public function show($id)
+    public function show($id)
     {
         $menu = Menu::with(['toko.ratings.user'])->findOrFail($id);
         $toppings = Menu::where('toko_id', $menu->toko_id)
@@ -40,7 +39,6 @@ class PembeliController extends Controller
     }
 
     public function updateProfile(Request $request) {
-        
         $user = User::find(Auth::id());
 
         $request->validate([
@@ -90,6 +88,22 @@ class PembeliController extends Controller
 
         $menu = Menu::findOrFail($id);
 
+        $hargaToppingAsli = 0;
+        if ($request->filled('topping') && $request->topping !== '-') {
+            // Parse harga topping dari field topping di Menu (format: "nama:harga, nama:harga")
+            if ($menu->topping) {
+                $toppingList = array_map('trim', explode(',', $menu->topping));
+                foreach ($toppingList as $top) {
+                    $parts = explode(':', $top);
+                    $namaTop = trim($parts[0]);
+                    if ($namaTop === $request->topping) {
+                        $hargaToppingAsli = isset($parts[1]) ? (int)trim($parts[1]) : 0;
+                        break;
+                    }
+                }
+            }
+        }
+
         $totalQty = $request->qty_reguler + $request->qty_jumbo;
         if ($totalQty < 1) {
             return back()->withErrors(['qty' => 'Minimal pesan 1 porsi.']);
@@ -106,32 +120,35 @@ class PembeliController extends Controller
             'tanggal_order' => now(),
         ]);
 
-    if ($request->qty_reguler > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_reguler,
-            'harga_satuan' => $menu->harga + ($hargaToppingAsli ?? 0), 
-            'topping'      => $request->topping,
-            'level_pedas'  => $request->level_pedas,
-            'subtotal'     => $request->qty_reguler * ($menu->harga + ($hargaToppingAsli ?? 0)),
-        ]);
-    }
+        if ($request->qty_reguler > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_reguler,
+                'harga_satuan' => $menu->harga + $hargaToppingAsli, 
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+                'subtotal'     => $request->qty_reguler * ($menu->harga + $hargaToppingAsli),
+                'is_jumbo'     => false,
+            ]);
+        }
 
-    if ($request->qty_jumbo > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_jumbo,
-            'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0) + ($hargaToppingAsli ?? 0), 
-            'topping'      => $request->topping,
-            'level_pedas'  => $request->level_pedas,
-            'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0) + ($hargaToppingAsli ?? 0)),
-        ]);
-    }
+        if ($request->qty_jumbo > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_jumbo,
+                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli, 
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli),
+                'is_jumbo'     => true,
+            ]);
+        }
 
         return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
     }
+
     public function checkout($id) {
         $menu = Menu::findOrFail($id);
         return view('pembeli.checkout', compact('menu'));
@@ -169,7 +186,6 @@ class PembeliController extends Controller
     public function rating($id)
     {
         $pesanan = Pesanan::with(['detailPesanan.menu', 'detail_pesanan.menu'])->findOrFail($id);
-
         return view('pembeli.rating', compact('pesanan'));
     }
 
@@ -201,7 +217,6 @@ class PembeliController extends Controller
     public function ratingForm($id)
     {
         $pesanan = Pesanan::findOrFail($id);
-
         return view('pembeli.rating', compact('pesanan'));
     }
 
@@ -224,20 +239,20 @@ class PembeliController extends Controller
     public function historyDetail($id)
     {
         $pesanan = Pesanan::with(['detailPesanan.menu', 'rating'])->findOrFail($id);
-    
         return view('pembeli.history_detail', compact('pesanan'));
     }
     
     public function pesanan()
     {
-        $toko = $this->getToko();
+        $toko = Toko::where('user_id', Auth::id())->first();
         $semuaPesanan = \App\Models\Pesanan::all();
         dd([
-            'ID_User_Penjual_Login' => \Illuminate\Support\Facades\Auth::id(),
+            'ID_User_Penjual_Login' => Auth::id(),
             'Toko_Object_Penjual' => $toko ? $toko->toArray() : 'Tidak Punya Toko',
             'Semua_Data_Pesanan_Di_MakanMart' => $semuaPesanan->toArray()
-            ]);
+        ]);
     }
+
     public function detailpesanan($id) 
     {
         $pesanan = Pesanan::findOrFail($id);
@@ -271,17 +286,17 @@ class PembeliController extends Controller
     public function cekStatusAjax($id) {
         $pesanan = \App\Models\Pesanan::find($id);
         if ($pesanan) {
-        return response()->json([
-            'success' => true,
-            'status' => $pesanan->status
-        ]);
+            return response()->json([
+                'success' => true,
+                'status' => $pesanan->status
+            ]);
+        }
+        return response()->json(['success' => false, 'message' => 'Pesanan tidak ditemukan.'], 404);
     }
-    return response()->json(['success' => false, 'message' => 'Pesanan tidak ditemukan.'], 404);
-}
 
     public function searchMenuAjax(Request $request) {
-    $keyword = $request->query('keyword', '');
-    $menus = \App\Models\Menu::where('nama_menu', 'like', '%' . $keyword . '%')->get();
-    return response()->json($menus);
-}
+        $keyword = $request->query('keyword', '');
+        $menus = \App\Models\Menu::where('nama_menu', 'like', '%' . $keyword . '%')->get();
+        return response()->json($menus);
+    }
 }

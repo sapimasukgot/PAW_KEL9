@@ -113,9 +113,27 @@ class PenjualController extends Controller
             'keterangan'   => 'nullable|string',
             'qty_reguler'  => 'required|integer|min:0',
             'qty_jumbo'    => 'required|integer|min:0',
+            'topping'      => 'nullable|string',
+            'level_pedas'  => 'nullable|string',
         ]);
 
         $menu = Menu::findOrFail($id);
+
+        $hargaToppingAsli = 0;
+        if ($request->filled('topping') && $request->topping !== '-') {
+            // Parse harga topping dari field topping di Menu (format: "nama:harga, nama:harga")
+            if ($menu->topping) {
+                $toppingList = array_map('trim', explode(',', $menu->topping));
+                foreach ($toppingList as $top) {
+                    $parts = explode(':', $top);
+                    $namaTop = trim($parts[0]);
+                    if ($namaTop === $request->topping) {
+                        $hargaToppingAsli = isset($parts[1]) ? (int)trim($parts[1]) : 0;
+                        break;
+                    }
+                }
+            }
+        }
 
         $totalQty = $request->qty_reguler + $request->qty_jumbo;
         if ($totalQty < 1) {
@@ -142,8 +160,11 @@ class PenjualController extends Controller
                 'order_id'     => $pesanan->pesanan_id,
                 'menu_id'      => $menu->menu_id,
                 'jumlah'       => $request->qty_reguler,
-                'harga_satuan' => $menu->harga,
-                'subtotal'     => $request->qty_reguler * $menu->harga,
+                'harga_satuan' => $menu->harga + $hargaToppingAsli,
+                'subtotal'     => $request->qty_reguler * ($menu->harga + $hargaToppingAsli),
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+                'is_jumbo'     => false,
             ]);
         }
 
@@ -152,8 +173,11 @@ class PenjualController extends Controller
                 'order_id'     => $pesanan->pesanan_id,
                 'menu_id'      => $menu->menu_id,
                 'jumlah'       => $request->qty_jumbo,
-                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0),
-                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0)),
+                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli,
+                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli),
+                'topping'      => $request->topping,
+                'level_pedas'  => $request->level_pedas,
+                'is_jumbo'     => true,
             ]);
         }
 

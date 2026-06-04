@@ -102,6 +102,7 @@
                         <input type="number" id="qty_jumbo" name="qty_jumbo" value="0" min="0" max="{{ $menu->stok }}"
                             class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none shadow-sm">
                     </div>
+                @else
                     <input type="hidden" id="qty_jumbo" name="qty_jumbo" value="0">
                 @endif
 

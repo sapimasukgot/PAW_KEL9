@@ -60,21 +60,15 @@
                     $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
                     $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
 
+                    // Gunakan kolom is_jumbo untuk membedakan
                     $dataReguler = null;
                     $dataJumbo = null;
 
-                    // Logika penentuan porsi yang diperketat dengan memeriksa selisih Tambahan Jumbo asli menu
                     foreach($details as $item) {
-                        $selisihHarga = $item->harga_satuan - $hargaRegulerAsli;
-                        
-                        if ($tambahanJumbo > 0 && $selisihHarga >= $tambahanJumbo) {
+                        if ($item->is_jumbo) {
                             $dataJumbo = $item;
                         } else {
-                            if ($details->count() == 1 && isset($ulasanDetail->pesanan->keterangan) && str_contains(strtolower($ulasanDetail->pesanan->keterangan), 'jumbo')) {
-                                $dataJumbo = $item;
-                            } else {
-                                $dataReguler = $item;
-                            }
+                            $dataReguler = $item;
                         }
                     }
 
@@ -84,16 +78,21 @@
                     $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
                     $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
 
-                    // Menghitung harga topping secara mandiri berdasarkan porsi aktif masing-masing
+                    // Pilih item yang akan ditampilkan detailnya (prioritas: jumbo, lalu reguler)
                     $itemAcuan = $dataJumbo ?? $dataReguler;
-                    if ($qtyJumbo > 0) {
-                        $hargaToppingSatuan = $itemAcuan->harga_satuan - ($hargaRegulerAsli + $tambahanJumbo);
-                    } else {
-                        $hargaToppingSatuan = $itemAcuan->harga_satuan - $hargaRegulerAsli;
-                    }
-
-                    if ($hargaToppingSatuan < 0) {
-                        $hargaToppingSatuan = 0;
+                    
+                    // Hitung harga topping (harga satuan dikurangi harga dasar + tambahan jumbo)
+                    $hargaToppingSatuan = 0;
+                    if ($itemAcuan) {
+                        if ($itemAcuan->is_jumbo) {
+                            $hargaToppingSatuan = $itemAcuan->harga_satuan - ($hargaRegulerAsli + $tambahanJumbo);
+                        } else {
+                            $hargaToppingSatuan = $itemAcuan->harga_satuan - $hargaRegulerAsli;
+                        }
+                        
+                        if ($hargaToppingSatuan < 0) {
+                            $hargaToppingSatuan = 0;
+                        }
                     }
                 @endphp
 
@@ -101,15 +100,26 @@
                     <p class="font-bold text-xs text-orange-600">📋 {{ $namaMenu }}</p>
                     
                     <div class="mt-2 space-y-2 pl-2 text-xs text-gray-600">
+                        @if($qtyReguler > 0)
                         <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
                             <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $qtyReguler }}x</p>
                             <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalReguler, 0, ',', '.') }}</span>
                         </div>
+                        @endif
 
+                        @if($qtyJumbo > 0)
                         <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
                             <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> <span class="text-orange-500 font-bold">{{ $qtyJumbo }}x</span></p>
                             <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalJumbo, 0, ',', '.') }}</span>
                         </div>
+                        @endif
+
+                        @if($qtyReguler == 0 && $qtyJumbo == 0)
+                        <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                            <p><span class="font-semibold text-gray-800">Jumlah:</span> {{ $dataReguler ? $dataReguler->jumlah : ($dataJumbo ? $dataJumbo->jumlah : 0) }}x</p>
+                            <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($dataReguler ? $dataReguler->subtotal : ($dataJumbo ? $dataJumbo->subtotal : 0), 0, ',', '.') }}</span>
+                        </div>
+                        @endif
 
                         <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
                             <div class="flex justify-between items-center">
