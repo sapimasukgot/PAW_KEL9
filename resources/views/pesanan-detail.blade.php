@@ -68,20 +68,19 @@
                         $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
                         $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
 
-                        $dataReguler = $details->values()->get(0);
-                        $dataJumbo = $details->values()->get(1);
+                        $dataReguler = null;
+                        $dataJumbo = null;
 
-                        if ($details->count() == 1) {
-                            if ($tambahanJumbo > 0 && $firstItem->harga_satuan > $hargaRegulerAsli) {
-                                $dataReguler = null;
-                                $dataJumbo = $firstItem;
-                            } 
-                            else {
-                                $totalHargaPesanan = $pesanan->harga_total ?? $pesanan->total_harga ?? 0;
-                                $hitungSubtotalReguler = $firstItem->jumlah * $hargaRegulerAsli;
-
-                                $dataReguler = $firstItem;
-                                $dataJumbo = null;
+                        // Menggunakan foreach dinamis untuk memisah porsi reguler & jumbo secara akurat
+                        foreach($details as $item) {
+                            if ($item->harga_satuan > $hargaRegulerAsli) {
+                                $dataJumbo = $item;
+                            } else {
+                                if($details->count() == 1 && isset($pesanan->keterangan) && str_contains(strtolower($pesanan->keterangan), 'jumbo')) {
+                                    $dataJumbo = $item;
+                                } else {
+                                    $dataReguler = $item;
+                                }
                             }
                         }
 
@@ -90,6 +89,15 @@
 
                         $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
                         $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
+
+                        // Perhitungan harga topping murni dari selisih data di database
+                        $itemAcuan = $dataJumbo ?? $dataReguler;
+                        $hargaToppingSatuan = $itemAcuan->harga_satuan - ($qtyJumbo > 0 ? ($hargaRegulerAsli + $tambahanJumbo) : $hargaRegulerAsli);
+                        
+                        // Validasi saringan: jika selisih bernilai negatif karena variasi input data, normalkan menjadi 0
+                        if ($hargaToppingSatuan < 0) {
+                            $hargaToppingSatuan = 0;
+                        }
                     @endphp
 
                     <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
@@ -107,8 +115,13 @@
                             </div>
 
                             <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
-                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $firstItem->topping ?? '-' }}</p>
-                                <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $firstItem->level_pedas ?? '-' }}</p>
+                                <div class="flex justify-between items-center">
+                                    <p><span class="font-semibold text-gray-800">Topping:</span> {{ $itemAcuan->topping ?? '-' }}</p>
+                                    @if(!empty($itemAcuan->topping) && $itemAcuan->topping != '-')
+                                        <span class="text-[10px] text-orange-600 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $itemAcuan->level_pedas ?? '-' }}</p>
                             </div>
                         </div>
                     </div>

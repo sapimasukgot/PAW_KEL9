@@ -60,16 +60,21 @@
                     $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
                     $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
 
-                    $dataReguler = $details->values()->get(0);
-                    $dataJumbo = $details->values()->get(1);
+                    $dataReguler = null;
+                    $dataJumbo = null;
 
-                    if ($details->count() == 1) {
-                        if ($tambahanJumbo > 0 && $firstItem->harga_satuan > $hargaRegulerAsli) {
-                            $dataReguler = null;
-                            $dataJumbo = $firstItem;
+                    // Logika penentuan porsi yang diperketat dengan memeriksa selisih Tambahan Jumbo asli menu
+                    foreach($details as $item) {
+                        $selisihHarga = $item->harga_satuan - $hargaRegulerAsli;
+                        
+                        if ($tambahanJumbo > 0 && $selisihHarga >= $tambahanJumbo) {
+                            $dataJumbo = $item;
                         } else {
-                            $dataReguler = $firstItem;
-                            $dataJumbo = null;
+                            if ($details->count() == 1 && isset($ulasanDetail->pesanan->keterangan) && str_contains(strtolower($ulasanDetail->pesanan->keterangan), 'jumbo')) {
+                                $dataJumbo = $item;
+                            } else {
+                                $dataReguler = $item;
+                            }
                         }
                     }
 
@@ -79,9 +84,17 @@
                     $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
                     $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
 
-                    // Hitung harga topping berdasarkan selisih harga porsi reguler asli
-                    $hargaToppingSatuan = $firstItem->harga_satuan - ($qtyJumbo > 0 ? ($hargaRegulerAsli + $tambahanJumbo) : $hargaRegulerAsli);
-                    if ($hargaToppingSatuan <= 0) { $hargaToppingSatuan = 3000; } // Sedia cadangan tetap 3rb jika selisih 0
+                    // Menghitung harga topping secara mandiri berdasarkan porsi aktif masing-masing
+                    $itemAcuan = $dataJumbo ?? $dataReguler;
+                    if ($qtyJumbo > 0) {
+                        $hargaToppingSatuan = $itemAcuan->harga_satuan - ($hargaRegulerAsli + $tambahanJumbo);
+                    } else {
+                        $hargaToppingSatuan = $itemAcuan->harga_satuan - $hargaRegulerAsli;
+                    }
+
+                    if ($hargaToppingSatuan < 0) {
+                        $hargaToppingSatuan = 0;
+                    }
                 @endphp
 
                 <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
@@ -100,10 +113,12 @@
 
                         <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
                             <div class="flex justify-between items-center">
-                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $firstItem->topping ?? '-' }}</p>
-                                <span class="text-[10px] text-orange-600 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $itemAcuan->topping ?? '-' }}</p>
+                                @if(!empty($itemAcuan->topping) && $itemAcuan->topping != '-')
+                                    <span class="text-[10px] text-orange-600 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                                @endif
                             </div>
-                            <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $firstItem->level_pedas ?? '-' }}</p>
+                            <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $itemAcuan->level_pedas ?? '-' }}</p>
                         </div>
                     </div>
                 </div>

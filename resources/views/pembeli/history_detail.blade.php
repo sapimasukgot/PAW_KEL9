@@ -71,55 +71,70 @@
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Rincian Menu yang Dibeli</h4>
                 
                 @if(isset($details) && $details->count() > 0)
-                    <div class="space-y-3">
-                        @foreach($details as $detailItem)
-                            @php
-                                $hargaRegulerAsli = $detailItem->menu->harga ?? 0;
-                                $tambahanJumbo = $detailItem->menu->tambahan_jumbo ?? 0;
-                                $isJumbo = $detailItem->harga_satuan > $hargaRegulerAsli;
+                    @php
+                        $firstItem = $details->first();
+                        $namaMenu = $firstItem->menu->nama_menu ?? 'Menu Pilihan';
+                        $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
+                        $tambahanJumbo = $firstItem->menu->tambahan_jumbo ?? 0;
 
-                                // Logika pemisahan harga topping mandiri dari basis harga_satuan transaksi
-                                $hargaToppingSatuan = $detailItem->harga_satuan - ($isJumbo ? ($hargaRegulerAsli + $tambahanJumbo) : $hargaRegulerAsli);
-                                
-                                // Jika hasil selisih kosong atau bernilai minus karena penataan awal, set standar nominal topping Rp 3.000
-                                if ($hargaToppingSatuan <= 0 && !empty($detailItem->topping) && $detailItem->topping != '-') {
-                                    $hargaToppingSatuan = 3000;
+                        $dataReguler = null;
+                        $dataJumbo = null;
+
+                        // Perulangan mendeteksi pembagian porsi reguler vs jumbo
+                        foreach($details as $item) {
+                            $selisihHarga = $item->harga_satuan - $hargaRegulerAsli;
+                            if ($tambahanJumbo > 0 && $selisihHarga >= $tambahanJumbo) {
+                                $dataJumbo = $item;
+                            } else {
+                                if($details->count() == 1 && isset($pesanan->keterangan) && str_contains(strtolower($pesanan->keterangan), 'jumbo')) {
+                                    $dataJumbo = $item;
+                                } else {
+                                    $dataReguler = $item;
                                 }
-                            @endphp
-                            
-                            <div class="flex justify-between items-start border-b border-gray-100 pb-3 last:border-none last:pb-0">
-                                <div class="space-y-0.5">
-                                    <p class="font-bold text-xs text-gray-900">
-                                        {{ $detailItem->menu->nama_menu ?? 'Menu Pilihan' }}
-                                    </p>
-                                    <div class="text-[11px] text-gray-500 space-y-1 pl-1 mt-1">
-                                        @if($detailItem->harga_satuan == $hargaRegulerAsli)
-                                            <p><span class="font-medium text-gray-700">Porsi:</span> Reguler ({{ $detailItem->jumlah ?? 0 }}x) <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli, 0, ',', '.') }}</span></p>
-                                        @else
-                                            <p><span class="font-medium text-gray-700">Porsi:</span> <span class="text-orange-500 font-semibold">Jumbo</span> ({{ $detailItem->jumlah ?? 0 }}x) <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli + $tambahanJumbo, 0, ',', '.') }}</span></p>
-                                            <span class="text-[10px] text-orange-400 block -mt-0.5">(Tambahan Jumbo: +Rp {{ number_format($tambahanJumbo, 0, ',', '.') }})</span>
-                                        @endif
+                            }
+                        }
 
-                                        <div class="flex items-center gap-2 pt-0.5">
-                                            <p><span class="font-medium text-gray-700">Topping:</span> {{ $detailItem->topping ?? '-' }}</p>
-                                            @if(!empty($detailItem->topping) && $detailItem->topping != '-')
-                                                <span class="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded border border-amber-200 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
-                                            @endif
-                                        </div>
-                                        
-                                        <p><span class="font-medium text-gray-700">Pedas:</span> {{ $detailItem->level_pedas ?? '-' }}</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-orange-500 block">
-                                        Rp {{ number_format($detailItem->subtotal ?? ($detailItem->harga_satuan * $detailItem->jumlah), 0, ',', '.') }}
-                                    </span>
-                                    <span class="text-[10px] text-gray-400 block">
-                                        {{ $detailItem->jumlah ?? 1 }}x Pesanan
-                                    </span>
-                                </div>
+                        $qtyReguler = $dataReguler ? ($dataReguler->jumlah ?? 0) : 0;
+                        $qtyJumbo = $dataJumbo ? ($dataJumbo->jumlah ?? 0) : 0;
+
+                        $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
+                        $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
+
+                        // Perhitungan harga topping murni menyesuaikan porsi aktif dari database
+                        $itemAcuan = $dataJumbo ?? $dataReguler;
+                        if ($qtyJumbo > 0) {
+                            $hargaToppingSatuan = $itemAcuan->harga_satuan - ($hargaRegulerAsli + $tambahanJumbo);
+                        } else {
+                            $hargaToppingSatuan = $itemAcuan->harga_satuan - $hargaRegulerAsli;
+                        }
+
+                        if ($hargaToppingSatuan < 0) {
+                            $hargaToppingSatuan = 0;
+                        }
+                    @endphp
+                    
+                    <div class="mt-2 space-y-2 text-xs text-gray-600">
+                        <p class="font-bold text-xs text-gray-900 mb-1">📋 {{ $namaMenu }}</p>
+
+                        <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                            <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $qtyReguler }}x <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli, 0, ',', '.') }}</span></p>
+                            <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalReguler, 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                            <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> <span class="text-orange-500 font-bold">{{ $qtyJumbo }}x</span> <span class="text-gray-400">@Rp {{ number_format($hargaRegulerAsli + $tambahanJumbo, 0, ',', '.') }}</span></p>
+                            <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalJumbo, 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $itemAcuan->topping ?? '-' }}</p>
+                                @if(!empty($itemAcuan->topping) && $itemAcuan->topping != '-')
+                                    <span class="text-[10px] text-orange-600 font-bold">Harga Topping: Rp {{ number_format($hargaToppingSatuan, 0, ',', '.') }}</span>
+                                @endif
                             </div>
-                        @endforeach
+                            <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $itemAcuan->level_pedas ?? '-' }}</p>
+                        </div>
                     </div>
                 @else
                     <p class="text-xs text-gray-400 italic">Rincian menu belanjaan tidak ditemukan.</p>

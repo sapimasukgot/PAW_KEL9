@@ -106,29 +106,29 @@ class PembeliController extends Controller
             'tanggal_order' => now(),
         ]);
 
-        if ($request->qty_reguler > 0) {
-            \App\Models\DetailPesanan::create([
-                'order_id'     => $pesanan->pesanan_id,
-                'menu_id'      => $menu->menu_id,
-                'jumlah'       => $request->qty_reguler,
-                'harga_satuan' => $menu->harga,
-                'subtotal'     => $request->qty_reguler * $menu->harga,
-                'topping'      => $request->topping,
-                'level_pedas'  => $request->level_pedas,
-            ]);
-        }
+    if ($request->qty_reguler > 0) {
+        \App\Models\DetailPesanan::create([
+            'order_id'     => $pesanan->pesanan_id,
+            'menu_id'      => $menu->menu_id,
+            'jumlah'       => $request->qty_reguler,
+            'harga_satuan' => $menu->harga + ($hargaToppingAsli ?? 0), 
+            'topping'      => $request->topping,
+            'level_pedas'  => $request->level_pedas,
+            'subtotal'     => $request->qty_reguler * ($menu->harga + ($hargaToppingAsli ?? 0)),
+        ]);
+    }
 
-        if ($request->qty_jumbo > 0) {
-            \App\Models\DetailPesanan::create([
-                'order_id'     => $pesanan->pesanan_id,
-                'menu_id'      => $menu->menu_id,
-                'jumlah'       => $request->qty_jumbo,
-                'harga_satuan' => $menu->harga + 4000,
-                'subtotal'     => $request->qty_jumbo * ($menu->harga + 4000),
-                'topping'      => $request->topping,
-                'level_pedas'  => $request->level_pedas,
-            ]);
-        }
+    if ($request->qty_jumbo > 0) {
+        \App\Models\DetailPesanan::create([
+            'order_id'     => $pesanan->pesanan_id,
+            'menu_id'      => $menu->menu_id,
+            'jumlah'       => $request->qty_jumbo,
+            'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0) + ($hargaToppingAsli ?? 0), 
+            'topping'      => $request->topping,
+            'level_pedas'  => $request->level_pedas,
+            'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0) + ($hargaToppingAsli ?? 0)),
+        ]);
+    }
 
         return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
     }
