@@ -53,7 +53,6 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->group(function (
     Route::get('/pesanan-detail/{id}', [PenjualController::class, 'pesananDetail'])->name('pesanan-detail');
     Route::get('/tambah-menu', [PenjualController::class, 'createMenu'])->name('tambah_menu');
     Route::post('/store-menu', [PenjualController::class, 'storeMenu'])->name('store_menu');
-    Route::post('/hapus-menu/{id}', [PenjualController::class, 'deleteMenu'])->name('delete_menu');
 
     Route::get('/riwayat', [PenjualController::class, 'riwayat'])->name('riwayat-penjual');
     Route::get('/riwayat-detail/{id}', [PenjualController::class, 'riwayatDetail'])->name('riwayat-penjual-detail');
@@ -66,6 +65,7 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->group(function (
     Route::get('/ubah-bahasa', function () { return view('ubah-bahasa'); })->name('ubah-bahasa-penjual');
     Route::get('/pengaturan-akun', function () { return view('pengaturan-akun'); })->name('pengaturan-akun-penjual');
     Route::post('/hapus-akun', [PenjualController::class, 'deleteAccount'])->name('hapus-akun-penjual');
+    Route::post('/menu/hapus/{id}', [PenjualController::class, 'deleteMenu'])->name('delete_menu');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {

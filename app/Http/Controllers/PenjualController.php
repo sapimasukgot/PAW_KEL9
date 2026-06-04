@@ -45,8 +45,16 @@ class PenjualController extends Controller
             'stok'      => 'required|numeric|min:0',
             'status'    => 'required|string',
             'topping' => 'nullable|string',
-            'tambahan_jumbo' => 'nullable|required|numeric|min:0',
+            'tambahan_jumbo' => 'nullable|numeric|min:0',
+            'gambar_menu' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $namaGambar = null;
+        if ($request->hasFile('gambar_menu')) {
+            $file = $request->file('gambar_menu');
+            $namaGambar = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/menu'), $namaGambar);
+        }
 
         $cleanStatus = strtolower($request->status);
 
@@ -59,20 +67,21 @@ class PenjualController extends Controller
             'tambahan_jumbo' => $request->tambahan_jumbo, 
             'topping'        => $request->topping,
             'status'    => $cleanStatus,
+            'gambar_menu' => $namaGambar,
         ]);
 
         return redirect()->route('penjual-beranda')->with('success', 'Menu berhasil ditambahkan!');
     }
-public function kosongkanMenu($id)
-{
-    $toko = $this->getToko();
-    $menu = Menu::where('toko_id', $toko->toko_id)->findOrFail($id);
-    $menu->stok = 0;
-    $menu->status = 'habis';
-    $menu->save();
+    public function kosongkanMenu($id)
+    {
+        $toko = $this->getToko();
+        $menu = Menu::where('toko_id', $toko->toko_id)->findOrFail($id);
+        $menu->stok = 0;
+        $menu->status = 'habis';
+        $menu->save();
 
-    return back()->with('success', 'Menu berhasil dikosongkan.');
-}
+        return back()->with('success', 'Menu berhasil dikosongkan.');
+    }
 
     public function deleteMenu($id)
     {
@@ -94,69 +103,79 @@ public function kosongkanMenu($id)
             
         return view('pesanan-penjual', compact('pesanans'));
     }
+
     public function storePesanan(Request $request, $id)
-{
-    $request->validate([
-        'nama_pembeli' => 'required|string|max:255',
-        'no_meja'      => 'required|integer|min:1',
-        'harga_total'  => 'required|integer',
-        'keterangan'   => 'nullable|string',
-        'qty_reguler'  => 'required|integer|min:0',
-        'qty_jumbo'    => 'required|integer|min:0',
-    ]);
-
-    $menu = Menu::findOrFail($id);
-
-    $totalQty = $request->qty_reguler + $request->qty_jumbo;
-    if ($totalQty < 1) {
-        return back()->withErrors(['qty' => 'Minimal pesan 1 porsi.']);
-    }
-
-    if ($totalQty > $menu->stok) {
-        return back()->withErrors(['qty' => 'Stok tidak mencukupi. Stok tersisa: ' . $menu->stok . ' porsi.']);
-    }
-
-    $pesanan = Pesanan::create([
-        'user_id'       => Auth::id(),
-        'toko_id'       => $menu->toko_id,
-        'nama_pembeli'  => $request->nama_pembeli,
-        'no_meja'       => $request->no_meja,
-        'total_harga'   => $request->harga_total,
-        'status'        => 'Pending',
-        'keterangan'    => $request->keterangan,
-        'tanggal_order' => now(),
-    ]);
-
-    if ($request->qty_reguler > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_reguler,
-            'harga_satuan' => $menu->harga,
-            'subtotal'     => $request->qty_reguler * $menu->harga,
+    {
+        $request->validate([
+            'nama_pembeli' => 'required|string|max:255',
+            'no_meja'      => 'required|integer|min:1',
+            'harga_total'  => 'required|integer',
+            'keterangan'   => 'nullable|string',
+            'qty_reguler'  => 'required|integer|min:0',
+            'qty_jumbo'    => 'required|integer|min:0',
         ]);
-    }
 
-    if ($request->qty_jumbo > 0) {
-        \App\Models\DetailPesanan::create([
-            'order_id'     => $pesanan->pesanan_id,
-            'menu_id'      => $menu->menu_id,
-            'jumlah'       => $request->qty_jumbo,
-            'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0),
-            'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0)),
+        $menu = Menu::findOrFail($id);
+
+        $totalQty = $request->qty_reguler + $request->qty_jumbo;
+        if ($totalQty < 1) {
+            return back()->withErrors(['qty' => 'Minimal pesan 1 porsi.']);
+        }
+
+        if ($totalQty > $menu->stok) {
+            return back()->withErrors(['qty' => 'Stok tidak mencukupi. Stok tersisa: ' . $menu->stok . ' porsi.']);
+        }
+
+        $pesanan = Pesanan::create([
+            'user_id'       => Auth::id(),
+            'toko_id'       => $menu->toko_id,
+            'nama_pembeli'  => $request->nama_pembeli,
+            'no_meja'       => $request->no_meja,
+            'total_harga'   => $request->harga_total,
+            'status'        => 'Pending',
+            'keterangan'    => $request->keterangan,
+            'tanggal_order' => now(),
         ]);
+
+        if ($request->qty_reguler > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_reguler,
+                'harga_satuan' => $menu->harga,
+                'subtotal'     => $request->qty_reguler * $menu->harga,
+            ]);
+        }
+
+        if ($request->qty_jumbo > 0) {
+            \App\Models\DetailPesanan::create([
+                'order_id'     => $pesanan->pesanan_id,
+                'menu_id'      => $menu->menu_id,
+                'jumlah'       => $request->qty_jumbo,
+                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0),
+                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0)),
+            ]);
+        }
+
+        $menu->stok -= $totalQty;
+        if ($menu->stok <= 0) {
+            $menu->stok = 0;
+            $menu->status = 'habis';
+        }
+        $menu->save();
+
+        return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
     }
 
-    $menu->stok -= $totalQty;
-    if ($menu->stok <= 0) {
-        $menu->stok = 0;
-        $menu->status = 'habis';
-    }
-    $menu->save();
-
-    return redirect()->route('pembeli-ongoing')->with('success', 'Pesanan berhasil dibuat, selamat menunggu!');
-}
     public function pesananDetail($id)
+    {
+        $pesanan = \App\Models\Pesanan::with([
+            'detailPesanan.menu'
+        ])->findOrFail($id);
+
+        return view('pesanan-detail', compact('pesanan'));
+    }
+    public function details($id)
     {
         $pesanan = \App\Models\Pesanan::with([
             'detailPesanan.menu'
@@ -189,7 +208,7 @@ public function kosongkanMenu($id)
     public function riwayatDetail($id)
     {
         $toko = $this->getToko();
-        $detail = Pesanan::with(['user', 'details.menu'])->where('toko_id', $toko->toko_id)->findOrFail($id);
+        $detail = Pesanan::with(['user', 'detailPesanan.menu'])->where('toko_id', $toko->toko_id)->findOrFail($id);
         return view('riwayat-detail', compact('detail'));
     }
 
@@ -204,7 +223,7 @@ public function kosongkanMenu($id)
     {
         $toko = $this->getToko();
     
-        $ulasanDetail = Rating::with(['user', 'pesanan.details.menu'])
+        $ulasanDetail = Rating::with(['user', 'pesanan.detailPesanan.menu'])
             ->where('toko_id', $toko->toko_id)
             ->findOrFail($id);
 

@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model {
     protected $table = 'menu';
     protected $primaryKey = 'menu_id';
-    protected $fillable = ['toko_id', 'nama_menu', 'deskripsi', 'harga', 'tambahan_jumbo','topping','stok', 'status'];
+    protected $fillable = ['toko_id', 'nama_menu', 'deskripsi', 'harga', 'tambahan_jumbo','topping','stok', 'status', 'gambar_menu'];
+
+     public function pesanan()
+    {
+        return $this->hasMany(DetailPesanan::class, 'menu_id', 'menu_id');
+    }
 
     public function toko()
     {

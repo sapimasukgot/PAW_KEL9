@@ -13,6 +13,8 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->decimal('harga_satuan', 12, 2);
             $table->decimal('subtotal', 12, 2);
+            $table->string('topping')->nullable();
+            $table->string('level_pedas')->nullable();
             $table->timestamps();
         });
     }

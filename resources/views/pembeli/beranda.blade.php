@@ -15,7 +15,7 @@
     <main class="px-4">
         <h2 class="text-2xl font-bold mb-4" data-translate="title_recommendation">Rekomendasi</h2>
         <div id="target-container-menu" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            </div>
+        </div>
     </main>
 
     <script>
@@ -46,10 +46,15 @@
                         const detailUrl = `{{ url('/pembeli/detail') }}/${menu.menu_id}`;
                         const deskripsiMenu = menu.deskripsi ? menu.deskripsi : 'Menu sedap sekali';
 
+                        // Memeriksa keberadaan file gambar hasil upload dari database
+                        const pathGambar = menu.gambar_menu 
+                            ? `{{ asset('images/menu') }}/${menu.gambar_menu}` 
+                            : `https://placehold.co/100x100?text=MakanMart`;
+
                         const componentHTML = `
                             <div class="card-item bg-white p-3 rounded-2xl shadow-md flex gap-3 relative transition-all duration-300">
-                                <div class="w-24 h-24 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase">Foto</span>
+                                <div class="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                    <img src="${pathGambar}" alt="${menu.nama_menu}" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex flex-col justify-between flex-1">
                                     <div>

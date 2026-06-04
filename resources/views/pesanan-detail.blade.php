@@ -15,15 +15,21 @@
         <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Pesanan Masuk</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm flex items-center justify-center">
+            <div class="w-full h-44 bg-orange-50 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-orange-100">
                 @php
                     $details = $pesanan->detail_pesanan ?? $pesanan->detailPesanan ?? $pesanan->details ?? null;
+                    $firstDetail = isset($details) && $details->count() > 0 ? $details->first() : null;
+                    $gambarMenu = ($firstDetail && $firstDetail->menu) ? $firstDetail->menu->gambar_menu : null;
                 @endphp
-                @if(isset($details) && $details->count() > 0 && !empty($details->first()->menu->foto))
-                    <img src="{{ asset('storage/' . $details->first()->menu->foto) }}" alt="Detail Pesanan" class="w-full h-full object-cover">
+                
+                @if($gambarMenu)
+                    <img src="{{ asset('images/menu/' . $gambarMenu) }}" alt="Detail Pesanan" class="w-full h-full object-cover">
                 @else
-                    <div class="text-orange-400 font-bold text-xs uppercase tracking-widest text-center px-4">
-                        📸 Foto Menu MakanMart
+                    <div class="text-center">
+                        <span class="text-3xl block mb-1">🛍️</span>
+                        <div class="text-orange-400 font-bold text-[10px] uppercase tracking-widest px-4">
+                            📸 Foto Menu Belum Tersedia
+                        </div>
                     </div>
                 @endif
             </div>
@@ -56,21 +62,53 @@
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Daftar Menu yang Harus Dimasak</h4>
                 
                 @if(isset($details) && $details->count() > 0)
-                    @foreach($details as $detail)
-                        <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
-                            <p class="font-bold text-xs text-orange-600">📋 {{ $detail->menu->nama_menu ?? 'Menu Pilihan' }}</p>
-                            
-                            <div class="mt-1 space-y-1 pl-2 text-xs text-gray-600">
-                                @if($detail->harga_satuan == ($detail->menu->harga ?? 0))
-                                    <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $detail->jumlah ?? 0 }}x</p>
-                                @else
-                                    <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> {{ $detail->jumlah ?? 0 }}x</p>
-                                @endif
-                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $detail->topping ?? '-' }}</p>
-                                <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $detail->level_pedas ?? '-' }}</p>
+                    @php
+                        $firstItem = $details->first();
+                        $namaMenu = $firstItem->menu->nama_menu ?? 'Menu Pilihan';
+                        $hargaRegulerAsli = $firstItem->menu->harga ?? 0;
+
+                        // Mengambil data berdasarkan index collection karena sistem memisahkan penyimpanan item
+                        $dataReguler = $details->values()->get(0);
+                        $dataJumbo = $details->values()->get(1);
+
+                        // Jika item di dalam transaksi hanya dibeli 1 jenis (Reguler saja ATAU Jumbo saja)
+                        if ($details->count() == 1) {
+                            if ($firstItem->harga_satuan > $hargaRegulerAsli) {
+                                $dataReguler = null;
+                                $dataJumbo = $firstItem;
+                            } else {
+                                $dataReguler = $firstItem;
+                                $dataJumbo = null;
+                            }
+                        }
+
+                        $qtyReguler = $dataReguler ? ($dataReguler->jumlah ?? 0) : 0;
+                        $qtyJumbo = $dataJumbo ? ($dataJumbo->jumlah ?? 0) : 0;
+
+                        $subtotalReguler = $dataReguler ? $dataReguler->subtotal : 0;
+                        $subtotalJumbo = $dataJumbo ? $dataJumbo->subtotal : 0;
+                    @endphp
+
+                    <div class="border-b border-orange-50 pb-2 mb-2 last:border-none last:pb-0">
+                        <p class="font-bold text-xs text-orange-600">📋 {{ $namaMenu }}</p>
+                        
+                        <div class="mt-2 space-y-2 pl-2 text-xs text-gray-600">
+                            <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                                <p><span class="font-semibold text-gray-800">Porsi Reguler:</span> {{ $qtyReguler }}x</p>
+                                <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalReguler, 0, ',', '.') }}</span>
+                            </div>
+
+                            <div class="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg">
+                                <p><span class="font-semibold text-gray-800">Porsi Jumbo:</span> <span class="text-orange-500 font-bold">{{ $qtyJumbo }}x</span></p>
+                                <span class="text-[10px] text-gray-400">Subtotal: Rp {{ number_format($subtotalJumbo, 0, ',', '.') }}</span>
+                            </div>
+
+                            <div class="pt-1 border-t border-dashed border-gray-200 space-y-0.5">
+                                <p><span class="font-semibold text-gray-800">Topping:</span> {{ $firstItem->topping ?? '-' }}</p>
+                                <p><span class="font-semibold text-gray-800">Pedas:</span> {{ $firstItem->level_pedas ?? '-' }}</p>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 @else
                     <p class="text-xs text-gray-400 italic">Rincian item porsi menu tidak ditemukan.</p>
                 @endif

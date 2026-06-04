@@ -15,11 +15,17 @@
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">{{ $menu->nama_menu }}</h1>
 
         <div class="bg-white p-5 rounded-3xl shadow-lg flex flex-col md:flex-row gap-6 mb-6">
-            <div
-                class="w-full md:w-1/2 h-48 bg-orange-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-orange-200 flex-shrink-0">
-                <span class="text-orange-400 font-bold uppercase tracking-widest text-center text-xs px-4">
-                    📸 Foto {{ $menu->nama_menu }}
-                </span>
+            <div class="w-full md:w-1/2 h-48 bg-orange-50 rounded-2xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-inner">
+                @if($menu->gambar_menu)
+                    <img src="{{ asset('images/menu/' . $menu->gambar_menu) }}" alt="{{ $menu->nama_menu }}" class="w-full h-full object-cover">
+                @else
+                    <div class="text-center p-4">
+                        <span class="text-4xl block mb-2">🍜</span>
+                        <span class="text-orange-400 font-bold uppercase tracking-widest text-[10px] block">
+                            📸 Foto {{ $menu->nama_menu }} Belum Tersedia
+                        </span>
+                    </div>
+                @endif
             </div>
 
             <div class="flex-1 flex flex-col justify-between">
@@ -114,8 +120,7 @@
                             </p>
                         @endforeach
                     @else
-                        <p class="bg-white/80 p-2 rounded-lg italic text-gray-400 text-center">Belum ada ulasan untuk lapak
-                            ini.</p>
+                        <p class="bg-white/80 p-2 rounded-lg italic text-gray-400 text-center">Belum ada ulasan untuk lapak ini.</p>
                     @endif
                 </div>
             </div>

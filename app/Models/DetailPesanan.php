@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class DetailPesanan extends Model {
     protected $table = 'detail_pesanan';
     protected $primaryKey = 'detail_id';
-    protected $fillable = ['order_id', 'menu_id', 'jumlah', 'harga_satuan', 'subtotal'];
+    protected $fillable = ['order_id', 'menu_id', 'jumlah', 'harga_satuan', 'subtotal', 'topping', 'level_pedas'];
 
     public function menu() {
         return $this->belongsTo(Menu::class, 'menu_id');

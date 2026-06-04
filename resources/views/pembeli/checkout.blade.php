@@ -17,9 +17,15 @@
         <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Order {{ $menu->nama_menu }}</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm flex items-center justify-center">
-                <span class="text-gray-400 text-xs font-bold uppercase tracking-widest">📸 Foto
-                    {{ $menu->nama_menu }}</span>
+            <div class="w-full h-44 bg-orange-50 rounded-xl overflow-hidden shadow-sm flex items-center justify-center border border-gray-100 shadow-inner">
+                @if($menu->gambar_menu)
+                    <img src="{{ asset('images/menu/' . $menu->gambar_menu) }}" alt="{{ $menu->nama_menu }}" class="w-full h-full object-cover">
+                @else
+                    <div class="text-center">
+                        <span class="text-3xl block mb-1">🍜</span>
+                        <span class="text-orange-400 text-[10px] font-bold uppercase tracking-widest block">📸 Foto Belum Tersedia</span>
+                    </div>
+                @endif
             </div>
 
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
@@ -96,7 +102,6 @@
                         <input type="number" id="qty_jumbo" name="qty_jumbo" value="0" min="0" max="{{ $menu->stok }}"
                             class="bg-gray-200 px-3 py-1 rounded-lg text-xs font-bold w-20 text-center focus:outline-none shadow-sm">
                     </div>
-                @else
                     <input type="hidden" id="qty_jumbo" name="qty_jumbo" value="0">
                 @endif
 

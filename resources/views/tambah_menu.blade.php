@@ -4,7 +4,7 @@
     <div class="max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold text-center mb-10 tracking-wide" data-translate="title_add_menu">Tambah Menu</h2>
 
-        <form action="{{ route('store_menu') }}" method="POST" class="space-y-6">
+        <form action="{{ route('store_menu') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             @if (session('error'))
@@ -23,6 +23,16 @@
             @endif
 
             <input type="hidden" name="status" value="tersedia">
+
+            <div>
+                <label class="block font-bold mb-2">Gambar Menu</label>
+                <div class="flex items-center gap-4 bg-white p-3 rounded-xl shadow-inner">
+                    <input type="file" name="gambar_menu" id="gambar_menu" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 transition-all" onchange="previewImage(event)">
+                </div>
+                <div class="mt-3 hidden" id="preview-box">
+                    <img id="output-image" class="w-40 h-40 object-cover rounded-xl border border-gray-200 shadow-sm">
+                </div>
+            </div>
 
             <div>
                 <label class="block font-bold mb-2">Nama Menu</label>
@@ -46,8 +56,7 @@
                 <label class="block font-bold mb-2">Tambahan Harga Porsi Jumbo (Rp)</label>
                 <input type="number" name="tambahan_jumbo" placeholder="Contoh: 4000 (isi 0 jika tidak ada porsi jumbo)"
                     class="w-full p-3 rounded-xl bg-white shadow-inner focus:outline-none" value="0" min="0">
-                <p class="text-xs text-gray-400 mt-1 ml-1">Harga jumbo = harga reguler + tambahan ini. Isi 0 jika tidak ada
-                    pilihan jumbo.</p>
+                <p class="text-xs text-gray-400 mt-1 ml-1">Harga jumbo = harga reguler + tambahan ini. Isi 0 jika tidak ada pilihan jumbo.</p>
             </div>
 
             <div>
@@ -58,11 +67,8 @@
 
             <div>
                 <label class="block font-bold mb-2">Topping (Nama & Harga)</label>
-                <p class="text-xs text-gray-400 mb-2">Format: <span
-                        class="font-mono bg-gray-100 px-1 rounded">NamaTopping:Harga</span> — pisahkan dengan koma.
-                    Kosongkan jika tidak ada topping.</p>
-                <p class="text-xs text-gray-400 mb-3">Contoh: <span
-                        class="font-mono bg-gray-100 px-1 rounded">Telur:4000,Kerupuk:3000,Kulit:2000</span></p>
+                <p class="text-xs text-gray-400 mb-2">Format: <span class="font-mono bg-gray-100 px-1 rounded">NamaTopping:Harga</span> — pisahkan dengan koma. Kosongkan jika tidak ada topping.</p>
+                <p class="text-xs text-gray-400 mb-3">Contoh: <span class="font-mono bg-gray-100 px-1 rounded">Telur:4000,Kerupuk:3000,Kulit:2000</span></p>
 
                 <div id="topping-container" class="space-y-2"></div>
 
@@ -82,12 +88,23 @@
                 <button type="submit" onclick="buildToppingString()"
                     class="bg-orange-500 text-white px-10 py-2 rounded-xl font-bold shadow-sm text-sm hover:bg-orange-600 transition">
                     Tambah
-                </button>
+                </a>
             </div>
         </form>
     </div>
 
     <script>
+        // Fungsi JS untuk menampilkan preview gambar instan saat dipilih
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('output-image');
+                output.src = reader.result;
+                document.getElementById('preview-box').classList.remove('hidden');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
         function tambahTopping() {
             const container = document.getElementById('topping-container');
             const div = document.createElement('div');

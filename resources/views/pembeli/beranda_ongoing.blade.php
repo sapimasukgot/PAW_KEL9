@@ -25,6 +25,7 @@
                        class="w-full bg-white border-none rounded-full py-3.5 pl-12 pr-4 shadow-sm focus:outline-none text-sm">
             </div>
         </div>
+        
         <div class="w-full space-y-4">
             <h2 class="text-xl font-bold text-gray-900" data-translate="title_ongoing">Pesanan Berlangsung</h2>
             
@@ -32,9 +33,21 @@
                 @forelse($pesanans as $pesanan)
                 <div class="bg-white rounded-3xl p-5 shadow-sm flex items-center border border-orange-100 relative w-full max-w-3xl h-32">
                     <div class="flex items-center gap-5">
-                        <div class="w-20 h-20 bg-orange-100 rounded-2xl flex-none flex items-center justify-center">
-                            <span class="text-2xl">🛍️</span>
+                        
+                        <div class="w-20 h-20 bg-orange-100 rounded-2xl flex-none flex items-center justify-center overflow-hidden shadow-inner">
+                            @php
+                                // Mengambil detail pesanan pertama untuk mendapatkan gambar menu yang dipesan
+                                $firstDetail = $pesanan->detailPesanan->first() ?? ($pesanan->details ? $pesanan->details->first() : null);
+                                $gambarPesanan = ($firstDetail && $firstDetail->menu) ? $firstDetail->menu->gambar_menu : null;
+                            @endphp
+
+                            @if($gambarPesanan)
+                                <img src="{{ asset('images/menu/' . $gambarPesanan) }}" alt="Gambar Pesanan" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-2xl">🛍️</span>
+                            @endif
                         </div>
+
                         <div class="flex flex-col items-start">
                             <h3 class="font-bold text-lg text-gray-900 leading-tight">
                                 Pesanan An. {{ $pesanan->nama_pembeli }}
@@ -57,6 +70,7 @@
                 @endforelse
             </div>
         </div>
+
         <div class="w-full space-y-4">
             <h2 class="text-xl font-bold text-gray-900" data-translate="title_recommendation">Rekomendasi</h2>
             
@@ -64,8 +78,12 @@
                 @forelse($menus as $menu)
                 <div class="card-item bg-white rounded-2xl p-4 shadow-sm flex items-center border border-gray-50 relative h-28 w-full overflow-hidden transition-all duration-200 hover:border-orange-200">
                     <div class="flex items-center gap-3 min-w-0 w-full pr-16">
-                        <div class="w-14 h-14 bg-orange-50 rounded-xl flex-none flex items-center justify-center text-xl">
-                            🍜
+                        <div class="w-14 h-14 bg-orange-50 rounded-xl flex-none flex items-center justify-center overflow-hidden">
+                            @if($menu->gambar_menu)
+                                <img src="{{ asset('images/menu/' . $menu->gambar_menu) }}" alt="{{ $menu->nama_menu }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-xl">🍜</span>
+                            @endif
                         </div>
                         <div class="flex flex-col items-start min-w-0 w-full">
                             <h3 class="card-title font-bold text-sm text-gray-900 truncate w-full">{{ $menu->nama_menu }}</h3>
@@ -85,10 +103,8 @@
                     Belum ada menu terdaftar yang tersedia saat ini.
                 </div>
                 @endforelse
-
             </div>
         </div>
-
     </div>
 
     <script>

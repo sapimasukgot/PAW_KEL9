@@ -18,8 +18,23 @@
         <h1 class="text-2xl font-bold text-center my-6 text-gray-900">Detail Riwayat Pesanan</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="w-full h-44 bg-gray-300 rounded-xl overflow-hidden shadow-sm">
-                <img src="https://via.placeholder.com/400x300" alt="Detail Pesanan" class="w-full h-full object-cover">
+            <div class="w-full h-44 bg-orange-50 rounded-xl overflow-hidden shadow-inner flex items-center justify-center border border-orange-100">
+                @php
+                    $details = $pesanan->detail_pesanan ?? $pesanan->detailPesanan ?? $pesanan->details ?? null;
+                    $firstDetail = isset($details) && $details->count() > 0 ? $details->first() : null;
+                    $gambarMenu = ($firstDetail && $firstDetail->menu) ? $firstDetail->menu->gambar_menu : null;
+                @endphp
+                
+                @if($gambarMenu)
+                    <img src="{{ asset('images/menu/' . $gambarMenu) }}" alt="Detail Pesanan" class="w-full h-full object-cover">
+                @else
+                    <div class="text-center">
+                        <span class="text-3xl block mb-1">🛍️</span>
+                        <div class="text-orange-400 font-bold text-[10px] uppercase tracking-widest px-4">
+                            📸 Foto Menu Belum Tersedia
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <div class="bg-white rounded-xl p-4 shadow-sm flex flex-col justify-start">
@@ -52,6 +67,42 @@
         </div>
 
         <div class="space-y-4">
+            <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 mb-2">Rincian Menu yang Dibeli</h4>
+                
+                @if(isset($details) && $details->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($details as $detail)
+                            <div class="flex justify-between items-start border-b border-gray-100 pb-3 last:border-none last:pb-0">
+                                <div class="space-y-0.5">
+                                    <p class="font-bold text-xs text-gray-900">
+                                        {{ $detail->menu->nama_menu ?? 'Menu Pilihan' }}
+                                    </p>
+                                    <div class="text-[11px] text-gray-500 space-y-0.5 pl-1">
+                                        @if($detail->harga_satuan == ($detail->menu->harga ?? 0))
+                                            <p><span class="font-medium text-gray-700">Porsi:</span> Reguler ({{ $detail->jumlah ?? 0 }}x)</p>
+                                        @else
+                                            <p><span class="font-medium text-gray-700">Porsi:</span> Jumbo ({{ $detail->jumlah ?? 0 }}x)</p>
+                                        @endif
+                                        <p><span class="font-medium text-gray-700">Topping:</span> {{ $detail->topping ?? '-' }}</p>
+                                        <p><span class="font-medium text-gray-700">Pedas:</span> {{ $detail->level_pedas ?? '-' }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-bold text-orange-500 block">
+                                        Rp {{ number_format($detail->subtotal ?? ($detail->harga_satuan * $detail->jumlah), 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-400 block">
+                                        @Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-gray-400 italic">Rincian menu belanjaan tidak ditemukan.</p>
+                @endif
+            </div>
 
             <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
                 <h4 class="font-bold text-sm text-gray-800 mb-2">Detail Identitas Pelanggan</h4>
@@ -70,7 +121,7 @@
 
                 <div class="flex items-center gap-4">
                     <span class="w-24 text-xs font-bold text-gray-700">Harga Total:</span>
-                    <input type="text" readonly value="Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}"
+                    <input type="text" readonly value="Rp {{ number_format($pesanan->harga_total ?? $pesanan->total_harga ?? 0, 0, ',', '.') }}"
                         class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-orange-600 min-w-[150px] text-center focus:outline-none border-none select-none">
                 </div>
 
@@ -88,7 +139,7 @@
                 </a>
 
                 @if(!$pesanan->rating)
-                    <a href="{{ route('pembeli-rating', $pesanan->pesanan_id) }}"
+                    <a href="{{ route('pembeli-rating', $pesanan->pesanan_id ?? $pesanan->id) }}"
                         class="bg-orange-500 hover:bg-orange-600 text-white px-16 py-1.5 rounded-lg font-semibold text-xs shadow-sm text-center transition-all">
                         Beri Rating
                     </a>

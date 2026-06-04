@@ -14,7 +14,10 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 12, 2);
             $table->integer('stok');
+            $table->decimal('tambahan_jumbo', 12, 2)->nullable();
+            $table->string('topping')->nullable();
             $table->enum('status', ['tersedia', 'habis']);
+            $table->string('gambar_menu')->nullable();
             $table->timestamps();
         });
     }
