@@ -125,10 +125,10 @@ class PembeliController extends Controller
                 'order_id'     => $pesanan->pesanan_id,
                 'menu_id'      => $menu->menu_id,
                 'jumlah'       => $request->qty_reguler,
-                'harga_satuan' => $menu->harga + $hargaToppingAsli, 
+                'harga_satuan' => $menu->harga,
                 'topping'      => $request->topping,
                 'level_pedas'  => $request->level_pedas,
-                'subtotal'     => $request->qty_reguler * ($menu->harga + $hargaToppingAsli),
+                'subtotal'     => $request->qty_reguler * $menu->harga,
                 'is_jumbo'     => false,
             ]);
         }
@@ -138,10 +138,10 @@ class PembeliController extends Controller
                 'order_id'     => $pesanan->pesanan_id,
                 'menu_id'      => $menu->menu_id,
                 'jumlah'       => $request->qty_jumbo,
-                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli, 
+                'harga_satuan' => $menu->harga + ($menu->tambahan_jumbo ?? 0),
                 'topping'      => $request->topping,
                 'level_pedas'  => $request->level_pedas,
-                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0) + $hargaToppingAsli),
+                'subtotal'     => $request->qty_jumbo * ($menu->harga + ($menu->tambahan_jumbo ?? 0)),
                 'is_jumbo'     => true,
             ]);
         }

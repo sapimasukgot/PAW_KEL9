@@ -40,9 +40,18 @@ return new class extends Migration
                 $isJumbo = ($selisih >= $tambahanJumbo);
             }
 
+            // PENTING: Normalize harga_satuan (remove topping, keep only base + jumbo)
+            $newHargaSatuan = $hargaSatuan;
+            if ($hargaToppingAsli > 0) {
+                $newHargaSatuan = $hargaSatuan - $hargaToppingAsli;
+            }
+
             DB::table('detail_pesanan')
                 ->where('detail_id', $detail->detail_id)
-                ->update(['is_jumbo' => $isJumbo ? 1 : 0]);
+                ->update([
+                    'is_jumbo' => $isJumbo ? 1 : 0,
+                    'harga_satuan' => $newHargaSatuan,
+                ]);
         }
     }
 

@@ -89,17 +89,17 @@
                         // Pilih item yang akan ditampilkan detailnya (prioritas: jumbo, lalu reguler)
                         $itemAcuan = $dataJumbo ?? $dataReguler;
                         
-                        // Hitung harga topping (harga satuan dikurangi harga dasar + tambahan jumbo)
+                        // Parse harga topping dari field topping (format: "nama:harga")
                         $hargaToppingSatuan = 0;
-                        if ($itemAcuan) {
-                            if ($itemAcuan->is_jumbo) {
-                                $hargaToppingSatuan = $itemAcuan->harga_satuan - ($hargaRegulerAsli + $tambahanJumbo);
-                            } else {
-                                $hargaToppingSatuan = $itemAcuan->harga_satuan - $hargaRegulerAsli;
-                            }
-                            
-                            if ($hargaToppingSatuan < 0) {
-                                $hargaToppingSatuan = 0;
+                        if ($itemAcuan && $itemAcuan->topping && $itemAcuan->topping !== '-') {
+                            $toppingList = array_map('trim', explode(',', $firstItem->menu->topping ?? ''));
+                            foreach ($toppingList as $top) {
+                                $parts = explode(':', $top);
+                                $namaTop = trim($parts[0]);
+                                if ($namaTop === $itemAcuan->topping) {
+                                    $hargaToppingSatuan = isset($parts[1]) ? (int)trim($parts[1]) : 0;
+                                    break;
+                                }
                             }
                         }
                     @endphp
